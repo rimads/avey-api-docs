@@ -14,7 +14,7 @@ export default function AdminPage() {
 
     script.onload = () => {
       // Environment-based configuration
-      const isDevelopment = false;
+      const isDevelopment = true;
       // window.location.hostname !== "localhost" &&
       // window.location.hostname !== "127.0.0.1";
 
@@ -33,6 +33,7 @@ export default function AdminPage() {
             },
         media_folder: "public/uploads",
         public_folder: "/uploads",
+        // publish_mode: "editorial_workflow",
         collections: [
           {
             name: "docs",
@@ -88,7 +89,7 @@ export default function AdminPage() {
               },
             ],
             editor: {
-              preview: false,
+              preview: true,
             },
           },
         ],
