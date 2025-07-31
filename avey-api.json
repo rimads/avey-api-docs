@@ -192,7 +192,7 @@
                   "descriptions": {
                     "type": "array",
                     "items": {
-                      "type": "object",
+                      "type": "object", 
                       "properties": {
                         "text": { "type": "string" }
                       }
@@ -235,7 +235,7 @@
                   "icd_codes": [
                     {
                       "code": "J45.909",
-                      "description": "Unspecified asthma, uncomplicated",
+                      "description": "Unspecified asthma, uncomplicated", 
                       "confidence": 0.93
                     },
                     {
@@ -244,6 +244,48 @@
                       "confidence": 0.89
                     }
                   ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get ICD code details",
+        "description": "Get detailed information about specific ICD codes",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "description": "ICD code to lookup",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "J45.909"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ICD code details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string" },
+                    "description": { "type": "string" },
+                    "category": { "type": "string" },
+                    "subcategory": { "type": "string" },
+                    "guidelines": { "type": "string" }
+                  }
+                },
+                "example": {
+                  "code": "J45.909",
+                  "description": "Unspecified asthma, uncomplicated",
+                  "category": "Diseases of the respiratory system",
+                  "subcategory": "Asthma",
+                  "guidelines": "Code also any associated conditions"
                 }
               }
             }
