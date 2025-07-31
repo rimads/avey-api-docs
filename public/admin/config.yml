@@ -1,6 +1,6 @@
 backend:
-  name: "github"
-  repo: "rimads/avey-api-docs"
+  name: "git-gateway"
+  # repo: "rimads/avey-api-docs"
   branch: "main"
 media_folder: "public/uploads"
 public_folder: "/uploads"
