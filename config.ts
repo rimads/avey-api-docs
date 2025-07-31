@@ -1,0 +1,1 @@
+export const ENV_MODE = process.env.NEXT_PUBLIC_MODE === "development";

@@ -1,5 +1,6 @@
 "use client";
 
+import { ENV_MODE } from "config";
 import { useEffect } from "react";
 
 // Extend Window interface for Decap CMS
@@ -23,20 +24,15 @@ export default function AdminPage() {
     script.async = true;
 
     script.onload = () => {
-      // Environment-based configuration
-      const isDevelopment = true;
-      // window.location.hostname !== "localhost" &&
-      // window.location.hostname !== "127.0.0.1";
+      const isDevelopment = ENV_MODE;
 
       const config = {
         backend: isDevelopment
           ? {
-              // LOCAL DEVELOPMENT: Use proxy server (no authentication needed)
               name: "proxy",
               proxy_url: "http://localhost:8081/api/v1",
             }
           : {
-              // PRODUCTION: Use GitHub (authentication required)
               name: "github",
               repo: "rimads/avey-api-docs",
               branch: "main",
