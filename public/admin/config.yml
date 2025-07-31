@@ -1,0 +1,49 @@
+backend:
+  name: "github"
+  repo: "rimads/avey-api-docs"
+  branch: "main"
+media_folder: "public/uploads"
+public_folder: "/uploads"
+publish_mode: "editorial_workflow"
+collections:
+  - name: "docs"
+    label: "Documentation"
+    folder: "content/docs"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+        hint: "The page title that appears in navigation and browser tab"
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+        hint: "Brief description for SEO and page previews"
+      - name: "icon"
+        label: "Icon"
+        widget: "string"
+        required: false
+        hint: 'Optional icon name for the page (e.g., "book", "settings")'
+      - name: "full"
+        label: "Full Width"
+        widget: "boolean"
+        required: false
+        default: false
+        hint: "Enable full-width layout for this page"
+      - name: "index"
+        label: "Show in Search Index"
+        widget: "boolean"
+        required: false
+        default: true
+        hint: "Whether this page should appear in search results"
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+        hint: "Supports MDX syntax including <Cards>, <Card>, code blocks, and other components"
+    editor:
+      preview: true
