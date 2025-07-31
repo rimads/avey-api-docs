@@ -1,6 +1,6 @@
 backend:
-  name: "git-gateway"
-  # repo: "rimads/avey-api-docs"
+  name: "github"
+  repo: "rimads/avey-api-docs"
   branch: "main"
 media_folder: "public/uploads"
 public_folder: "/uploads"
@@ -45,5 +45,137 @@ collections:
         label: "Content"
         widget: "markdown"
         hint: "Supports MDX syntax including <Cards>, <Card>, code blocks, and other components"
+    editor:
+      preview: true
+
+  - name: "cpt"
+    label: "CPT Documentation"
+    folder: "content/docs/CPT"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+    editor:
+      preview: true
+
+  - name: "diagnostic"
+    label: "Diagnostic Documentation"
+    folder: "content/docs/Diagnostic"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+    editor:
+      preview: true
+
+  - name: "drug"
+    label: "Drug Documentation"
+    folder: "content/docs/Drug"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+    editor:
+      preview: true
+
+  - name: "icd"
+    label: "ICD Documentation"
+    folder: "content/docs/ICD"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+    editor:
+      preview: true
+
+  - name: "ndc"
+    label: "NDC Documentation"
+    folder: "content/docs/NDC"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
+    editor:
+      preview: true
+
+  - name: "procedure"
+    label: "Procedure Documentation"
+    folder: "content/docs/Procedure"
+    extension: "mdx"
+    format: "frontmatter"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - name: "title"
+        label: "Title"
+        widget: "string"
+        required: true
+      - name: "description"
+        label: "Description"
+        widget: "string"
+        required: true
+      - name: "body"
+        label: "Content"
+        widget: "markdown"
     editor:
       preview: true
