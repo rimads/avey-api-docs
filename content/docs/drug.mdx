@@ -1,0 +1,515 @@
+---
+title: Drug API
+description: Medication validation, interactions, and contraindications
+---
+
+# Drug API
+
+The Drug API validates medications against diagnoses and checks for drug interactions, dosage validation, and contraindications to ensure patient safety and medication appropriateness.
+
+## Overview
+
+This API enables healthcare applications to:
+
+- Validate medical necessity of medications against diagnoses
+- Check for drug-drug interactions between multiple medications
+- Validate dosage recommendations based on patient demographics
+- Identify absolute and relative contraindications
+- Provide evidence-based medication recommendations
+- Support clinical decision making for medication safety
+
+## Authentication
+
+All requests require authentication via API key in the request headers:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+## Endpoint Specification
+
+### POST /drug-validation
+
+Validates medications against diagnoses and checks for interactions and contraindications.
+
+**URL:** `https://api.avey.com/v1/drug-validation`
+
+**Method:** `POST`
+
+**Content-Type:** `application/json`
+
+## Request Schema
+
+```json
+{
+  "medications": [
+    {
+      "ndc": "string",
+      "dose": "string (optional)",
+      "frequency": "string (optional)",
+      "route": "string (optional)",
+      "duration": "string (optional)"
+    }
+  ],
+  "diagnoses": [
+    {
+      "icd_code": "string",
+      "description": "string (optional)"
+    }
+  ],
+  "patient": {
+    "age": "number",
+    "gender": "male" | "female" | "other" | "prefer_not_to_say",
+    "weight_kg": "number (optional)",
+    "height_cm": "number (optional)",
+    "pregnancy_status": "pregnant" | "not_pregnant" | "unknown (optional)",
+    "renal_function": "normal" | "mild_impairment" | "moderate_impairment" | "severe_impairment" | "unknown (optional)",
+    "hepatic_function": "normal" | "mild_impairment" | "moderate_impairment" | "severe_impairment" | "unknown (optional)",
+    "allergies": ["string (optional)"],
+    "current_medications": ["string (optional)"]
+  },
+  "validation_type": "medical_necessity" | "interactions" | "dosage" | "contraindications" | "all (optional, default: all)"
+}
+```
+
+## Response Schema
+
+```json
+{
+  "success": true,
+  "data": {
+    "validation_results": [
+      {
+        "ndc": "00071-1010-01",
+        "medication_name": "Lisinopril 10 MG Oral Tablet",
+        "medical_necessity": {
+          "is_appropriate": true,
+          "confidence_score": 0.95,
+          "supporting_diagnoses": ["I10", "I11.9"],
+          "rationale": "Lisinopril is FDA-approved for hypertension and heart failure",
+          "warnings": []
+        },
+        "drug_interactions": [
+          {
+            "interacting_medication": "00071-0220-01",
+            "interaction_type": "moderate",
+            "severity": "moderate",
+            "description": "Increased risk of myopathy when combined with statins",
+            "recommendation": "Monitor for muscle pain and weakness",
+            "evidence_level": "moderate"
+          }
+        ],
+        "dosage_validation": {
+          "is_appropriate": true,
+          "recommended_dose": "10mg daily",
+          "max_dose": "40mg daily",
+          "adjustments": {
+            "renal_impairment": "Reduce dose by 50% for CrCl <30 mL/min",
+            "elderly": "No adjustment needed",
+            "hepatic_impairment": "No adjustment needed"
+          },
+          "warnings": []
+        },
+        "contraindications": {
+          "absolute": [],
+          "relative": [
+            {
+              "condition": "Pregnancy",
+              "severity": "high",
+              "description": "ACE inhibitors can cause fetal harm",
+              "recommendation": "Avoid in pregnancy, especially second and third trimesters"
+            }
+          ]
+        },
+        "overall_assessment": {
+          "risk_level": "low",
+          "recommendation": "Appropriate for this patient",
+          "monitoring_required": [
+            "Blood pressure",
+            "Renal function",
+            "Potassium levels"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "total_medications": 1,
+      "medications_with_warnings": 1,
+      "high_risk_interactions": 0,
+      "contraindications_found": 1
+    }
+  },
+  "metadata": {
+    "request_id": "req_123456789",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+## Request Examples
+
+### Single Medication Validation
+
+```bash
+curl -X POST https://api.avey.com/v1/drug-validation \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "medications": [
+      {
+        "ndc": "00071-1010-01",
+        "dose": "10mg",
+        "frequency": "daily"
+      }
+    ],
+    "diagnoses": [
+      {
+        "icd_code": "I10",
+        "description": "Essential hypertension"
+      }
+    ],
+    "patient": {
+      "age": 65,
+      "gender": "male",
+      "weight_kg": 80,
+      "height_cm": 175
+    }
+  }'
+```
+
+### Multiple Medications with Interactions Check
+
+```bash
+curl -X POST https://api.avey.com/v1/drug-validation \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "medications": [
+      {
+        "ndc": "00071-1010-01",
+        "dose": "10mg",
+        "frequency": "daily"
+      },
+      {
+        "ndc": "00071-0220-01",
+        "dose": "20mg",
+        "frequency": "daily"
+      },
+      {
+        "ndc": "00071-0570-01",
+        "dose": "500mg",
+        "frequency": "twice daily"
+      }
+    ],
+    "diagnoses": [
+      {
+        "icd_code": "I10",
+        "description": "Essential hypertension"
+      },
+      {
+        "icd_code": "E11.9",
+        "description": "Type 2 diabetes mellitus without complications"
+      }
+    ],
+    "patient": {
+      "age": 65,
+      "gender": "male",
+      "weight_kg": 80,
+      "height_cm": 175,
+      "renal_function": "normal",
+      "allergies": ["Penicillin"]
+    }
+  }'
+```
+
+### Pregnancy-Specific Validation
+
+```bash
+curl -X POST https://api.avey.com/v1/drug-validation \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "medications": [
+      {
+        "ndc": "00071-1010-01",
+        "dose": "10mg",
+        "frequency": "daily"
+      }
+    ],
+    "diagnoses": [
+      {
+        "icd_code": "I10",
+        "description": "Essential hypertension"
+      }
+    ],
+    "patient": {
+      "age": 28,
+      "gender": "female",
+      "pregnancy_status": "pregnant",
+      "weight_kg": 65
+    },
+    "validation_type": "contraindications"
+  }'
+```
+
+## Response Examples
+
+### Single Medication Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "validation_results": [
+      {
+        "ndc": "00071-1010-01",
+        "medication_name": "Lisinopril 10 MG Oral Tablet",
+        "medical_necessity": {
+          "is_appropriate": true,
+          "confidence_score": 0.95,
+          "supporting_diagnoses": ["I10"],
+          "rationale": "Lisinopril is FDA-approved for hypertension",
+          "warnings": []
+        },
+        "drug_interactions": [],
+        "dosage_validation": {
+          "is_appropriate": true,
+          "recommended_dose": "10mg daily",
+          "max_dose": "40mg daily",
+          "adjustments": {
+            "renal_impairment": "Reduce dose by 50% for CrCl <30 mL/min",
+            "elderly": "No adjustment needed"
+          },
+          "warnings": []
+        },
+        "contraindications": {
+          "absolute": [],
+          "relative": []
+        },
+        "overall_assessment": {
+          "risk_level": "low",
+          "recommendation": "Appropriate for this patient",
+          "monitoring_required": ["Blood pressure", "Renal function"]
+        }
+      }
+    ],
+    "summary": {
+      "total_medications": 1,
+      "medications_with_warnings": 0,
+      "high_risk_interactions": 0,
+      "contraindications_found": 0
+    }
+  },
+  "metadata": {
+    "request_id": "req_123456789",
+    "timestamp": "2024-01-15T10:30:00Z"
+  }
+}
+```
+
+### Multiple Medications with Interactions Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "validation_results": [
+      {
+        "ndc": "00071-1010-01",
+        "medication_name": "Lisinopril 10 MG Oral Tablet",
+        "medical_necessity": {
+          "is_appropriate": true,
+          "confidence_score": 0.95,
+          "supporting_diagnoses": ["I10"],
+          "rationale": "Appropriate for hypertension management"
+        },
+        "drug_interactions": [
+          {
+            "interacting_medication": "00071-0220-01",
+            "interaction_type": "moderate",
+            "severity": "moderate",
+            "description": "Increased risk of myopathy when combined with statins",
+            "recommendation": "Monitor for muscle pain and weakness",
+            "evidence_level": "moderate"
+          }
+        ],
+        "dosage_validation": {
+          "is_appropriate": true,
+          "recommended_dose": "10mg daily"
+        },
+        "contraindications": {
+          "absolute": [],
+          "relative": []
+        },
+        "overall_assessment": {
+          "risk_level": "moderate",
+          "recommendation": "Appropriate with monitoring",
+          "monitoring_required": [
+            "Blood pressure",
+            "Renal function",
+            "Muscle symptoms"
+          ]
+        }
+      },
+      {
+        "ndc": "00071-0220-01",
+        "medication_name": "Atorvastatin 20 MG Oral Tablet",
+        "medical_necessity": {
+          "is_appropriate": true,
+          "confidence_score": 0.9,
+          "supporting_diagnoses": ["I10", "E11.9"],
+          "rationale": "Appropriate for cardiovascular risk reduction in diabetes"
+        },
+        "drug_interactions": [
+          {
+            "interacting_medication": "00071-1010-01",
+            "interaction_type": "moderate",
+            "severity": "moderate",
+            "description": "Increased risk of myopathy when combined with ACE inhibitors",
+            "recommendation": "Monitor for muscle pain and weakness",
+            "evidence_level": "moderate"
+          }
+        ],
+        "dosage_validation": {
+          "is_appropriate": true,
+          "recommended_dose": "20mg daily"
+        },
+        "contraindications": {
+          "absolute": [],
+          "relative": []
+        },
+        "overall_assessment": {
+          "risk_level": "moderate",
+          "recommendation": "Appropriate with monitoring",
+          "monitoring_required": [
+            "Liver function",
+            "Muscle symptoms",
+            "Lipid levels"
+          ]
+        }
+      }
+    ],
+    "summary": {
+      "total_medications": 2,
+      "medications_with_warnings": 2,
+      "high_risk_interactions": 0,
+      "contraindications_found": 0
+    }
+  }
+}
+```
+
+### Pregnancy Contraindication Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "validation_results": [
+      {
+        "ndc": "00071-1010-01",
+        "medication_name": "Lisinopril 10 MG Oral Tablet",
+        "medical_necessity": {
+          "is_appropriate": false,
+          "confidence_score": 0.98,
+          "rationale": "ACE inhibitors are contraindicated in pregnancy",
+          "warnings": ["This medication can cause fetal harm"]
+        },
+        "drug_interactions": [],
+        "dosage_validation": {
+          "is_appropriate": false,
+          "recommendation": "Do not prescribe during pregnancy"
+        },
+        "contraindications": {
+          "absolute": [],
+          "relative": [
+            {
+              "condition": "Pregnancy",
+              "severity": "high",
+              "description": "ACE inhibitors can cause fetal harm, especially in second and third trimesters",
+              "recommendation": "Discontinue immediately and switch to pregnancy-safe alternative"
+            }
+          ]
+        },
+        "overall_assessment": {
+          "risk_level": "high",
+          "recommendation": "Contraindicated in pregnancy - consider alternative therapy",
+          "monitoring_required": ["Fetal monitoring if already exposed"]
+        }
+      }
+    ],
+    "summary": {
+      "total_medications": 1,
+      "medications_with_warnings": 1,
+      "high_risk_interactions": 0,
+      "contraindications_found": 1
+    }
+  }
+}
+```
+
+## Rate Limits
+
+- **Free Plan**: 50 requests/month
+- **Professional Plan**: 500 requests/month
+- **Enterprise Plan**: 5,000 requests/month
+
+## Error Codes
+
+| Code                  | HTTP Status | Description                                           |
+| --------------------- | ----------- | ----------------------------------------------------- |
+| `INVALID_INPUT`       | 400         | Invalid request parameters or missing required fields |
+| `INVALID_NDC`         | 400         | Invalid NDC code format                               |
+| `INVALID_ICD`         | 400         | Invalid ICD code format                               |
+| `RATE_LIMIT_EXCEEDED` | 429         | Rate limit exceeded for your plan                     |
+| `UNAUTHORIZED`        | 401         | Invalid or missing API key                            |
+| `INTERNAL_ERROR`      | 500         | Internal server error                                 |
+
+## Best Practices
+
+1. **Complete Patient Information**: Provide as much patient demographic and clinical information as possible for accurate validation.
+
+2. **All Current Medications**: Include all current medications to check for drug interactions.
+
+3. **Accurate Diagnoses**: Provide specific ICD codes for better medical necessity validation.
+
+4. **Risk Assessment**: Pay attention to risk levels and recommendations in the response.
+
+5. **Monitoring Requirements**: Implement the suggested monitoring protocols for patient safety.
+
+6. **Contraindications**: Always review contraindications, especially for special populations (pregnancy, pediatrics, elderly).
+
+7. **Evidence Levels**: Consider the evidence level when evaluating interaction recommendations.
+
+## Limitations
+
+- Maximum 10 medications per request
+- Free plan limited to 5 medications per request
+- Patient age must be provided for accurate dosing
+- Some rare drug interactions may not be captured
+- Validation results are estimates and should not replace clinical judgment
+- Pregnancy and pediatric dosing may have limited data
+
+## Supported Validation Types
+
+The API supports comprehensive medication validation:
+
+- **Medical Necessity**: Validates appropriateness for given diagnoses
+- **Drug Interactions**: Checks for interactions between medications
+- **Dosage Validation**: Validates dosing based on patient factors
+- **Contraindications**: Identifies absolute and relative contraindications
+- **All**: Performs complete validation (default)
+
+## Interaction Severity Levels
+
+- **Major**: Potentially life-threatening interactions
+- **Moderate**: Clinically significant interactions requiring monitoring
+- **Minor**: Interactions with limited clinical significance
+- **None**: No known interactions
+
+## Risk Levels
+
+- **High**: Significant safety concerns, consider alternative therapy
+- **Moderate**: Some concerns, monitor closely
+- **Low**: Generally safe, standard monitoring
+- **None**: No identified risks
