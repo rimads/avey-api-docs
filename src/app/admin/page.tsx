@@ -2,10 +2,20 @@
 
 import { useEffect } from "react";
 
+// Extend Window interface for Decap CMS
+declare global {
+  interface Window {
+    CMS_MANUAL_INIT?: boolean;
+    CMS?: {
+      init: (config: Record<string, unknown>) => void;
+    };
+  }
+}
+
 export default function AdminPage() {
   useEffect(() => {
     // Configure CMS before loading
-    (window as any).CMS_MANUAL_INIT = true;
+    window.CMS_MANUAL_INIT = true;
 
     // Load Decap CMS script
     const script = document.createElement("script");
@@ -96,7 +106,9 @@ export default function AdminPage() {
       };
 
       // Initialize CMS with environment-appropriate backend
-      (window as any).CMS.init({ config });
+      if (window.CMS) {
+        window.CMS.init(config);
+      }
     };
 
     document.body.appendChild(script);
