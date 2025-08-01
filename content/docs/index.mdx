@@ -3,8 +3,6 @@ title: Avey API Documentation
 description: Comprehensive API documentation for medical coding, diagnostics, and clinical decision support
 ---
 
-# Avey API Documentation
-
 Welcome to the Avey API documentation. Our suite of APIs provides comprehensive medical coding, diagnostic assistance, and clinical decision support capabilities for healthcare applications.
 
 ## Available APIs
@@ -16,28 +14,23 @@ Welcome to the Avey API documentation. Our suite of APIs provides comprehensive 
     description="Conversational AI for clinical data gathering and differential diagnosis generation"
   />
   <Card
-    title="CPT API"
-    href="/docs/CPT/cpt"
+    title="CPT API (Coming Soon)"
     description="Automatic CPT code identification for medical procedures"
   />
   <Card
-    title="ICD API"
-    href="/docs/ICD/icd"
+    title="ICD API (Coming Soon)"
     description="ICD code extraction from symptom and diagnosis descriptions"
   />
   <Card
-    title="NDC API"
-    href="/docs/NDC/ndc"
+    title="NDC API (Coming Soon)"
     description="Medication name to NDC code conversion"
   />
   <Card
-    title="Drug API"
-    href="/docs/Drug/drug"
+    title="Drug API (Coming Soon)"
     description="Medication validation, interactions, and contraindications"
   />
   <Card
-    title="Procedure API"
-    href="/docs/Procedure/procedure"
+    title="Procedure API (Coming Soon)"
     description="Procedure validation and medical necessity checking"
   />
 </Cards>
@@ -46,58 +39,8 @@ Welcome to the Avey API documentation. Our suite of APIs provides comprehensive 
 
 All APIs require authentication via API key. Include your API key in the request headers:
 
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
-
-## Rate Limits
-
-- **Free Plan**: 100 requests/month
-- **Professional Plan**: 1,000 requests/month
-- **Enterprise Plan**: 10,000 requests/month
-
 ## Base URL
 
 ```
 https://api.avey.com/v1
 ```
-
-## Common Response Format
-
-All APIs return responses in the following format:
-
-```json
-{
-  "success": true,
-  "data": {
-    // API-specific response data
-  },
-  "metadata": {
-    "request_id": "req_123456789",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-## Error Handling
-
-All APIs use standard HTTP status codes and return error responses in this format:
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "INVALID_INPUT",
-    "message": "Invalid input provided",
-    "details": "Additional error details"
-  }
-}
-```
-
-## Support
-
-For technical support or questions about our APIs, please contact us at:
-
-- Email: support@avey.com
-- Documentation: https://docs.avey.com
-- Status Page: https://status.avey.com

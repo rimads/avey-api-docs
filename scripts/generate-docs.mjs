@@ -4,11 +4,8 @@ void generateFiles({
   // the OpenAPI schema, you can also give it an external URL.
   input: ["./avey-api.json"],
 
-  output: "./content/docs",
+  output: "./content/docs/diagnosis",
   // we recommend to enable it
   // make sure your endpoint description doesn't break MDX syntax.
   includeDescription: true,
-
-
-
 });

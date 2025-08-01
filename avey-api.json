@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://35.188.153.196:8000",
+      "url": "http://35.188.153.196:8000/",
       "description": "Production"
     }
   ],
@@ -19,7 +19,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/NewSessionRequest"
+              }
             }
           },
           "required": true
@@ -29,7 +31,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/NewSessionResponse"
+                }
               }
             }
           },
@@ -37,7 +41,9 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -50,37 +56,23 @@
         "operationId": "new_diagnosis_diagnose_post",
         "parameters": [
           {
-            "name": "next_steps",
+            "name": "differential",
             "in": "query",
             "required": false,
             "schema": {
               "type": "boolean",
-              "default": false,
-              "title": "Next Steps"
+              "default": true,
+              "title": "Differential"
             }
-          },
-          {
-            "name": "use_phoenix",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false,
-              "title": "Use Phoenix"
-            }
-          },
-          {
-            "name": "use_lm",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "boolean", "default": true, "title": "Use Lm" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/DiagnoseRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/DiagnoseRequest"
+              }
             }
           }
         },
@@ -89,7 +81,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/DiagnoseResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnoseResponse"
+                }
               }
             }
           },
@@ -97,7 +91,9 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -113,20 +109,29 @@
             "name": "session_id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "title": "Session Id" }
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
           },
           {
             "name": "advice",
             "in": "query",
             "required": false,
-            "schema": { "type": "boolean", "default": true, "title": "Advice" }
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Advice"
+            }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateSessionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionRequest"
+              }
             }
           }
         },
@@ -145,7 +150,9 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
               }
             }
           }
@@ -157,72 +164,171 @@
     "schemas": {
       "CodingType": {
         "type": "string",
-        "enum": ["icd-10-cm", "snomed-ct", "avey-kr"],
-        "title": "CodingType"
+        "enum": ["avey-kr", "icd-10-cm", "snomed-ct"],
+        "title": "CodingType",
+        "description": "Specifies the medical coding system used for concept identifiers."
       },
       "Concept": {
         "properties": {
-          "id": { "type": "string", "title": "Id" },
-          "term": { "type": "string", "title": "Term" }
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          }
         },
         "type": "object",
         "required": ["id", "term"],
-        "title": "Concept"
+        "title": "Concept",
+        "description": "Represents a general medical concept, like a symptom or condition."
       },
       "DiagnoseRequest": {
         "properties": {
-          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Input" }
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Input",
+            "description": "The complete patient profile collected during the session."
+          }
         },
         "type": "object",
         "required": ["patient_info"],
-        "title": "DiagnoseRequest"
+        "title": "DiagnoseRequest",
+        "description": "Request the Clinical Assessment of a Patient Profile."
       },
       "DiagnoseResponse": {
         "properties": {
-          "assessment": { "$ref": "#/components/schemas/PatientAssessment" }
+          "differential_diagnosis": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Disease"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Differential Diagnosis",
+            "description": "A ranked list of possible conditions matching the patient's profile."
+          },
+          "self_management": {
+            "type": "string",
+            "title": "Self Management",
+            "description": "Advice for managing symptoms at home."
+          },
+          "urgency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgency",
+            "description": "A high-level indicator of the situation's urgency. Non-Urgent represents blue and green triage category codes, while semi-urgent represents yellow. Urgent represents an orange or posssibly red situation requiring quick medical action.",
+            "examples": ["Urgent", "Non-Urgent", "Home Treatable"]
+          }
         },
         "type": "object",
-        "required": ["assessment"],
-        "title": "DiagnoseResponse"
+        "required": ["self_management", "urgency"],
+        "title": "DiagnoseResponse",
+        "description": "Clinical Assessment of a Patient."
       },
       "Disease": {
         "properties": {
-          "id": { "type": "string", "title": "Id" },
-          "description": { "type": "string", "title": "Description" },
-          "term": { "type": "string", "title": "Term" }
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "A clinical description of the disease."
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "description": "Additional notes or considerations about the disease."
+          },
+          "treatment": {
+            "type": "string",
+            "title": "Treatment",
+            "description": "General information about treatment options."
+          }
         },
         "type": "object",
-        "required": ["id", "description", "term"],
-        "title": "Disease"
+        "required": ["id", "term"],
+        "title": "Disease",
+        "description": "Detailed information about a potential disease or condition in a differential diagnosis."
       },
       "Finding": {
         "properties": {
-          "id": { "type": "string", "title": "Id" },
-          "term": { "type": "string", "title": "Term" },
-          "status": { "$ref": "#/components/schemas/FindingStatus" }
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/FindingStatus",
+            "description": "The status of the finding as reported by the patient."
+          }
         },
         "type": "object",
         "required": ["id", "term", "status"],
-        "title": "Finding"
+        "title": "Finding",
+        "description": "A medical concept with a reported status from the patient."
       },
       "FindingAnswer": {
         "properties": {
-          "id": { "type": "string", "title": "Id" },
-          "status": { "$ref": "#/components/schemas/FindingStatus" }
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The concept ID of the finding being answered.",
+            "examples": ["snomed-ct:49727002"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/FindingStatus"
+          }
         },
         "type": "object",
         "required": ["id", "status"],
-        "title": "FindingAnswer"
+        "title": "FindingAnswer",
+        "description": "An answer to a text-based question."
       },
       "FindingStatus": {
         "type": "string",
         "enum": ["present", "absent", "unsure"],
-        "title": "FindingStatus"
+        "title": "FindingStatus",
+        "description": "The patient's reported status for a given finding or symptom."
       },
       "HTTPValidationError": {
         "properties": {
           "detail": {
-            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
             "type": "array",
             "title": "Detail"
           }
@@ -232,170 +338,314 @@
       },
       "ImageQuestion": {
         "properties": {
-          "text": { "type": "string", "title": "Text" },
-          "selections": {
-            "items": { "$ref": "#/components/schemas/ImageQuestionSelection" },
+          "type": {
+            "type": "string",
+            "const": "image",
+            "title": "Type",
+            "description": "The type of question."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The text prompt accompanying the images.",
+            "examples": ["Where is your abdominal pain located?"]
+          },
+          "image_selections": {
+            "items": {
+              "$ref": "#/components/schemas/ImageQuestionSelection"
+            },
             "type": "array",
-            "title": "Selections"
+            "title": "Image Selections",
+            "description": "A list of image choices for the user."
           }
         },
         "type": "object",
-        "required": ["text", "selections"],
-        "title": "ImageQuestion"
+        "required": ["type", "text", "image_selections"],
+        "title": "ImageQuestion",
+        "description": "A question that uses images, such as asking to identify a location on a body map."
       },
       "ImageQuestionSelection": {
         "properties": {
+          "selection_id": {
+            "type": "string",
+            "title": "Selection Id",
+            "description": "The unique ID for this image choice, used in the answer.",
+            "examples": ["img_head_left"]
+          },
           "selected_image_url": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Selected Image Url"
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selected Image Url",
+            "description": "URL of the image when it is in a 'selected' state."
           },
           "unselected_image_url": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Unselected Image Url"
-          },
-          "selection_id": { "type": "string", "title": "Selection Id" }
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unselected Image Url",
+            "description": "URL of the image when it is in a normal or 'unselected' state."
+          }
         },
         "type": "object",
         "required": ["selection_id"],
-        "title": "ImageQuestionSelection"
+        "title": "ImageQuestionSelection",
+        "description": "Represents one of the selectable images in an image-based question."
       },
       "NewSessionRequest": {
         "properties": {
-          "coding_type": { "$ref": "#/components/schemas/CodingType" },
+          "coding_type": {
+            "$ref": "#/components/schemas/CodingType",
+            "description": "The desired coding system for all concepts in the session."
+          },
           "allow_images": {
             "type": "boolean",
             "title": "Allow Images",
-            "default": false
+            "description": "Set to true if the client supports image-based questions.",
+            "default": true
           },
-          "patient_info": { "$ref": "#/components/schemas/PatientInfoRequest" },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfoRequest"
+          },
           "input_text": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Input Text",
-            "description": "Only for enterprise tier"
+            "description": "Optional free-text input describing the patient's symptoms. (May be enterprise-only)."
           }
         },
         "type": "object",
         "required": ["coding_type", "patient_info"],
-        "title": "NewSessionRequest"
+        "title": "NewSessionRequest",
+        "description": "Payload to create a new diagnostic session."
       },
       "NewSessionResponse": {
         "properties": {
-          "session_id": { "type": "string", "title": "Session Id" },
-          "question": { "$ref": "#/components/schemas/Question" },
-          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Output" }
+          "session_id": {
+            "type": "string",
+            "title": "Session Id",
+            "description": "The unique identifier for the newly created session.",
+            "examples": ["f47ac10b-58cc-4372-a567-0e02b2c3d479"]
+          },
+          "question": {
+            "$ref": "#/components/schemas/Question"
+          },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Output"
+          }
         },
         "type": "object",
         "required": ["session_id", "question", "patient_info"],
-        "title": "NewSessionResponse"
-      },
-      "PatientAssessment": {
-        "properties": {
-          "differential_diagnosis": {
-            "items": { "$ref": "#/components/schemas/Disease" },
-            "type": "array",
-            "title": "Differential Diagnosis"
-          },
-          "advice": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Advice"
-          }
-        },
-        "type": "object",
-        "required": ["differential_diagnosis"],
-        "title": "PatientAssessment"
+        "title": "NewSessionResponse",
+        "description": "Response from creating a new session, containing the first question."
       },
       "PatientInfo-Input": {
         "properties": {
-          "age": { "type": "integer", "title": "Age" },
-          "sex": { "$ref": "#/components/schemas/Sex" },
+          "age": {
+            "type": "integer",
+            "maximum": 130,
+            "minimum": 0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
           "chief_findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
-            "title": "Chief Findings"
+            "title": "Chief Findings",
+            "description": "The primary symptoms or reasons for the consultation."
           },
           "findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
-            "title": "Findings"
+            "title": "Findings",
+            "description": "All other symptoms or findings collected during the session."
           }
         },
         "type": "object",
         "required": ["age", "sex", "chief_findings", "findings"],
-        "title": "PatientInfo"
+        "title": "PatientInfo",
+        "description": "A complete snapshot of the patient's information at a point in time."
       },
       "PatientInfo-Output": {
         "properties": {
-          "age": { "type": "integer", "title": "Age" },
-          "sex": { "$ref": "#/components/schemas/Sex" },
+          "age": {
+            "type": "integer",
+            "maximum": 130,
+            "minimum": 0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
           "chief_findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
-            "title": "Chief Findings"
+            "title": "Chief Findings",
+            "description": "The primary symptoms or reasons for the consultation."
           },
           "findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
-            "title": "Findings"
+            "title": "Findings",
+            "description": "All other symptoms or findings collected during the session."
           }
         },
         "type": "object",
         "required": ["age", "sex", "chief_findings", "findings"],
-        "title": "PatientInfo"
+        "title": "PatientInfo",
+        "description": "A complete snapshot of the patient's information at a point in time."
       },
       "PatientInfoRequest": {
         "properties": {
-          "age": { "type": "integer", "title": "Age" },
-          "sex": { "$ref": "#/components/schemas/Sex" },
+          "age": {
+            "type": "integer",
+            "maximum": 130,
+            "minimum": 0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
           "chief_findings_codes": {
-            "anyOf": [
-              { "items": { "type": "string" }, "type": "array" },
-              { "type": "null" }
-            ],
-            "title": "Chief Findings Codes"
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Chief Findings Codes",
+            "description": "A list of concept IDs for the patient's chief complaints.",
+            "examples": [["snomed-ct:247345003"]]
           }
         },
         "type": "object",
         "required": ["age", "sex"],
-        "title": "PatientInfoRequest"
+        "title": "PatientInfoRequest",
+        "description": "Initial patient information used to start a new session."
       },
       "Question": {
         "properties": {
-          "type": { "$ref": "#/components/schemas/QuestionType" },
-          "id": { "type": "integer", "title": "Id" },
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "A unique, incrementally increasing ID for the question within the session.",
+            "examples": [1, 2, 3]
+          },
           "content": {
-            "anyOf": [
-              { "$ref": "#/components/schemas/ImageQuestion" },
-              { "$ref": "#/components/schemas/TextQuestion" }
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ImageQuestion"
+              },
+              {
+                "$ref": "#/components/schemas/TextQuestion"
+              }
             ],
-            "title": "Content"
+            "title": "Content",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "image": "#/components/schemas/ImageQuestion",
+                "text": "#/components/schemas/TextQuestion"
+              }
+            }
           }
         },
         "type": "object",
-        "required": ["type", "id", "content"],
-        "title": "Question"
+        "required": ["id", "content"],
+        "title": "Question",
+        "description": "A container for a question, using a discriminated union for the content."
       },
-      "QuestionType": {
+      "Sex": {
         "type": "string",
-        "enum": ["image", "text"],
-        "title": "QuestionType"
+        "enum": ["male", "female"],
+        "title": "Sex",
+        "description": "Biological sex of the patient."
       },
-      "Sex": { "type": "string", "enum": ["male", "female"], "title": "Sex" },
       "TextQuestion": {
         "properties": {
-          "text": { "type": "string", "title": "Text" },
-          "target_concept": { "$ref": "#/components/schemas/Concept" }
+          "type": {
+            "type": "string",
+            "const": "text",
+            "title": "Type",
+            "description": "The type of question."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The question to be displayed to the user.",
+            "examples": ["Do you have a fever?"]
+          },
+          "target_concept": {
+            "$ref": "#/components/schemas/Concept",
+            "description": "The medical concept this question is about."
+          }
         },
         "type": "object",
-        "required": ["text", "target_concept"],
-        "title": "TextQuestion"
+        "required": ["type", "text", "target_concept"],
+        "title": "TextQuestion",
+        "description": "A standard text-based question targeting a specific medical concept."
       },
       "UpdateSessionRequest": {
         "properties": {
-          "question_id": { "type": "integer", "title": "Question Id" },
+          "question_id": {
+            "type": "integer",
+            "title": "Question Id",
+            "description": "The ID of the question being answered.",
+            "examples": [1]
+          },
           "answers": {
-            "items": { "$ref": "#/components/schemas/FindingAnswer" },
-            "type": "array",
-            "title": "Answers"
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FindingAnswer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answers",
+            "description": "A list of answers for text-based questions."
           },
           "image_answers": {
             "anyOf": [
@@ -405,50 +655,71 @@
                 },
                 "type": "object"
               },
-              { "type": "null" }
+              {
+                "type": "null"
+              }
             ],
-            "title": "Image Answers"
+            "title": "Image Answers",
+            "description": "A dictionary mapping image selection IDs to their status for image-based questions."
           },
           "input_text": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Input Text",
-            "description": "Only for enterprise tier"
+            "description": "Optional additional free-text input from the user. (May be enterprise-only)."
           }
         },
         "type": "object",
-        "required": ["question_id", "answers"],
-        "title": "UpdateSessionRequest"
+        "required": ["question_id"],
+        "title": "UpdateSessionRequest",
+        "description": "Payload to submit answers and get the next question."
       },
       "UpdateSessionResponse": {
         "properties": {
-          "type": { "$ref": "#/components/schemas/UpdateSessionResponseType" },
-          "data": {
-            "anyOf": [
-              { "$ref": "#/components/schemas/Question" },
-              { "$ref": "#/components/schemas/PatientAssessment" }
-            ],
-            "title": "Data"
+          "question": {
+            "$ref": "#/components/schemas/Question",
+            "description": "The next question to ask. If null, the interview phase is complete."
           },
-          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Output" }
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Output",
+            "description": "An updated snapshot of the patient's information."
+          }
         },
         "type": "object",
-        "required": ["type", "data", "patient_info"],
-        "title": "UpdateSessionResponse"
-      },
-      "UpdateSessionResponseType": {
-        "type": "string",
-        "enum": ["question", "assessment"],
-        "title": "UpdateSessionResponseType"
+        "required": ["patient_info"],
+        "title": "UpdateSessionResponse",
+        "description": "Response to an answer submission. Contains either the next question or the final assessment.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined assessment/diagnosis endpoint."
       },
       "ValidationError": {
         "properties": {
           "loc": {
-            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
             "type": "array",
             "title": "Location"
           },
-          "msg": { "type": "string", "title": "Message" },
-          "type": { "type": "string", "title": "Error Type" }
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
         },
         "type": "object",
         "required": ["loc", "msg", "type"],
