@@ -1,3 +1,4 @@
+import ClientNav from "@/components/TopBar";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 /**
@@ -47,4 +48,13 @@ export const baseOptions: BaseLayoutProps = {
   },
   // see https://fumadocs.dev/docs/ui/navigation/links
   links: [],
+};
+
+export const layoutOptions = {
+  ...baseOptions,
+  nav: {
+    ...baseOptions.nav,
+    component: <ClientNav />,
+  },
+  links: [], // …optional global links
 };
