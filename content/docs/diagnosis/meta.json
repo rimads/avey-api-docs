@@ -1,5 +1,5 @@
 {
-  "title": "Diagnosis",
-  "pages": ["diagnostic", "new-diagnosis", "new-session", "update-session"],
+  "title": "Diagnostic API",
+  "pages": ["overview", "new-session", "update-session", "diagnose"],
   "defaultOpen": true
 }

@@ -12,10 +12,10 @@
     }
   ],
   "paths": {
-    "/diagnosis/session": {
+    "/ddx/session": {
       "post": {
         "summary": "New Session",
-        "operationId": "new_session_diagnosis_session_post",
+        "operationId": "new_session_ddx_session_post",
         "requestBody": {
           "content": {
             "application/json": {
@@ -45,10 +45,10 @@
         "security": [{ "HTTPBearer": [] }]
       }
     },
-    "/diagnosis/diagnose": {
+    "/ddx/diagnose": {
       "post": {
         "summary": "New Diagnosis",
-        "operationId": "new_diagnosis_diagnosis_diagnose_post",
+        "operationId": "new_diagnosis_ddx_diagnose_post",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
@@ -92,6 +92,16 @@
             "in": "query",
             "required": false,
             "schema": { "type": "boolean", "default": true, "title": "Urgency" }
+          },
+          {
+            "name": "specialist",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Specialist"
+            }
           }
         ],
         "requestBody": {
@@ -122,10 +132,10 @@
         }
       }
     },
-    "/diagnosis/session/{session_id}": {
+    "/ddx/session/{session_id}": {
       "post": {
         "summary": "Update Session",
-        "operationId": "update_session_diagnosis_session__session_id__post",
+        "operationId": "update_session_ddx_session__session_id__post",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
@@ -234,11 +244,17 @@
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Urgency",
             "description": "A high-level indicator of the situation's urgency. Non-Urgent represents blue and green triage category codes, while semi-urgent represents yellow. Urgent represents an orange or posssibly red situation requiring quick medical action.",
+            "examples": ["Emergency", "Urgent", "Non-Urgent", "Home Treatable"]
+          },
+          "specialist": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Specialist",
+            "description": "Recommended Specialist For the Patient to visit",
             "examples": ["Urgent", "Non-Urgent", "Home Treatable"]
           }
         },
         "type": "object",
-        "required": ["self_management", "urgency"],
+        "required": ["self_management", "urgency", "specialist"],
         "title": "DiagnoseResponse",
         "description": "Clinical Assessment of a Patient."
       },
