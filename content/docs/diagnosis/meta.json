@@ -1,10 +1,5 @@
 {
   "title": "Diagnosis",
-  "pages": [
-    "diagnostic",
-    "new_diagnosis_diagnosis_diagnose_post",
-    "new_session_diagnosis_session_post",
-    "update_session_diagnosis_session__session_id__post"
-  ],
+  "pages": ["diagnostic", "new-diagnosis", "new-session", "update-session"],
   "defaultOpen": true
 }
