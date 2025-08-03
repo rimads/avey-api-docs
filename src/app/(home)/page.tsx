@@ -2,9 +2,16 @@ import Link from "next/link";
 
 export default function HomePage() {
   return (
-    <main className="flex flex-1 flex-col">
+    <main className="flex flex-1 flex-col relative">
+      <video
+        src="/avey-animation.mp4"
+        loop
+        autoPlay
+        muted
+        className="absolute inset-0 w-full h-full object-cover z-0"
+      ></video>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-50 to-indigo-100 py-20 px-4 h-screen flex items-center justify-center">
+      <section className="bg-gradient-to-br  py-20 px-4 h-screen flex items-center justify-center relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
             Avey Healthcare APIs
@@ -17,7 +24,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/docs"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center justify-center"
+              className="bg-white hover:bg-transparent text-black font-semibold py-3 px-8 rounded-lg text-lg transition-colors duration-200 inline-flex items-center justify-center"
             >
               Get Started
               <svg
