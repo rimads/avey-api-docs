@@ -7,21 +7,19 @@
   },
   "servers": [
     {
-      "url": "http://35.188.153.196:8000/",
-      "description": "Production"
+      "url": "https://api.avey.ai",
+      "description": "Production API"
     }
   ],
   "paths": {
-    "/sessions": {
+    "/diagnosis/session": {
       "post": {
         "summary": "New Session",
-        "operationId": "new_session_sessions_post",
+        "operationId": "new_session_diagnosis_session_post",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewSessionRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
             }
           },
           "required": true
@@ -31,9 +29,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/NewSessionResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
               }
             }
           },
@@ -41,20 +37,36 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
-        }
+        },
+        "security": [{ "HTTPBearer": [] }]
       }
     },
-    "/diagnose": {
+    "/diagnosis/diagnose": {
       "post": {
         "summary": "New Diagnosis",
-        "operationId": "new_diagnosis_diagnose_post",
+        "operationId": "new_diagnosis_diagnosis_diagnose_post",
+        "security": [{ "HTTPBearer": [] }],
         "parameters": [
+          {
+            "name": "use_phoenix",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Use Phoenix"
+            }
+          },
+          {
+            "name": "use_lm",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true, "title": "Use Lm" }
+          },
           {
             "name": "differential",
             "in": "query",
@@ -64,15 +76,29 @@
               "default": true,
               "title": "Differential"
             }
+          },
+          {
+            "name": "self_management",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Self Management"
+            }
+          },
+          {
+            "name": "urgency",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true, "title": "Urgency" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DiagnoseRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/DiagnoseRequest" }
             }
           }
         },
@@ -81,9 +107,7 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DiagnoseResponse"
-                }
+                "schema": { "$ref": "#/components/schemas/DiagnoseResponse" }
               }
             }
           },
@@ -91,47 +115,37 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
         }
       }
     },
-    "/sessions/{session_id}": {
+    "/diagnosis/session/{session_id}": {
       "post": {
         "summary": "Update Session",
-        "operationId": "update_session_sessions__session_id__post",
+        "operationId": "update_session_diagnosis_session__session_id__post",
+        "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
             "name": "session_id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
+            "schema": { "type": "string", "title": "Session Id" }
           },
           {
             "name": "advice",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": true,
-              "title": "Advice"
-            }
+            "schema": { "type": "boolean", "default": true, "title": "Advice" }
           }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateSessionRequest"
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateSessionRequest" }
             }
           }
         },
@@ -150,9 +164,7 @@
             "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
@@ -164,7 +176,7 @@
     "schemas": {
       "CodingType": {
         "type": "string",
-        "enum": ["avey-kr", "icd-10-cm", "snomed-ct"],
+        "enum": ["icd-10-cm", "snomed-ct", "avey-kr"],
         "title": "CodingType",
         "description": "Specifies the medical coding system used for concept identifiers."
       },
@@ -205,32 +217,21 @@
           "differential_diagnosis": {
             "anyOf": [
               {
-                "items": {
-                  "$ref": "#/components/schemas/Disease"
-                },
+                "items": { "$ref": "#/components/schemas/Disease" },
                 "type": "array"
               },
-              {
-                "type": "null"
-              }
+              { "type": "null" }
             ],
             "title": "Differential Diagnosis",
             "description": "A ranked list of possible conditions matching the patient's profile."
           },
           "self_management": {
-            "type": "string",
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Self Management",
             "description": "Advice for managing symptoms at home."
           },
           "urgency": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Urgency",
             "description": "A high-level indicator of the situation's urgency. Non-Urgent represents blue and green triage category codes, while semi-urgent represents yellow. Urgent represents an orange or posssibly red situation requiring quick medical action.",
             "examples": ["Urgent", "Non-Urgent", "Home Treatable"]
@@ -308,9 +309,7 @@
             "description": "The concept ID of the finding being answered.",
             "examples": ["snomed-ct:49727002"]
           },
-          "status": {
-            "$ref": "#/components/schemas/FindingStatus"
-          }
+          "status": { "$ref": "#/components/schemas/FindingStatus" }
         },
         "type": "object",
         "required": ["id", "status"],
@@ -326,9 +325,7 @@
       "HTTPValidationError": {
         "properties": {
           "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
+            "items": { "$ref": "#/components/schemas/ValidationError" },
             "type": "array",
             "title": "Detail"
           }
@@ -351,9 +348,7 @@
             "examples": ["Where is your abdominal pain located?"]
           },
           "image_selections": {
-            "items": {
-              "$ref": "#/components/schemas/ImageQuestionSelection"
-            },
+            "items": { "$ref": "#/components/schemas/ImageQuestionSelection" },
             "type": "array",
             "title": "Image Selections",
             "description": "A list of image choices for the user."
@@ -380,9 +375,7 @@
                 "minLength": 1,
                 "format": "uri"
               },
-              {
-                "type": "null"
-              }
+              { "type": "null" }
             ],
             "title": "Selected Image Url",
             "description": "URL of the image when it is in a 'selected' state."
@@ -395,9 +388,7 @@
                 "minLength": 1,
                 "format": "uri"
               },
-              {
-                "type": "null"
-              }
+              { "type": "null" }
             ],
             "title": "Unselected Image Url",
             "description": "URL of the image when it is in a normal or 'unselected' state."
@@ -420,18 +411,9 @@
             "description": "Set to true if the client supports image-based questions.",
             "default": true
           },
-          "patient_info": {
-            "$ref": "#/components/schemas/PatientInfoRequest"
-          },
+          "patient_info": { "$ref": "#/components/schemas/PatientInfoRequest" },
           "input_text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Input Text",
             "description": "Optional free-text input describing the patient's symptoms. (May be enterprise-only)."
           }
@@ -449,12 +431,8 @@
             "description": "The unique identifier for the newly created session.",
             "examples": ["f47ac10b-58cc-4372-a567-0e02b2c3d479"]
           },
-          "question": {
-            "$ref": "#/components/schemas/Question"
-          },
-          "patient_info": {
-            "$ref": "#/components/schemas/PatientInfo-Output"
-          }
+          "question": { "$ref": "#/components/schemas/Question" },
+          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Output" }
         },
         "type": "object",
         "required": ["session_id", "question", "patient_info"],
@@ -465,8 +443,8 @@
         "properties": {
           "age": {
             "type": "integer",
-            "maximum": 130,
-            "minimum": 0,
+            "maximum": 130.0,
+            "minimum": 0.0,
             "title": "Age",
             "description": "The age of the patient in years.",
             "examples": [34]
@@ -476,17 +454,13 @@
             "description": "The biological sex of the patient."
           },
           "chief_findings": {
-            "items": {
-              "$ref": "#/components/schemas/Finding"
-            },
+            "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Chief Findings",
             "description": "The primary symptoms or reasons for the consultation."
           },
           "findings": {
-            "items": {
-              "$ref": "#/components/schemas/Finding"
-            },
+            "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Findings",
             "description": "All other symptoms or findings collected during the session."
@@ -501,8 +475,8 @@
         "properties": {
           "age": {
             "type": "integer",
-            "maximum": 130,
-            "minimum": 0,
+            "maximum": 130.0,
+            "minimum": 0.0,
             "title": "Age",
             "description": "The age of the patient in years.",
             "examples": [34]
@@ -512,17 +486,13 @@
             "description": "The biological sex of the patient."
           },
           "chief_findings": {
-            "items": {
-              "$ref": "#/components/schemas/Finding"
-            },
+            "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Chief Findings",
             "description": "The primary symptoms or reasons for the consultation."
           },
           "findings": {
-            "items": {
-              "$ref": "#/components/schemas/Finding"
-            },
+            "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Findings",
             "description": "All other symptoms or findings collected during the session."
@@ -537,8 +507,8 @@
         "properties": {
           "age": {
             "type": "integer",
-            "maximum": 130,
-            "minimum": 0,
+            "maximum": 130.0,
+            "minimum": 0.0,
             "title": "Age",
             "description": "The age of the patient in years.",
             "examples": [34]
@@ -548,9 +518,7 @@
             "description": "The biological sex of the patient."
           },
           "chief_findings_codes": {
-            "items": {
-              "type": "string"
-            },
+            "items": { "type": "string" },
             "type": "array",
             "title": "Chief Findings Codes",
             "description": "A list of concept IDs for the patient's chief complaints.",
@@ -572,12 +540,8 @@
           },
           "content": {
             "oneOf": [
-              {
-                "$ref": "#/components/schemas/ImageQuestion"
-              },
-              {
-                "$ref": "#/components/schemas/TextQuestion"
-              }
+              { "$ref": "#/components/schemas/ImageQuestion" },
+              { "$ref": "#/components/schemas/TextQuestion" }
             ],
             "title": "Content",
             "discriminator": {
@@ -635,14 +599,10 @@
           "answers": {
             "anyOf": [
               {
-                "items": {
-                  "$ref": "#/components/schemas/FindingAnswer"
-                },
+                "items": { "$ref": "#/components/schemas/FindingAnswer" },
                 "type": "array"
               },
-              {
-                "type": "null"
-              }
+              { "type": "null" }
             ],
             "title": "Answers",
             "description": "A list of answers for text-based questions."
@@ -655,22 +615,13 @@
                 },
                 "type": "object"
               },
-              {
-                "type": "null"
-              }
+              { "type": "null" }
             ],
             "title": "Image Answers",
             "description": "A dictionary mapping image selection IDs to their status for image-based questions."
           },
           "input_text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Input Text",
             "description": "Optional additional free-text input from the user. (May be enterprise-only)."
           }
@@ -692,39 +643,25 @@
           }
         },
         "type": "object",
-        "required": ["patient_info"],
+        "required": ["question", "patient_info"],
         "title": "UpdateSessionResponse",
         "description": "Response to an answer submission. Contains either the next question or the final assessment.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined assessment/diagnosis endpoint."
       },
       "ValidationError": {
         "properties": {
           "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
             "type": "array",
             "title": "Location"
           },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          }
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
         },
         "type": "object",
         "required": ["loc", "msg", "type"],
         "title": "ValidationError"
       }
-    }
+    },
+    "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
   }
 }
