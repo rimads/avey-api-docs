@@ -30,12 +30,6 @@ description: Conversational AI for clinical data gathering and differential diag
 https://api.avey.ai/ddx
 ```
 
-## Authentication
-
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
-
 ## Endpoints
 
 ### 1. Create Session
@@ -142,7 +136,7 @@ Authorization: Bearer YOUR_API_KEY
 ### Coding Systems
 
 - `icd-10-cm`: ICD-10 Clinical Modification
-- `snomed-ct`: SNOMED Clinical Terms
+- `snomed-ct`: SNOMED CT Clinical Terms
 - `avey-kr`: Avey Knowledge Representation
 
 ### Finding Status
@@ -158,25 +152,19 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Urgency Levels
 
-- `Urgent`: Immediate attention needed
-- `Non-Urgent`: Routine care
+- 'Emergency': Immediate medical care required.
+- `Urgent`: Medical attention needed due to problematic presentation
+- `Non-Urgent`: Professional medical support is needed but time is not very critical
 - `Home Treatable`: Self-manageable
 
 ## Workflow
 
-1. Create session with patient info
-2. Ask questions and submit answers
-3. Repeat until session complete (`question: null`)
-4. Generate diagnosis with final patient info
+1. Create session with basic patient info, and provide chief complaints as free text or using codes
+2. Ask questions and submit answers, using free text or codes, and receive an updated `patient_info` object
+3. Repeat until session complete (`question: null`).
+4. Generate generate diagnosis, specialist, triage, and self_management advice with final `patient_info` object by sending it to /diagnose.
 
 ## Error Codes
 
 - `401`: Unauthorized
 - `422`: Validation Error
-
-## Best Practices
-
-- Store and reuse `session_id`
-- Provide accurate patient demographics
-- Handle image questions if supported
-- Follow urgency recommendations
