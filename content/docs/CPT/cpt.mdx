@@ -3,10 +3,6 @@ title: CPT API
 description: Automatic CPT code identification for medical procedures
 ---
 
-# CPT API
-
-The CPT API automatically identifies and returns Current Procedural Terminology (CPT) codes for medical procedures mentioned in free-text descriptions.
-
 ## Overview
 
 This API enables healthcare applications to:
@@ -25,7 +21,7 @@ All requests require authentication via API key in the request headers:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-## Endpoint Specification
+## Endpoint specification
 
 ### POST /cpt-coding
 
@@ -37,7 +33,7 @@ Identifies CPT codes from free-text procedure descriptions.
 
 **Content-Type:** `application/json`
 
-## Request Schema
+## Request schema
 
 ```json
 {
@@ -52,7 +48,7 @@ Identifies CPT codes from free-text procedure descriptions.
 }
 ```
 
-## Response Schema
+## Response schema
 
 ```json
 {
@@ -98,13 +94,13 @@ Identifies CPT codes from free-text procedure descriptions.
 }
 ```
 
-## Rate Limits
+## Rate limits
 
 - **Free Plan**: 100 requests/month
 - **Professional Plan**: 1,000 requests/month
 - **Enterprise Plan**: 10,000 requests/month
 
-## Error Codes
+## Error codes
 
 | Code                  | HTTP Status | Description                                                |
 | --------------------- | ----------- | ---------------------------------------------------------- |
@@ -113,7 +109,7 @@ Identifies CPT codes from free-text procedure descriptions.
 | `UNAUTHORIZED`        | 401         | Invalid or missing API key                                 |
 | `INTERNAL_ERROR`      | 500         | Internal server error                                      |
 
-## Best Practices
+## Best practices
 
 1. **Descriptive Input**: Provide detailed procedure descriptions for better accuracy.
 
@@ -135,7 +131,7 @@ Identifies CPT codes from free-text procedure descriptions.
 - Some complex or rare procedures may not be recognized
 - Confidence scores are estimates and should not replace clinical judgment
 
-## Supported CPT Categories
+## Supported CPT categories
 
 The API supports all major CPT categories:
 
@@ -146,6 +142,6 @@ The API supports all major CPT categories:
 - **Pathology and Laboratory (80047-89398)**
 - **Medicine (90281-99607)**
 
-## Code Updates
+## Code updates
 
 CPT codes are updated annually. The API uses the most current version available at the time of your request. Historical codes may be available for specific date ranges when the `date_of_service` parameter is provided.

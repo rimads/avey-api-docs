@@ -1,547 +1,683 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Avey Healthcare APIs",
-    "description": "Prototype healthcare APIs for medical coding, diagnostics, and clinical decision support",
-    "version": "1.0.0",
-    "contact": {
-      "email": "support@avey.com"
-    }
+    "title": "Avey Diagnosis API",
+    "description": "API for performing medical diagnoses",
+    "version": "0.1.0"
   },
   "servers": [
     {
-      "url": "https://httpbin.org",
-      "description": "Sample server for testing"
+      "url": "https://api.avey.ai",
+      "description": "Production API"
     }
   ],
   "paths": {
-    "/diagnostic": {
+    "/ddx/session": {
       "post": {
-        "summary": "Diagnostic API",
-        "description": "Conversational AI for clinical data gathering and differential diagnosis generation",
+        "summary": "New Session",
+        "operationId": "new_session_ddx_session_post",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "chief_complaints": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "icd_code": { "type": "string", "example": "R07.9" },
-                        "description": {
-                          "type": "string",
-                          "example": "Chest pain"
-                        }
-                      }
-                    }
-                  },
-                  "patient_context": {
-                    "type": "object",
-                    "properties": {
-                      "age": { "type": "number", "example": 65 },
-                      "gender": {
-                        "type": "string",
-                        "enum": ["male", "female"],
-                        "example": "male"
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "chief_complaints": [
-                  {
-                    "icd_code": "R07.9",
-                    "description": "Chest pain"
-                  }
-                ],
-                "patient_context": {
-                  "age": 65,
-                  "gender": "male"
-                }
+              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
         },
-        "responses": {
-          "200": {
-            "description": "Diagnostic response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "session_id": { "type": "string" },
-                    "diagnoses": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "rank": { "type": "number" },
-                          "condition": { "type": "string" },
-                          "icd_codes": {
-                            "type": "array",
-                            "items": { "type": "string" }
-                          },
-                          "probability": { "type": "number" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "session_id": "session_123456789",
-                  "diagnoses": [
-                    {
-                      "rank": 1,
-                      "condition": "Acute Coronary Syndrome",
-                      "icd_codes": ["I21.9"],
-                      "probability": 0.75
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
+        "security": [{ "HTTPBearer": [] }]
       }
     },
-    "/cpt": {
+    "/ddx/diagnose": {
       "post": {
-        "summary": "CPT API",
-        "description": "Automatic CPT code identification for medical procedures",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "procedures": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "description": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "procedures": [
-                  {
-                    "description": "Laparoscopic cholecystectomy"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "CPT coding response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "cpt_codes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": { "type": "string" },
-                          "description": { "type": "string" },
-                          "confidence": { "type": "number" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "cpt_codes": [
-                    {
-                      "code": "47562",
-                      "description": "Laparoscopy, surgical; cholecystectomy",
-                      "confidence": 0.98
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/icd": {
-      "post": {
-        "summary": "ICD API",
-        "description": "Extract ICD codes from symptom and diagnosis descriptions",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "descriptions": {
-                    "type": "array",
-                    "items": {
-                      "type": "object", 
-                      "properties": {
-                        "text": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "descriptions": [
-                  {
-                    "text": "shortness of breath and wheezing"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "ICD coding response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "icd_codes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "code": { "type": "string" },
-                          "description": { "type": "string" },
-                          "confidence": { "type": "number" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "icd_codes": [
-                    {
-                      "code": "J45.909",
-                      "description": "Unspecified asthma, uncomplicated", 
-                      "confidence": 0.93
-                    },
-                    {
-                      "code": "R06.2",
-                      "description": "Wheezing",
-                      "confidence": 0.89
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "summary": "Get ICD code details",
-        "description": "Get detailed information about specific ICD codes",
+        "summary": "New Diagnosis",
+        "operationId": "new_diagnosis_ddx_diagnose_post",
+        "security": [{ "HTTPBearer": [] }],
         "parameters": [
           {
-            "name": "code",
+            "name": "use_phoenix",
             "in": "query",
-            "description": "ICD code to lookup",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string"
-            },
-            "example": "J45.909"
+              "type": "boolean",
+              "default": false,
+              "title": "Use Phoenix"
+            }
+          },
+          {
+            "name": "use_lm",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true, "title": "Use Lm" }
+          },
+          {
+            "name": "differential",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Differential"
+            }
+          },
+          {
+            "name": "self_management",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Self Management"
+            }
+          },
+          {
+            "name": "urgency",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true, "title": "Urgency" }
+          },
+          {
+            "name": "specialist",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Specialist"
+            }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/DiagnoseRequest" }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "ICD code details",
+            "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": { "type": "string" },
-                    "description": { "type": "string" },
-                    "category": { "type": "string" },
-                    "subcategory": { "type": "string" },
-                    "guidelines": { "type": "string" }
-                  }
-                },
-                "example": {
-                  "code": "J45.909",
-                  "description": "Unspecified asthma, uncomplicated",
-                  "category": "Diseases of the respiratory system",
-                  "subcategory": "Asthma",
-                  "guidelines": "Code also any associated conditions"
-                }
+                "schema": { "$ref": "#/components/schemas/DiagnoseResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
         }
       }
     },
-    "/ndc": {
+    "/ddx/session/{session_id}": {
       "post": {
-        "summary": "NDC API",
-        "description": "Convert medication names to NDC codes",
+        "summary": "Update Session",
+        "operationId": "update_session_ddx_session__session_id__post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Session Id" }
+          },
+          {
+            "name": "advice",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "boolean", "default": true, "title": "Advice" }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "medications": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "medications": [
-                  {
-                    "name": "Lisinopril 10mg tablet"
-                  }
-                ]
-              }
+              "schema": { "$ref": "#/components/schemas/UpdateSessionRequest" }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "NDC coding response",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "ndc_codes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ndc": { "type": "string" },
-                          "description": { "type": "string" },
-                          "confidence": { "type": "number" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "ndc_codes": [
-                    {
-                      "ndc": "00071-1010-01",
-                      "description": "Lisinopril 10 MG Oral Tablet",
-                      "confidence": 0.98
-                    }
-                  ]
+                  "$ref": "#/components/schemas/UpdateSessionResponse"
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/drug": {
-      "post": {
-        "summary": "Drug API",
-        "description": "Validate medications against diagnoses and check interactions",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "medications": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "ndc": { "type": "string" }
-                      }
-                    }
-                  },
-                  "diagnoses": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "icd_code": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "medications": [
-                  {
-                    "ndc": "00071-1010-01"
-                  }
-                ],
-                "diagnoses": [
-                  {
-                    "icd_code": "I10"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Drug validation response",
+          },
+          "422": {
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "validation_results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "ndc": { "type": "string" },
-                          "medical_necessity": {
-                            "type": "object",
-                            "properties": {
-                              "is_appropriate": { "type": "boolean" },
-                              "confidence_score": { "type": "number" }
-                            }
-                          },
-                          "risk_level": { "type": "string" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "validation_results": [
-                    {
-                      "ndc": "00071-1010-01",
-                      "medical_necessity": {
-                        "is_appropriate": true,
-                        "confidence_score": 0.95
-                      },
-                      "risk_level": "low"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/procedure": {
-      "post": {
-        "summary": "Procedure API",
-        "description": "Validate procedures and check medical necessity",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "procedures": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "cpt_code": { "type": "string" }
-                      }
-                    }
-                  },
-                  "diagnoses": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "icd_code": { "type": "string" }
-                      }
-                    }
-                  }
-                }
-              },
-              "example": {
-                "procedures": [
-                  {
-                    "cpt_code": "93010"
-                  }
-                ],
-                "diagnoses": [
-                  {
-                    "icd_code": "R07.9"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Procedure validation response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "validation_results": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "cpt_code": { "type": "string" },
-                          "medical_necessity": {
-                            "type": "object",
-                            "properties": {
-                              "is_appropriate": { "type": "boolean" },
-                              "confidence_score": { "type": "number" }
-                            }
-                          },
-                          "risk_level": { "type": "string" }
-                        }
-                      }
-                    }
-                  }
-                },
-                "example": {
-                  "validation_results": [
-                    {
-                      "cpt_code": "93010",
-                      "medical_necessity": {
-                        "is_appropriate": true,
-                        "confidence_score": 0.95
-                      },
-                      "risk_level": "low"
-                    }
-                  ]
-                }
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
               }
             }
           }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "CodingType": {
+        "type": "string",
+        "enum": ["icd-10-cm", "snomed-ct", "avey-kr"],
+        "title": "CodingType",
+        "description": "Specifies the medical coding system used for concept identifiers."
+      },
+      "Concept": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          }
+        },
+        "type": "object",
+        "required": ["id", "term"],
+        "title": "Concept",
+        "description": "Represents a general medical concept, like a symptom or condition."
+      },
+      "DiagnoseRequest": {
+        "properties": {
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Input",
+            "description": "The complete patient profile collected during the session."
+          }
+        },
+        "type": "object",
+        "required": ["patient_info"],
+        "title": "DiagnoseRequest",
+        "description": "Request the Clinical Assessment of a Patient Profile."
+      },
+      "DiagnoseResponse": {
+        "properties": {
+          "differential_diagnosis": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Disease" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Differential Diagnosis",
+            "description": "A ranked list of possible conditions matching the patient's profile."
+          },
+          "self_management": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Self Management",
+            "description": "Advice for managing symptoms at home."
+          },
+          "urgency": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Urgency",
+            "description": "A high-level indicator of the situation's urgency. Non-Urgent represents blue and green triage category codes, while semi-urgent represents yellow. Urgent represents an orange or posssibly red situation requiring quick medical action.",
+            "examples": ["Emergency", "Urgent", "Non-Urgent", "Home Treatable"]
+          },
+          "specialist": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Specialist",
+            "description": "Recommended Specialist For the Patient to visit",
+            "examples": ["Urgent", "Non-Urgent", "Home Treatable"]
+          }
+        },
+        "type": "object",
+        "required": ["self_management", "urgency", "specialist"],
+        "title": "DiagnoseResponse",
+        "description": "Clinical Assessment of a Patient."
+      },
+      "Disease": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "A clinical description of the disease."
+          },
+          "note": {
+            "type": "string",
+            "title": "Note",
+            "description": "Additional notes or considerations about the disease."
+          },
+          "treatment": {
+            "type": "string",
+            "title": "Treatment",
+            "description": "General information about treatment options."
+          }
+        },
+        "type": "object",
+        "required": ["id", "term"],
+        "title": "Disease",
+        "description": "Detailed information about a potential disease or condition in a differential diagnosis."
+      },
+      "Finding": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The unique identifier of the concept in its coding system.",
+            "examples": ["snomed-ct:247345003"]
+          },
+          "term": {
+            "type": "string",
+            "title": "Term",
+            "description": "The human-readable name of the concept.",
+            "examples": ["Headache"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/FindingStatus",
+            "description": "The status of the finding as reported by the patient."
+          }
+        },
+        "type": "object",
+        "required": ["id", "term", "status"],
+        "title": "Finding",
+        "description": "A medical concept with a reported status from the patient."
+      },
+      "FindingAnswer": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "The concept ID of the finding being answered.",
+            "examples": ["snomed-ct:49727002"]
+          },
+          "status": { "$ref": "#/components/schemas/FindingStatus" }
+        },
+        "type": "object",
+        "required": ["id", "status"],
+        "title": "FindingAnswer",
+        "description": "An answer to a text-based question."
+      },
+      "FindingStatus": {
+        "type": "string",
+        "enum": ["present", "absent", "unsure"],
+        "title": "FindingStatus",
+        "description": "The patient's reported status for a given finding or symptom."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ImageQuestion": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "image",
+            "title": "Type",
+            "description": "The type of question."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The text prompt accompanying the images.",
+            "examples": ["Where is your abdominal pain located?"]
+          },
+          "image_selections": {
+            "items": { "$ref": "#/components/schemas/ImageQuestionSelection" },
+            "type": "array",
+            "title": "Image Selections",
+            "description": "A list of image choices for the user."
+          }
+        },
+        "type": "object",
+        "required": ["type", "text", "image_selections"],
+        "title": "ImageQuestion",
+        "description": "A question that uses images, such as asking to identify a location on a body map."
+      },
+      "ImageQuestionSelection": {
+        "properties": {
+          "selection_id": {
+            "type": "string",
+            "title": "Selection Id",
+            "description": "The unique ID for this image choice, used in the answer.",
+            "examples": ["img_head_left"]
+          },
+          "selected_image_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              { "type": "null" }
+            ],
+            "title": "Selected Image Url",
+            "description": "URL of the image when it is in a 'selected' state."
+          },
+          "unselected_image_url": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              { "type": "null" }
+            ],
+            "title": "Unselected Image Url",
+            "description": "URL of the image when it is in a normal or 'unselected' state."
+          }
+        },
+        "type": "object",
+        "required": ["selection_id"],
+        "title": "ImageQuestionSelection",
+        "description": "Represents one of the selectable images in an image-based question."
+      },
+      "NewSessionRequest": {
+        "properties": {
+          "coding_type": {
+            "$ref": "#/components/schemas/CodingType",
+            "description": "The desired coding system for all concepts in the session."
+          },
+          "allow_images": {
+            "type": "boolean",
+            "title": "Allow Images",
+            "description": "Set to true if the client supports image-based questions.",
+            "default": true
+          },
+          "patient_info": { "$ref": "#/components/schemas/PatientInfoRequest" },
+          "input_text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Input Text",
+            "description": "Optional free-text input describing the patient's symptoms. (May be enterprise-only)."
+          }
+        },
+        "type": "object",
+        "required": ["coding_type", "patient_info"],
+        "title": "NewSessionRequest",
+        "description": "Payload to create a new diagnostic session."
+      },
+      "NewSessionResponse": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id",
+            "description": "The unique identifier for the newly created session.",
+            "examples": ["f47ac10b-58cc-4372-a567-0e02b2c3d479"]
+          },
+          "question": { "$ref": "#/components/schemas/Question" },
+          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Output" }
+        },
+        "type": "object",
+        "required": ["session_id", "question", "patient_info"],
+        "title": "NewSessionResponse",
+        "description": "Response from creating a new session, containing the first question."
+      },
+      "PatientInfo-Input": {
+        "properties": {
+          "age": {
+            "type": "integer",
+            "maximum": 130.0,
+            "minimum": 0.0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
+          "chief_findings": {
+            "items": { "$ref": "#/components/schemas/Finding" },
+            "type": "array",
+            "title": "Chief Findings",
+            "description": "The primary symptoms or reasons for the consultation."
+          },
+          "findings": {
+            "items": { "$ref": "#/components/schemas/Finding" },
+            "type": "array",
+            "title": "Findings",
+            "description": "All other symptoms or findings collected during the session."
+          }
+        },
+        "type": "object",
+        "required": ["age", "sex", "chief_findings", "findings"],
+        "title": "PatientInfo",
+        "description": "A complete snapshot of the patient's information at a point in time."
+      },
+      "PatientInfo-Output": {
+        "properties": {
+          "age": {
+            "type": "integer",
+            "maximum": 130.0,
+            "minimum": 0.0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
+          "chief_findings": {
+            "items": { "$ref": "#/components/schemas/Finding" },
+            "type": "array",
+            "title": "Chief Findings",
+            "description": "The primary symptoms or reasons for the consultation."
+          },
+          "findings": {
+            "items": { "$ref": "#/components/schemas/Finding" },
+            "type": "array",
+            "title": "Findings",
+            "description": "All other symptoms or findings collected during the session."
+          }
+        },
+        "type": "object",
+        "required": ["age", "sex", "chief_findings", "findings"],
+        "title": "PatientInfo",
+        "description": "A complete snapshot of the patient's information at a point in time."
+      },
+      "PatientInfoRequest": {
+        "properties": {
+          "age": {
+            "type": "integer",
+            "maximum": 130.0,
+            "minimum": 0.0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
+            "examples": [34]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient."
+          },
+          "chief_findings_codes": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Chief Findings Codes",
+            "description": "A list of concept IDs for the patient's chief complaints.",
+            "examples": [["snomed-ct:247345003"]]
+          }
+        },
+        "type": "object",
+        "required": ["age", "sex"],
+        "title": "PatientInfoRequest",
+        "description": "Initial patient information used to start a new session."
+      },
+      "Question": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id",
+            "description": "A unique, incrementally increasing ID for the question within the session.",
+            "examples": [1, 2, 3]
+          },
+          "content": {
+            "oneOf": [
+              { "$ref": "#/components/schemas/ImageQuestion" },
+              { "$ref": "#/components/schemas/TextQuestion" }
+            ],
+            "title": "Content",
+            "discriminator": {
+              "propertyName": "type",
+              "mapping": {
+                "image": "#/components/schemas/ImageQuestion",
+                "text": "#/components/schemas/TextQuestion"
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": ["id", "content"],
+        "title": "Question",
+        "description": "A container for a question, using a discriminated union for the content."
+      },
+      "Sex": {
+        "type": "string",
+        "enum": ["male", "female"],
+        "title": "Sex",
+        "description": "Biological sex of the patient."
+      },
+      "TextQuestion": {
+        "properties": {
+          "type": {
+            "type": "string",
+            "const": "text",
+            "title": "Type",
+            "description": "The type of question."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The question to be displayed to the user.",
+            "examples": ["Do you have a fever?"]
+          },
+          "target_concept": {
+            "$ref": "#/components/schemas/Concept",
+            "description": "The medical concept this question is about."
+          }
+        },
+        "type": "object",
+        "required": ["type", "text", "target_concept"],
+        "title": "TextQuestion",
+        "description": "A standard text-based question targeting a specific medical concept."
+      },
+      "UpdateSessionRequest": {
+        "properties": {
+          "question_id": {
+            "type": "integer",
+            "title": "Question Id",
+            "description": "The ID of the question being answered.",
+            "examples": [1]
+          },
+          "answers": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/FindingAnswer" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Answers",
+            "description": "A list of answers for text-based questions."
+          },
+          "image_answers": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/FindingStatus"
+                },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "title": "Image Answers",
+            "description": "A dictionary mapping image selection IDs to their status for image-based questions."
+          },
+          "input_text": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Input Text",
+            "description": "Optional additional free-text input from the user. (May be enterprise-only)."
+          }
+        },
+        "type": "object",
+        "required": ["question_id"],
+        "title": "UpdateSessionRequest",
+        "description": "Payload to submit answers and get the next question."
+      },
+      "UpdateSessionResponse": {
+        "properties": {
+          "question": {
+            "$ref": "#/components/schemas/Question",
+            "description": "The next question to ask. If null, the interview phase is complete."
+          },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Output",
+            "description": "An updated snapshot of the patient's information."
+          }
+        },
+        "type": "object",
+        "required": ["question", "patient_info"],
+        "title": "UpdateSessionResponse",
+        "description": "Response to an answer submission. Contains either the next question or the final assessment.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined assessment/diagnosis endpoint."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
   }
 }

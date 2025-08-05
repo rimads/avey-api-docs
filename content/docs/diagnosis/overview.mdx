@@ -3,23 +3,23 @@ title: Overview
 description: Conversational AI for clinical data gathering and differential diagnosis generation
 ---
 
-## Use Diagnostic API For
+## Use diagnostic API for
 
 <Cards>
   <Card
-    title="Differential Diagnosis"
+    title="Differential diagnosis"
     description="Get a list of medical conditions the patient is suffering from"
   />
   <Card
-    title="Self Management Advice"
+    title="Self management advice"
     description="Provides practical guidance to help individuals manage their symptoms safely at home"
   />
   <Card
-    title="Triage Recommendation"
+    title="Triage recommendation"
     description="Suggests the appropriate level of care based on patient input."
   />
   <Card
-    title="Specialist Recommendation"
+    title="Specialist recommendation"
     description="Recommends the appropriate medical specialty to visit based on patient input."
   />
 
@@ -30,127 +30,26 @@ description: Conversational AI for clinical data gathering and differential diag
 https://api.avey.ai/ddx
 ```
 
-## Endpoints
+## Data types
 
-### 1. Create Session
-
-**POST** `/diagnosis/session`
-
-```json
-{
-  "coding_type": "snomed-ct",
-  "allow_images": true,
-  "patient_info": {
-    "age": 34,
-    "sex": "female",
-    "chief_findings_codes": ["snomed-ct:247345003"]
-  }
-}
-```
-
-**Response:**
-
-```json
-{
-  "session_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-  "question": {
-    "id": 1,
-    "content": {
-      "type": "text",
-      "text": "Do you have a fever?",
-      "target_concept": {
-        "id": "snomed-ct:49727002",
-        "term": "Fever"
-      }
-    }
-  },
-  "patient_info": {
-    /* updated patient info */
-  }
-}
-```
-
-### 2. Update Session
-
-**POST** `/diagnosis/session/{session_id}`
-
-```json
-{
-  "question_id": 1,
-  "answers": [
-    {
-      "id": "snomed-ct:49727002",
-      "status": "present"
-    }
-  ],
-  "image_answers": {
-    "img_head_left": "present"
-  }
-}
-```
-
-**Response:** Next question or `null` if session complete.
-
-### 3. Generate Diagnosis
-
-**POST** `/diagnosis/diagnose`
-
-```json
-{
-  "patient_info": {
-    "age": 34,
-    "sex": "female",
-    "chief_findings": [
-      {
-        "id": "snomed-ct:247345003",
-        "term": "Headache",
-        "status": "present"
-      }
-    ],
-    "findings": [
-      /* all collected findings */
-    ]
-  }
-}
-```
-
-**Response:**
-
-```json
-{
-  "differential_diagnosis": [
-    {
-      "id": "snomed-ct:73211009",
-      "term": "Migraine",
-      "description": "A primary headache disorder...",
-      "treatment": "Pain management, lifestyle modifications..."
-    }
-  ],
-  "self_management": "Rest in a quiet, dark room...",
-  "urgency": "Non-Urgent"
-}
-```
-
-## Data Types
-
-### Coding Systems
+### Coding systems
 
 - `icd-10-cm`: ICD-10 Clinical Modification
 - `snomed-ct`: SNOMED CT Clinical Terms
 - `avey-kr`: Avey Knowledge Representation
 
-### Finding Status
+### Finding status
 
 - `present`: Patient has symptom
 - `absent`: Patient doesn't have symptom
 - `unsure`: Patient uncertain
 
-### Question Types
+### Question types
 
 - **Text**: Standard yes/no questions
 - **Image**: Body maps for location identification
 
-### Urgency Levels
+### Urgency levels
 
 - 'Emergency': Immediate medical care required.
 - `Urgent`: Medical attention needed due to problematic presentation
@@ -164,7 +63,24 @@ https://api.avey.ai/ddx
 3. Repeat until session complete (`question: null`).
 4. Generate generate diagnosis, specialist, triage, and self_management advice with final `patient_info` object by sending it to /diagnose.
 
-## Error Codes
+<Mermaid chart={`
+sequenceDiagram
+    participant Patient
+    participant Avey DDX
+    participant Avey Session Manager
+    participant Avey QNA Engine
+
+    Patient->>Avey Session Manager: Create session with patient details and chief symptoms
+    Avey Session Manager->>Avey QNA Engine: Start QNA for patient session
+    loop QNA Loop
+        Avey QNA Engine->>Patient: Question
+        Patient->>Avey QNA Engine: Answer
+    end
+    Avey QNA Engine->>Avey DDX: Request differential diagnosis and specialist recommendation.
+    Avey DDX->>Patient: Present differential diagnosis and recommendations
+    Avey Session Manager-->Avey Session Manager: Clean up session data`}/>
+
+## Error codes
 
 - `401`: Unauthorized
 - `422`: Validation Error

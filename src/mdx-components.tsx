@@ -3,6 +3,7 @@ import { APIPage } from "fumadocs-openapi/ui";
 import { openapi } from "@/lib/source";
 import type { MDXComponents } from "mdx/types";
 import myDark from "@/theme/my-dark-theme";
+import { Mermaid } from "./components/mdx/mermaid";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -18,6 +19,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
         {...openapi.getAPIPageProps(props)}
       />
     ),
+    Mermaid,
     ...components,
   };
 }

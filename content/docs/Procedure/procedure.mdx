@@ -3,10 +3,6 @@ title: Procedure API
 description: Procedure validation and medical necessity checking
 ---
 
-# Procedure API
-
-The Procedure API validates medical procedures based on diagnoses, other procedures, and frequency to ensure medical necessity and compliance with billing regulations.
-
 ## Overview
 
 This API enables healthcare applications to:
@@ -26,7 +22,7 @@ All requests require authentication via API key in the request headers:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-## Endpoint Specification
+## Endpoint specification
 
 ### POST /procedure-validation
 
@@ -38,7 +34,7 @@ Validates procedures against diagnoses and checks for compatibility and billing 
 
 **Content-Type:** `application/json`
 
-## Request Schema
+## Request schema
 
 ```json
 {
@@ -74,7 +70,7 @@ Validates procedures against diagnoses and checks for compatibility and billing 
 }
 ```
 
-## Response Schema
+## Response schema
 
 ```json
 {
@@ -133,13 +129,13 @@ Validates procedures against diagnoses and checks for compatibility and billing 
 }
 ```
 
-## Rate Limits
+## Rate limits
 
 - **Free Plan**: 50 requests/month
 - **Professional Plan**: 500 requests/month
 - **Enterprise Plan**: 5,000 requests/month
 
-## Error Codes
+## Error codes
 
 | Code                  | HTTP Status | Description                                           |
 | --------------------- | ----------- | ----------------------------------------------------- |
@@ -150,7 +146,7 @@ Validates procedures against diagnoses and checks for compatibility and billing 
 | `UNAUTHORIZED`        | 401         | Invalid or missing API key                            |
 | `INTERNAL_ERROR`      | 500         | Internal server error                                 |
 
-## Best Practices
+## Best practices
 
 1. **Complete Patient Information**: Provide patient demographics for accurate validation.
 
@@ -175,7 +171,7 @@ Validates procedures against diagnoses and checks for compatibility and billing 
 - Validation results are estimates and should not replace clinical judgment
 - MUE limits may vary by payer and region
 
-## Supported Validation Types
+## Supported validation types
 
 The API supports comprehensive procedure validation:
 
@@ -185,21 +181,21 @@ The API supports comprehensive procedure validation:
 - **Frequency**: Checks procedure timing and frequency
 - **All**: Performs complete validation (default)
 
-## MUE Categories
+## MUE categories
 
 - **Per Day**: Maximum units allowed per day
 - **Per Encounter**: Maximum units allowed per encounter
 - **Per Provider**: Maximum units allowed per provider
 - **Per Patient**: Maximum units allowed per patient
 
-## Risk Levels
+## Risk levels
 
 - **High**: Significant compliance or clinical concerns
 - **Moderate**: Some concerns requiring attention
 - **Low**: Generally appropriate with standard monitoring
 - **None**: No identified risks
 
-## Common MUE Violations
+## Common MUE violations
 
 - Multiple E&M codes on same day
 - Excessive units for laboratory tests

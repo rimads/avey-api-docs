@@ -3,10 +3,6 @@ title: Drug API
 description: Medication validation, interactions, and contraindications
 ---
 
-# Drug API
-
-The Drug API validates medications against diagnoses and checks for drug interactions, dosage validation, and contraindications to ensure patient safety and medication appropriateness.
-
 ## Overview
 
 This API enables healthcare applications to:
@@ -26,7 +22,7 @@ All requests require authentication via API key in the request headers:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-## Endpoint Specification
+## Endpoint specification
 
 ### POST /drug-validation
 
@@ -38,7 +34,7 @@ Validates medications against diagnoses and checks for interactions and contrain
 
 **Content-Type:** `application/json`
 
-## Request Schema
+## Request schema
 
 ```json
 {
@@ -72,7 +68,7 @@ Validates medications against diagnoses and checks for interactions and contrain
 }
 ```
 
-## Response Schema
+## Response schema
 
 ```json
 {
@@ -146,9 +142,9 @@ Validates medications against diagnoses and checks for interactions and contrain
 }
 ```
 
-## Request Examples
+## Request examples
 
-### Single Medication Validation
+### Single medication validation
 
 ```bash
 curl -X POST https://api.avey.com/v1/drug-validation \
@@ -222,7 +218,7 @@ curl -X POST https://api.avey.com/v1/drug-validation \
   }'
 ```
 
-### Pregnancy-Specific Validation
+### Pregnancy-specific validation
 
 ```bash
 curl -X POST https://api.avey.com/v1/drug-validation \
@@ -252,13 +248,13 @@ curl -X POST https://api.avey.com/v1/drug-validation \
   }'
 ```
 
-## Rate Limits
+## Rate limits
 
 - **Free Plan**: 50 requests/month
 - **Professional Plan**: 500 requests/month
 - **Enterprise Plan**: 5,000 requests/month
 
-## Error Codes
+## Error codes
 
 | Code                  | HTTP Status | Description                                           |
 | --------------------- | ----------- | ----------------------------------------------------- |
@@ -269,7 +265,7 @@ curl -X POST https://api.avey.com/v1/drug-validation \
 | `UNAUTHORIZED`        | 401         | Invalid or missing API key                            |
 | `INTERNAL_ERROR`      | 500         | Internal server error                                 |
 
-## Best Practices
+## Best practices
 
 1. **Complete Patient Information**: Provide as much patient demographic and clinical information as possible for accurate validation.
 
@@ -294,7 +290,7 @@ curl -X POST https://api.avey.com/v1/drug-validation \
 - Validation results are estimates and should not replace clinical judgment
 - Pregnancy and pediatric dosing may have limited data
 
-## Supported Validation Types
+## Supported validation types
 
 The API supports comprehensive medication validation:
 
@@ -304,14 +300,14 @@ The API supports comprehensive medication validation:
 - **Contraindications**: Identifies absolute and relative contraindications
 - **All**: Performs complete validation (default)
 
-## Interaction Severity Levels
+## Interaction severity levels
 
 - **Major**: Potentially life-threatening interactions
 - **Moderate**: Clinically significant interactions requiring monitoring
 - **Minor**: Interactions with limited clinical significance
 - **None**: No known interactions
 
-## Risk Levels
+## Risk levels
 
 - **High**: Significant safety concerns, consider alternative therapy
 - **Moderate**: Some concerns, monitor closely

@@ -3,10 +3,6 @@ title: NDC API
 description: Medication name to NDC code conversion
 ---
 
-# NDC API
-
-The NDC API converts medication names and descriptions in free-text into National Drug Code (NDC) codes for pharmaceutical identification and billing.
-
 ## Overview
 
 This API enables healthcare applications to:
@@ -26,7 +22,7 @@ All requests require authentication via API key in the request headers:
 Authorization: Bearer YOUR_API_KEY
 ```
 
-## Endpoint Specification
+## Endpoint specification
 
 ### POST /ndc-coding
 
@@ -38,7 +34,7 @@ Converts medication names and descriptions to NDC codes.
 
 **Content-Type:** `application/json`
 
-## Request Schema
+## Request schema
 
 ```json
 {
@@ -57,7 +53,7 @@ Converts medication names and descriptions to NDC codes.
 }
 ```
 
-## Response Schema
+## Response schema
 
 ```json
 {
@@ -111,9 +107,9 @@ Converts medication names and descriptions to NDC codes.
 }
 ```
 
-## Request Examples
+## Request examples
 
-### Single Medication
+### Single medication
 
 ```bash
 curl -X POST https://api.avey.com/v1/ndc-coding \
@@ -177,13 +173,13 @@ curl -X POST https://api.avey.com/v1/ndc-coding \
   }'
 ```
 
-## Rate Limits
+## Rate limits
 
 - **Free Plan**: 100 requests/month
 - **Professional Plan**: 1,000 requests/month
 - **Enterprise Plan**: 10,000 requests/month
 
-## Error Codes
+## Error codes
 
 | Code                  | HTTP Status | Description                                          |
 | --------------------- | ----------- | ---------------------------------------------------- |
@@ -192,7 +188,7 @@ curl -X POST https://api.avey.com/v1/ndc-coding \
 | `UNAUTHORIZED`        | 401         | Invalid or missing API key                           |
 | `INTERNAL_ERROR`      | 500         | Internal server error                                |
 
-## Best Practices
+## Best practices
 
 1. **Specific Names**: Provide the most specific medication name available for better accuracy.
 
@@ -217,7 +213,7 @@ curl -X POST https://api.avey.com/v1/ndc-coding \
 - Confidence scores are estimates and should not replace clinical judgment
 - NDC codes are specific to the United States
 
-## Supported Medication Types
+## Supported medication types
 
 The API supports various medication categories:
 
@@ -228,7 +224,7 @@ The API supports various medication categories:
 - **Medical Devices**: Drug-device combination products
 - **Compounded Medications**: Custom formulations (limited support)
 
-## NDC Code Format
+## NDC code format
 
 NDC codes follow the format: `XXXXX-XXXX-XX`
 
@@ -236,6 +232,6 @@ NDC codes follow the format: `XXXXX-XXXX-XX`
 - **Middle 4 digits**: Product code (specific medication)
 - **Last 2 digits**: Package code (package size/type)
 
-## Code Updates
+## Code updates
 
 NDC codes are updated regularly by the FDA. The API uses the most current version available at the time of your request. Historical codes may be available when `include_inactive` is set to true.
