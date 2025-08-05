@@ -1,5 +1,4 @@
 {
   "title": "Diagnostic API",
-  "pages": ["overview", "new-session", "update-session", "diagnose"],
-  "defaultOpen": true
+  "pages": ["overview", "new-session", "update-session", "diagnose"]
 }
