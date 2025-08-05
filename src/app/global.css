@@ -16,24 +16,8 @@
     }
   }
 
-   :root  {
-    --color-primary: #000000;
-    --color-primary-foreground: #ffffff;
-    /* --color-blue-600: #000000; */
-    /* --shiki-light: #000000; */
-    --shiki-foreground: #eeeeee;
-    --shiki-background: #333333;
-    --shiki-token-constant: #660000;
-    --shiki-token-string: #770000;
-    --shiki-token-comment: #880000;
-    --shiki-token-keyword: #990000;
-    --shiki-token-parameter: #aa0000;
-    --shiki-token-function: #bb0000;
-    --shiki-token-string-expression: #cc0000;
-    --shiki-token-punctuation: #dd0000;
-    --shiki-token-link: #ee0000;
-  
 
-  }
-
-
+html.light{
+  --color-fd-primary: #171717!important;
+  --color-fd-foreground: #171717 !important;
+}
