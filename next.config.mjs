@@ -13,6 +13,10 @@ const config = {
         source: "/admin",
         destination: "/admin/index.html",
       },
+      {
+        source: "/",
+        destination: "/docs",
+      },
     ];
   },
 };
