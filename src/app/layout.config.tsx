@@ -47,14 +47,4 @@ export const baseOptions: BaseLayoutProps = {
     ),
   },
   // see https://fumadocs.dev/docs/ui/navigation/links
-  links: [],
-};
-
-export const layoutOptions = {
-  ...baseOptions,
-  nav: {
-    ...baseOptions.nav,
-    component: <ClientNav />,
-  },
-  links: [], // …optional global links
 };

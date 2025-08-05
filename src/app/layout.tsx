@@ -3,8 +3,9 @@ import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { RootProvider } from "fumadocs-ui/provider";
 import { Inter } from "next/font/google";
 import type { ReactNode } from "react";
-import { layoutOptions } from "./layout.config";
+import { baseOptions } from "./layout.config";
 import { source } from "@/lib/source";
+import ClientNav from "@/components/TopBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           {" "}
           <DocsLayout
             tree={source.pageTree}
-            {...layoutOptions}
+            {...baseOptions}
             sidebar={{
               tabs: {
                 transform: (option, node) => ({
@@ -44,6 +45,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               },
             }}
           >
+            <ClientNav />
             {children}
           </DocsLayout>
         </RootProvider>
