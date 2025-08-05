@@ -6,7 +6,7 @@
 @import 'fumadocs-openapi/css/preset.css';
 
 @theme {
-    /* This replaces Tailwind’s font-sans stack */
+    /* This replaces Tailwind's font-sans stack */
     --font-sans: "Nunito", sans-serif;
   }
 
@@ -17,4 +17,7 @@
   }
 
 
-  
+html.light{
+  --color-fd-primary: #171717!important;
+  --color-fd-foreground: #171717 !important;
+}
