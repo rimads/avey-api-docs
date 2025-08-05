@@ -4,16 +4,16 @@ import Link from "next/link";
 
 export default function ClientNav() {
   return (
-    <div className="flex items-center  justify-end space-x-4 p-3 mr-4">
+    <div className="flex items-center  justify-end space-x-5 p-3 mr-4">
       <Link
         href="https://avey.ai/contact-us"
-        className="text-fd-muted-foreground"
+        className="text-fd-muted-foreground font-semibold text-md"
       >
         Support
       </Link>
 
       <Link
-        href="/login"
+        href="https://avey.ai/apis"
         className="flex items-center  gap-1   text-sm font-medium bg-fd-primary text-white dark:text-black pl-4 pr-2  py-1 rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300"
       >
         Dashboard
