@@ -8,7 +8,7 @@ import myDark from '@/theme/my-dark-theme';
 // See https://fumadocs.vercel.app/docs/headless/source-api for more info
 export const source = loader({
   // it assigns a URL to your pages
-  baseUrl: '/docs',
+  baseUrl: '/',
   source: docs.toFumadocsSource(),
   pageTree: {
     attachFile,
