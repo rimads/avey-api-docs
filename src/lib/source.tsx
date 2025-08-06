@@ -14,7 +14,6 @@ export const source = loader({
       if (!file) return node;
 
       const data = file.data;
-      console.log("node", node, data.new);
 
       if (data.new) {
         node.name = (
