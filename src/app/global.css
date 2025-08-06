@@ -8,6 +8,7 @@
 @theme {
     /* This replaces Tailwind's font-sans stack */
     --font-sans: "Nunito", sans-serif;
+    --color-av-blue-500: #77E0FF;
   }
 
   @layer base {
@@ -21,3 +22,6 @@ html.light{
   --color-fd-primary: #171717!important;
   --color-fd-foreground: #171717 !important;
 }
+
+
+

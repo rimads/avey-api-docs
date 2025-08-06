@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 import { baseOptions } from "./layout.config";
 import { source } from "@/lib/source";
 import ClientNav from "@/components/TopBar";
+import { Banner } from "fumadocs-ui/components/banner";
+import Link from "next/link";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,6 +17,18 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={inter.className} suppressHydrationWarning>
       <body className="flex flex-col min-h-screen">
+        {/* <Banner
+          // changeLayout={false}
+          height="40px"
+        >
+          Access our playground from here:{" "}
+          <Link
+            href="https://avey.ai/playground"
+            className="bg-fd-primary text-fd-background px-2 py-1 ml-2 rounded-md hover:bg-fd-primary/80"
+          >
+            Playground
+          </Link>
+        </Banner> */}
         <RootProvider>
           {" "}
           <DocsLayout
@@ -24,6 +38,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               tabs: {
                 transform: (option, node) => ({
                   ...option,
+
                   icon: (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

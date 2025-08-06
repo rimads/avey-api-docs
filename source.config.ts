@@ -6,13 +6,16 @@ import {
 } from 'fumadocs-mdx/config';
 import myDarkTheme from './src/theme/my-dark-theme';
 import { rehypeCode, rehypeCodeDefaultOptions } from 'fumadocs-core/mdx-plugins';
-
+import { z } from 'zod';
 
 // You can customise Zod schemas for frontmatter and `meta.json` here
 // see https://fumadocs.vercel.app/docs/mdx/collections#define-docs
 export const docs = defineDocs({
   docs: {
-    schema: frontmatterSchema,
+    schema: frontmatterSchema.extend({
+      new: z.boolean().default(false),
+
+    }),
   },
   meta: {
     schema: metaSchema,
@@ -33,4 +36,4 @@ export default defineConfig({
     ],
 
   },
-}});
+} }) ;

@@ -1,0 +1,246 @@
+---
+title: MCP
+description: Model Context Protocol integration for AI-powered differential diagnosis
+new: true
+---
+
+## MCP Integration for Diagnosis APIs
+
+The Avey Diagnosis APIs provide conversational AI capabilities for clinical data gathering and differential diagnosis generation. This guide explains how to integrate these APIs using the Model Context Protocol (MCP) framework.
+
+## Overview
+
+The diagnosis system enables AI agents to:
+
+- Conduct interactive symptom assessments through structured conversations
+- Generate differential diagnoses with confidence scores
+- Provide triage recommendations and urgency assessments  
+- Suggest appropriate medical specialists
+- Offer self-management advice for patients
+
+## MCP Integration Architecture
+
+<Mermaid chart={`
+graph LR
+    A[MCP Client] --> B[Avey Diagnosis API]
+    B --> C[Session Manager]
+    B --> D[QNA Engine]
+    B --> E[Diagnosis Engine]
+    
+    C --> F[Patient Session]
+    D --> G[Question Generation]
+    E --> H[Differential Diagnosis]
+    E --> I[Specialist Recommendation]
+    E --> J[Triage Assessment]
+    E --> K[Self-Management Advice]
+    `}/>
+
+## Core Workflow
+
+### 1. Session Initialization
+
+Start a new diagnostic session with basic patient information and chief complaints:
+
+```json
+{
+  "coding_type": "icd-10-cm",
+  "allow_images": true,
+  "patient_info": {
+    "age": 34,
+    "sex": "female",
+    "chief_findings": [
+      {
+        "concept": {
+          "id": "25064002",
+          "name": "Headache",
+          "coding_system": "snomed-ct"
+        },
+        "status": "present"
+      }
+    ],
+    "findings": []
+  },
+  "input_text": "Patient reports severe headache for 3 days"
+}
+```
+
+### 2. Interactive Question Loop
+
+The system will return questions to gather more information. Continue asking questions until `question` is `null`:
+
+```json
+{
+  "session_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "question": {
+    "id": "q001",
+    "text": "Is the headache throbbing or pounding?",
+    "type": "text",
+    "selections": [
+      {"selection_id": "yes", "text": "Yes"},
+      {"selection_id": "no", "text": "No"},
+      {"selection_id": "unsure", "text": "I'm not sure"}
+    ]
+  },
+  "patient_info": { /* updated patient data */ }
+}
+```
+
+### 3. Answer Submission
+
+Submit answers to progress through the assessment:
+
+```json
+{
+  "question_id": "q001",
+  "answer": {
+    "selection_id": "yes",
+    "text": "Yes, it's a throbbing pain"
+  }
+}
+```
+
+### 4. Final Diagnosis
+
+Once all questions are answered, generate the final diagnosis and recommendations:
+
+```json
+{
+  "patient_info": { /* complete patient data */ },
+  "differential": true,
+  "self_management": true,
+  "urgency": true,
+  "specialist": true
+}
+```
+
+## Data Types and Coding Systems
+
+### Supported Coding Systems
+
+- **ICD-10-CM**: ICD-10 Clinical Modification codes
+- **SNOMED CT**: SNOMED Clinical Terms  
+- **Avey-KR**: Avey Knowledge Representation
+
+### Finding Status Values
+
+- `present`: Patient has the symptom
+- `absent`: Patient doesn't have the symptom  
+- `unsure`: Patient is uncertain about the symptom
+
+### Question Types
+
+- **Text**: Standard yes/no/multiple choice questions
+- **Image**: Body maps for anatomical location identification
+
+### Urgency Classifications
+
+- `Emergency`: Immediate medical care required
+- `Urgent`: Medical attention needed due to problematic presentation
+- `Non-Urgent`: Professional medical support needed but not time-critical
+- `Home Treatable`: Self-manageable condition
+
+## MCP Tool Implementations
+
+### Session Management Tools
+
+#### create_diagnosis_session
+
+Creates a new diagnostic session with patient information.
+
+**Parameters:**
+
+- `patient_age` (integer): Patient age in years (0-130)
+- `patient_sex` (string): "male", "female", or "other"  
+- `chief_complaints` (array): Array of primary symptoms
+- `coding_system` (string): Preferred coding system
+- `allow_images` (boolean): Whether to allow image-based questions
+
+#### update_diagnosis_session
+
+Updates an existing session with question answers.
+
+**Parameters:**
+
+- `session_id` (string): Unique session identifier
+- `question_id` (string): ID of the question being answered
+- `answer` (object): Answer object with selection and optional text
+
+#### get_diagnosis
+
+Generates final diagnosis and recommendations from completed session.
+
+**Parameters:**
+
+- `patient_info` (object): Complete patient information object
+- `include_differential` (boolean): Include differential diagnosis
+- `include_specialist` (boolean): Include specialist recommendations
+- `include_triage` (boolean): Include urgency/triage assessment
+- `include_self_care` (boolean): Include self-management advice
+
+## Example MCP Implementation
+
+```python
+import asyncio
+import json
+from typing import Dict, List, Optional, Any
+
+class AveyDiagnosisMCP:
+    def __init__(self, api_key: str, base_url: str = "https://api.avey.ai"):
+        self.api_key = api_key
+        self.base_url = base_url
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    async def create_session(self, patient_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Create a new diagnostic session"""
+        url = f"{self.base_url}/ddx/session"
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=patient_info, headers=self.headers)
+            return response.json()
+    
+    async def update_session(self, session_id: str, answer: Dict[str, Any]) -> Dict[str, Any]:
+        """Update session with question answer"""
+        url = f"{self.base_url}/ddx/session/{session_id}"
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=answer, headers=self.headers)
+            return response.json()
+    
+    async def get_diagnosis(self, patient_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate final diagnosis and recommendations"""
+        url = f"{self.base_url}/ddx/diagnose"
+        async with httpx.AsyncClient() as client:
+            response = await client.post(url, json=patient_info, headers=self.headers)
+            return response.json()
+    
+    async def conduct_full_assessment(self, initial_patient_info: Dict[str, Any]) -> Dict[str, Any]:
+        """Conduct complete diagnostic assessment"""
+        # Create session
+        session_data = await self.create_session(initial_patient_info)
+        session_id = session_data["session_id"]
+        
+        # Interactive question loop
+        while session_data.get("question"):
+            question = session_data["question"]
+            
+            # Present question to user/agent and get answer
+            answer = await self.get_answer_for_question(question)
+            
+            # Submit answer and get next question
+            session_data = await self.update_session(session_id, {
+                "question_id": question["id"],
+                "answer": answer
+            })
+        
+        # Generate final diagnosis
+        diagnosis = await self.get_diagnosis(session_data["patient_info"])
+        return diagnosis
+    
+    async def get_answer_for_question(self, question: Dict[str, Any]) -> Dict[str, Any]:
+        """Get answer for a question (implement based on your UI/logic)"""
+        # This would typically involve presenting the question to a user
+        # or using an AI agent to answer based on available information
+        pass
+```
+

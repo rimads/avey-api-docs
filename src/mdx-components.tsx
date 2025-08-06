@@ -4,6 +4,7 @@ import { openapi } from "@/lib/source";
 import type { MDXComponents } from "mdx/types";
 import myDark from "@/theme/my-dark-theme";
 import { Mermaid } from "./components/mdx/mermaid";
+import * as TabsComponents from "fumadocs-ui/components/tabs";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -20,6 +21,7 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
       />
     ),
     Mermaid,
+    ...TabsComponents,
     ...components,
   };
 }
