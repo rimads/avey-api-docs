@@ -15,6 +15,11 @@ export const source = loader({
 
       const data = file.data;
 
+      // Use sidebar_title if available, otherwise keep the default title
+      if (data.sidebar_title) {
+        node.name = data.sidebar_title;
+      }
+
       if (data.new) {
         node.name = (
           <>
