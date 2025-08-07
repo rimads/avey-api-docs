@@ -20,19 +20,19 @@ export const source = loader({
         node.name = data.sidebar_title;
       }
 
-      if (data.new) {
-        node.name = (
-          <>
-            <span className="flex justify-between w-full items-center">
-              {node.name}
+      node.name = (
+        <>
+          <span className="ml-2 flex justify-between w-full items-center ">
+            {node.name}
 
-              <span className="mr-1 rounded-full bg-av-blue-500 px-2.5 py-0.5 text-xs font-medium text-fd-background text-right">
+            {data.new && (
+              <span className="mx-1  rounded-full bg-av-blue-500 px-2.5 py-0.5 text-xs font-medium text-fd-background text-right">
                 NEW!
               </span>
-            </span>
-          </>
-        );
-      }
+            )}
+          </span>
+        </>
+      );
 
       return attachFile(node, file);
     },

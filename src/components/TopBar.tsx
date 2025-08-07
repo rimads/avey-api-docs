@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function ClientNav() {
   return (
-    <div className="flex items-center  justify-end space-x-5 p-3 mr-4 max-xl:mt-[50px] max-xl:mb-[-50px] max-md:mt-[100px] max-md:mb-[-100px]">
+    <div className="flex items-center z-50  justify-end space-x-5 p-3 mr-4 max-xl:mt-[50px] max-xl:mb-[-50px] max-md:mt-[100px] max-md:mb-[-100px]">
       <Link
         href="https://avey.ai/contact-us"
         className="text-fd-muted-foreground font-semibold text-md"

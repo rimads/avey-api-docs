@@ -1,204 +1,70 @@
 ---
-title: Overview
-description: Procedure validation and medical necessity checking
+title: Procedure API
+sidebar_title: Overview
+description: Validate procedures for medical necessity, compatibility, and correct application based on diagnoses and history
 ---
 
-## Overview
+## Use Procedure API for
 
-This API enables healthcare applications to:
+<Cards>
+  <Card
+    title="Medical justification"
+    description="Check if a procedure is clinically appropriate for one or more conditions"
+  />
+  <Card
+    title="Procedure compatibility"
+    description="Detect if procedures conflict with each other or should not be billed together"
+  />
+  <Card
+    title="Historical context validation"
+    description="Use past procedures and their timing to validate new ones"
+  />
+  <Card
+    title="Quantity validation"
+    description="Check if the procedure quantity is reasonable based on guidelines"
+  />
+</Cards>
 
-- Validate medical necessity of procedures against diagnoses
-- Check procedure-to-procedure (P2P) compatibility
-- Identify Medically Unlikely Edits (MUEs) for billing compliance
-- Validate procedure frequency and timing
-- Provide evidence-based procedure recommendations
-- Support clinical decision making for procedure appropriateness
+## How to use the API
 
-## Authentication
+This API accepts current and past procedures along with diagnostic context. It returns validation results for each procedure, indicating whether it's justified, if any combinations are unsafe or incompatible, and whether the quantity of usage is acceptable. Use this API before applying or billing procedures to prevent clinical and coding errors.
 
-All requests require authentication via API key in the request headers:
+### Input Parameters
 
-```bash
-Authorization: Bearer YOUR_API_KEY
+| Field                            | Type                  | Description |
+|----------------------------------|-----------------------|-------------|
+| `current_cpts`<span style={{ color: "red" }}>*</span>         | `string[]`            | One or more CPT codes representing the procedures to validate. |
+| `past_cpts`                      | `{ code: string, date: string }[]` | Optional. Past CPT procedures and their dates (ISO format). |
+| `primary_icd`<span style={{ color: "red" }}>*</span>          | `string`              | Primary diagnosis (ICD-10 code). |
+| `secondary_icds`                | `string[]`            | Optional. Additional diagnoses (ICD-10 codes). |
+
+### Output
+
+Returns an object that includes:
+  - Validation results for each procedure:
+  - Medical necessity (`justified` or not)
+  - Procedure compatibility (e.g., not allowed to be billed together)
+  - Quantity validation (based on past history or standard limits)
+
+## How it works
+
+The Procedure API routes your inputs through Avey’s Procedure Engine, which evaluates whether each procedure is clinically and contextually appropriate. It checks for conflicts between procedures, validates associations between procedures and diagnoses, and uses historical context when available — all powered by Avey’s internal mapping systems.
+
+<Mermaid chart={`
+sequenceDiagram
+    participant Developer
+    participant Avey Procedure API
+    participant Avey Validator
+    participant Avey Procedure Engine
+
+    Developer->>Avey Procedure API: Send CPTs, ICDs, past history
+    Avey Procedure API->>Avey Procedure Engine: Analyze procedure-diagnosis relationships
+    Avey Procedure Engine->>Avey Validator: Check compatibility, quantity, and justification
+    Avey Validator-->>Avey Procedure API: Return validation results
+    Avey Procedure API-->>Developer: Final procedure report with justifications and warnings
+`}/>
+
+## Base URL
 ```
-
-## Endpoint specification
-
-### POST /procedure-validation
-
-Validates procedures against diagnoses and checks for compatibility and billing compliance.
-
-**URL:** `https://api.avey.com/v1/procedure-validation`
-
-**Method:** `POST`
-
-**Content-Type:** `application/json`
-
-## Request schema
-
-```json
-{
-  "procedures": [
-    {
-      "cpt_code": "string",
-      "units": "number (optional, default: 1)",
-      "date_of_service": "string (optional, ISO 8601 format)",
-      "modifiers": ["string (optional)"],
-      "diagnosis_pointer": "number (optional)"
-    }
-  ],
-  "diagnoses": [
-    {
-      "icd_code": "string",
-      "description": "string (optional)",
-      "primary": "boolean (optional, default: false)"
-    }
-  ],
-  "patient": {
-    "age": "number (optional)",
-    "gender": "male" | "female" | "other" | "prefer_not_to_say (optional)",
-    "pregnancy_status": "pregnant" | "not_pregnant" | "unknown (optional)"
-  },
-  "historical_procedures": [
-    {
-      "cpt_code": "string",
-      "date_of_service": "string (ISO 8601 format)",
-      "units": "number"
-    }
-  ],
-  "validation_type": "medical_necessity" | "p2p_compatibility" | "mue_validation" | "frequency" | "all (optional, default: all)"
-}
+https://api.avey.ai/procedures
 ```
-
-## Response schema
-
-```json
-{
-  "success": true,
-  "data": {
-    "validation_results": [
-      {
-        "cpt_code": "93010",
-        "procedure_name": "Electrocardiogram, routine ECG with at least 12 leads",
-        "medical_necessity": {
-          "is_appropriate": true,
-          "confidence_score": 0.95,
-          "supporting_diagnoses": ["I10", "R07.9"],
-          "rationale": "ECG is appropriate for chest pain evaluation",
-          "warnings": []
-        },
-        "p2p_compatibility": {
-          "compatible_procedures": ["71046", "80048"],
-          "incompatible_procedures": [],
-          "warnings": []
-        },
-        "mue_validation": {
-          "is_within_limits": true,
-          "max_units_allowed": 1,
-          "current_units": 1,
-          "warnings": []
-        },
-        "frequency_validation": {
-          "is_appropriate": true,
-          "last_performed": "2024-01-01",
-          "days_since_last": 14,
-          "recommended_interval": 30,
-          "warnings": []
-        },
-        "overall_assessment": {
-          "risk_level": "low",
-          "recommendation": "Appropriate for this patient",
-          "documentation_required": [
-            "Chest pain symptoms",
-            "Cardiac risk factors"
-          ]
-        }
-      }
-    ],
-    "summary": {
-      "total_procedures": 1,
-      "procedures_with_warnings": 0,
-      "mue_violations": 0,
-      "frequency_violations": 0
-    }
-  },
-  "metadata": {
-    "request_id": "req_123456789",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-## Rate limits
-
-- **Free Plan**: 50 requests/month
-- **Professional Plan**: 500 requests/month
-- **Enterprise Plan**: 5,000 requests/month
-
-## Error codes
-
-| Code                  | HTTP Status | Description                                           |
-| --------------------- | ----------- | ----------------------------------------------------- |
-| `INVALID_INPUT`       | 400         | Invalid request parameters or missing required fields |
-| `INVALID_CPT`         | 400         | Invalid CPT code format                               |
-| `INVALID_ICD`         | 400         | Invalid ICD code format                               |
-| `RATE_LIMIT_EXCEEDED` | 429         | Rate limit exceeded for your plan                     |
-| `UNAUTHORIZED`        | 401         | Invalid or missing API key                            |
-| `INTERNAL_ERROR`      | 500         | Internal server error                                 |
-
-## Best practices
-
-1. **Complete Patient Information**: Provide patient demographics for accurate validation.
-
-2. **Historical Data**: Include historical procedures to check frequency and timing.
-
-3. **Accurate Diagnoses**: Provide specific ICD codes for better medical necessity validation.
-
-4. **Diagnosis Pointers**: Use diagnosis pointers to link procedures to specific diagnoses.
-
-5. **MUE Compliance**: Pay attention to MUE violations to avoid billing denials.
-
-6. **Documentation**: Implement suggested documentation requirements for compliance.
-
-7. **Frequency Monitoring**: Monitor procedure frequency to avoid unnecessary repeat studies.
-
-## Limitations
-
-- Maximum 10 procedures per request
-- Free plan limited to 5 procedures per request
-- Historical data limited to 2 years
-- Some rare procedures may not have complete validation data
-- Validation results are estimates and should not replace clinical judgment
-- MUE limits may vary by payer and region
-
-## Supported validation types
-
-The API supports comprehensive procedure validation:
-
-- **Medical Necessity**: Validates appropriateness for given diagnoses
-- **P2P Compatibility**: Checks procedure-to-procedure compatibility
-- **MUE Validation**: Validates against Medically Unlikely Edits
-- **Frequency**: Checks procedure timing and frequency
-- **All**: Performs complete validation (default)
-
-## MUE categories
-
-- **Per Day**: Maximum units allowed per day
-- **Per Encounter**: Maximum units allowed per encounter
-- **Per Provider**: Maximum units allowed per provider
-- **Per Patient**: Maximum units allowed per patient
-
-## Risk levels
-
-- **High**: Significant compliance or clinical concerns
-- **Moderate**: Some concerns requiring attention
-- **Low**: Generally appropriate with standard monitoring
-- **None**: No identified risks
-
-## Common MUE violations
-
-- Multiple E&M codes on same day
-- Excessive units for laboratory tests
-- Duplicate procedures within short timeframes
-- Unbundling of bundled procedures
-- Inappropriate use of modifiers
