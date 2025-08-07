@@ -8,7 +8,9 @@
 @theme {
     /* This replaces Tailwind's font-sans stack */
     --font-sans: "Nunito", sans-serif;
-    --color-av-blue-500: #77E0FF;
+    --color-av-blue-500: #50a2ff;
+    --color-av-blue-100: #E6FBFF;
+
   }
 
   @layer base {
