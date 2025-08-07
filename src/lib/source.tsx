@@ -21,7 +21,7 @@ export const source = loader({
 
       node.name = (
         <>
-          <span className="ml-2 flex justify-between w-full items-center -pr-8">
+          <span className="flex justify-between w-full items-center -pr-8">
             {node.name}
 
             {data.new && (

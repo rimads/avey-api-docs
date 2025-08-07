@@ -1,8 +1,8 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Avey Diagnosis API",
-    "description": "API for performing medical diagnoses",
+    "title": "Avey Diagnostic API",
+    "description": "Use our leading symptom checker AI to provide early patient care through differential diagnosis suggestions, self-management advice, specialist recommendation, and a triage assessment of how urgent the patient's presentation is",
     "version": "0.1.0"
   },
   "servers": [
@@ -12,70 +12,25 @@
     }
   ],
   "paths": {
-    "/ddx/session": {
+    "/ddx/diagnose/": {
       "post": {
-        "summary": "New Session",
-        "operationId": "new_session_ddx_session_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
-          }
-        },
-        "security": [{ "HTTPBearer": [] }]
-      }
-    },
-    "/ddx/diagnose": {
-      "post": {
-        "summary": "New Diagnosis",
-        "operationId": "new_diagnosis_ddx_diagnose_post",
+        "tags": ["New Diagnosis"],
+        "summary": "Create a Clinical Diagnosis",
+        "description": "Generates a comprehensive clinical diagnosis and patient recommendations based on a patient's collected information. This endpoint takes a complete patient profile and returns a set of potential diagnoses and care recommendations.\n\n### Query parameters can be used to toggle specific features:\n\n* Differential Diagnosis\n* Urgency (Triage)\n* Specialist Recommendation\n* Suggested Health Management Advice\n<br>",
+        "operationId": "new_diagnosis_ddx_diagnose__post",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
-          {
-            "name": "use_phoenix",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false,
-              "title": "Use Phoenix"
-            }
-          },
-          {
-            "name": "use_lm",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "boolean", "default": true, "title": "Use Lm" }
-          },
           {
             "name": "differential",
             "in": "query",
             "required": false,
             "schema": {
               "type": "boolean",
+              "description": "If true, generates and returns a differential diagnosis list.",
               "default": true,
               "title": "Differential"
-            }
+            },
+            "description": "If true, generates and returns a differential diagnosis list."
           },
           {
             "name": "self_management",
@@ -83,15 +38,23 @@
             "required": false,
             "schema": {
               "type": "boolean",
+              "description": "If true, provides advice for managing symptoms at home.",
               "default": true,
               "title": "Self Management"
-            }
+            },
+            "description": "If true, provides advice for managing symptoms at home."
           },
           {
             "name": "urgency",
             "in": "query",
             "required": false,
-            "schema": { "type": "boolean", "default": true, "title": "Urgency" }
+            "schema": {
+              "type": "boolean",
+              "description": "If true, assesses the urgency level of the situation.",
+              "default": true,
+              "title": "Urgency"
+            },
+            "description": "If true, assesses the urgency level of the situation."
           },
           {
             "name": "specialist",
@@ -99,9 +62,11 @@
             "required": false,
             "schema": {
               "type": "boolean",
+              "description": "If true, recommends a medical specialist to consult.",
               "default": true,
               "title": "Specialist"
-            }
+            },
+            "description": "If true, recommends a medical specialist to consult."
           }
         ],
         "requestBody": {
@@ -114,27 +79,55 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful clinical assessment.",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/DiagnoseResponse" }
               }
             }
           },
+          "401": { "description": "Invalid or missing authentication token." },
           "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
+            "description": "Validation Error: The request body is malformed."
           }
         }
       }
     },
+    "/ddx/session/": {
+      "post": {
+        "tags": ["Session Management"],
+        "summary": "Create a New Session",
+        "description": "Starts a new interactive diagnostic session.\n\nSpecify coding scheme for concepts and provide the patient's initial information (age, sex, and chief complaints) to create a session and receive the first question. The session is stateful and managed on the server.\n\n### Workflow\n1.  Provide either `input_text` (e.g., \"I have a headache and a fever\") or a list of `chief_findings_codes`.\n2.  The system processes the initial data and generates the first, most relevant question.\n3.  A unique `session_id` is returned, which you must use for all subsequent calls to the `update_session` endpoint.",
+        "operationId": "new_session_ddx_session__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Session successfully created and first question returned.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error, e.g., could not extract any symptoms from the provided input text."
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
     "/ddx/session/{session_id}": {
       "post": {
-        "summary": "Update Session",
+        "tags": ["Session Management"],
+        "summary": "Continue a Session",
+        "description": "Submits an answer to the previous question and retrieves the next one.\n\n### Workflow after session creation:\n1.  The client displays the question received from the previous call.\n2.  The user provides an answer.\n3.  The client sends this answer in the request body to this endpoint, either as the free text of a user, or as an `answers` object.\n4.  The diagnostic model processes the answer, updates the patient's profile, and determines the next best question.\n5.  If more questions are needed, a new `question` object is returned.\n6.  If the model converges towards a final diagnosis, the `question` field in the response will be. At this point, you should use the final `patient_info` object to call the main `/diagnose` endpoint.",
         "operationId": "update_session_ddx_session__session_id__post",
         "security": [{ "HTTPBearer": [] }],
         "parameters": [
@@ -142,13 +135,13 @@
             "name": "session_id",
             "in": "path",
             "required": true,
-            "schema": { "type": "string", "title": "Session Id" }
-          },
-          {
-            "name": "advice",
-            "in": "query",
-            "required": false,
-            "schema": { "type": "boolean", "default": true, "title": "Advice" }
+            "schema": {
+              "type": "string",
+              "description": "The unique identifier for the session, obtained from the 'new_session' response.",
+              "title": "Session Id"
+            },
+            "description": "The unique identifier for the session, obtained from the 'new_session' response.",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
           }
         ],
         "requestBody": {
@@ -161,7 +154,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Answer processed successfully. Returns the next question or a null question if the session is complete.",
             "content": {
               "application/json": {
                 "schema": {
@@ -170,14 +163,8 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
-          }
+          "404": { "description": "Session with the given ID was not found." },
+          "422": { "description": "Validation Error in the request body." }
         }
       }
     }
@@ -186,9 +173,9 @@
     "schemas": {
       "CodingType": {
         "type": "string",
-        "enum": ["icd-10-cm", "snomed-ct", "avey-kr"],
+        "enum": ["icd-10-cm", "snomed-ct", "aut"],
         "title": "CodingType",
-        "description": "Specifies the medical coding system used for concept identifiers."
+        "description": "Specifies the medical coding system used for concept identifiers. Avey Unified Terminology (aut) describes our internally developed naming system designed to be simple for developers to work with while remaining medically expressive. It covers\nWe created it using a combination of SNOMED-CT, ICD, and terms that we have curated for AI - patient interaction in the development of the diagnostic model.\nThe current version uses unique strings for each name, making it convenient to use the name as the term's identifier."
       },
       "Concept": {
         "properties": {
@@ -196,13 +183,13 @@
             "type": "string",
             "title": "Id",
             "description": "The unique identifier of the concept in its coding system.",
-            "examples": ["snomed-ct:247345003"]
+            "examples": ["Headache", "Fever"]
           },
           "term": {
             "type": "string",
             "title": "Term",
             "description": "The human-readable name of the concept.",
-            "examples": ["Headache"]
+            "examples": ["Headache", "Fever"]
           }
         },
         "type": "object",
@@ -214,13 +201,32 @@
         "properties": {
           "patient_info": {
             "$ref": "#/components/schemas/PatientInfo-Input",
-            "description": "The complete patient profile collected during the session."
+            "description": "The complete patient profile",
+            "examples": [
+              {
+                "patient_info": {
+                  "age": 34,
+                  "chief_findings": [
+                    {
+                      "id": "Headache",
+                      "status": "present",
+                      "term": "Headache"
+                    }
+                  ],
+                  "findings": [
+                    { "id": "Fever", "status": "present", "term": "Fever" },
+                    { "id": "Cough", "status": "absent", "term": "Cough" }
+                  ],
+                  "sex": "female"
+                }
+              }
+            ]
           }
         },
         "type": "object",
         "required": ["patient_info"],
         "title": "DiagnoseRequest",
-        "description": "Request the Clinical Assessment of a Patient Profile."
+        "description": "Request the Clinical Diagnosis of a Patient Profile."
       },
       "DiagnoseResponse": {
         "properties": {
@@ -233,30 +239,56 @@
               { "type": "null" }
             ],
             "title": "Differential Diagnosis",
-            "description": "A ranked list of possible conditions matching the patient's profile."
+            "description": "A ranked list of possible conditions matching the patient's profile.",
+            "examples": [
+              [
+                {
+                  "description": "Commonly known as the common cold, this is a viral infection of your nose and throat.",
+                  "id": "Common Cold",
+                  "note": "Often resolves on its own within 7-10 days.",
+                  "term": "Common Cold",
+                  "treatment": "Rest, fluids, and over-the-counter medications can help relieve symptoms."
+                },
+                {
+                  "description": "Commonly known as the flu, this is a contagious respiratory illness caused by influenza viruses.",
+                  "id": "Influenza",
+                  "note": "Symptoms are typically more severe than a cold and can include fever, body aches, and fatigue.",
+                  "term": "Influenza",
+                  "treatment": "Antiviral drugs may be prescribed. Rest and fluid intake are crucial for recovery."
+                }
+              ]
+            ]
           },
           "self_management": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Self Management",
-            "description": "Advice for managing symptoms at home."
+            "description": "Advice for managing symptoms at home.",
+            "examples": [
+              "Stay hydrated and get plenty of rest. Over-the-counter pain relievers can help with aches."
+            ]
           },
           "urgency": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Urgency",
-            "description": "A high-level indicator of the situation's urgency. Non-Urgent represents blue and green triage category codes, while semi-urgent represents yellow. Urgent represents an orange or posssibly red situation requiring quick medical action.",
-            "examples": ["Emergency", "Urgent", "Non-Urgent", "Home Treatable"]
+            "description": "A high-level indicator of the situation's urgency",
+            "examples": [
+              "Home Treatable",
+              "Non-Urgent, but schedule a visit with your physician",
+              "Urgent, seek medical care and watch your symptoms closely",
+              "Emergency, seek medical care immediately"
+            ]
           },
           "specialist": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Specialist",
             "description": "Recommended Specialist For the Patient to visit",
-            "examples": ["Urgent", "Non-Urgent", "Home Treatable"]
+            "examples": ["General Practitioner"]
           }
         },
         "type": "object",
         "required": ["self_management", "urgency", "specialist"],
         "title": "DiagnoseResponse",
-        "description": "Clinical Assessment of a Patient."
+        "description": "Clinical Diagnosis of a Patient."
       },
       "Disease": {
         "properties": {
@@ -264,13 +296,13 @@
             "type": "string",
             "title": "Id",
             "description": "The unique identifier of the concept in its coding system.",
-            "examples": ["snomed-ct:247345003"]
+            "examples": ["Headache", "Fever"]
           },
           "term": {
             "type": "string",
             "title": "Term",
             "description": "The human-readable name of the concept.",
-            "examples": ["Headache"]
+            "examples": ["Headache", "Fever"]
           },
           "description": {
             "type": "string",
@@ -280,7 +312,7 @@
           "note": {
             "type": "string",
             "title": "Note",
-            "description": "Additional notes or considerations about the disease."
+            "description": "Additional notes about the disease."
           },
           "treatment": {
             "type": "string",
@@ -299,17 +331,18 @@
             "type": "string",
             "title": "Id",
             "description": "The unique identifier of the concept in its coding system.",
-            "examples": ["snomed-ct:247345003"]
+            "examples": ["Headache", "Fever"]
           },
           "term": {
             "type": "string",
             "title": "Term",
             "description": "The human-readable name of the concept.",
-            "examples": ["Headache"]
+            "examples": ["Headache", "Fever"]
           },
           "status": {
             "$ref": "#/components/schemas/FindingStatus",
-            "description": "The status of the finding as reported by the patient."
+            "description": "The lowercased status of the finding as reported by the patient.",
+            "examples": ["present", "absent", "unsure"]
           }
         },
         "type": "object",
@@ -323,7 +356,7 @@
             "type": "string",
             "title": "Id",
             "description": "The concept ID of the finding being answered.",
-            "examples": ["snomed-ct:49727002"]
+            "examples": ["Fever"]
           },
           "status": { "$ref": "#/components/schemas/FindingStatus" }
         },
@@ -338,104 +371,28 @@
         "title": "FindingStatus",
         "description": "The patient's reported status for a given finding or symptom."
       },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": { "$ref": "#/components/schemas/ValidationError" },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "ImageQuestion": {
-        "properties": {
-          "type": {
-            "type": "string",
-            "const": "image",
-            "title": "Type",
-            "description": "The type of question."
-          },
-          "text": {
-            "type": "string",
-            "title": "Text",
-            "description": "The text prompt accompanying the images.",
-            "examples": ["Where is your abdominal pain located?"]
-          },
-          "image_selections": {
-            "items": { "$ref": "#/components/schemas/ImageQuestionSelection" },
-            "type": "array",
-            "title": "Image Selections",
-            "description": "A list of image choices for the user."
-          }
-        },
-        "type": "object",
-        "required": ["type", "text", "image_selections"],
-        "title": "ImageQuestion",
-        "description": "A question that uses images, such as asking to identify a location on a body map."
-      },
-      "ImageQuestionSelection": {
-        "properties": {
-          "selection_id": {
-            "type": "string",
-            "title": "Selection Id",
-            "description": "The unique ID for this image choice, used in the answer.",
-            "examples": ["img_head_left"]
-          },
-          "selected_image_url": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 2083,
-                "minLength": 1,
-                "format": "uri"
-              },
-              { "type": "null" }
-            ],
-            "title": "Selected Image Url",
-            "description": "URL of the image when it is in a 'selected' state."
-          },
-          "unselected_image_url": {
-            "anyOf": [
-              {
-                "type": "string",
-                "maxLength": 2083,
-                "minLength": 1,
-                "format": "uri"
-              },
-              { "type": "null" }
-            ],
-            "title": "Unselected Image Url",
-            "description": "URL of the image when it is in a normal or 'unselected' state."
-          }
-        },
-        "type": "object",
-        "required": ["selection_id"],
-        "title": "ImageQuestionSelection",
-        "description": "Represents one of the selectable images in an image-based question."
-      },
       "NewSessionRequest": {
         "properties": {
           "coding_type": {
-            "$ref": "#/components/schemas/CodingType",
-            "description": "The desired coding system for all concepts in the session."
-          },
-          "allow_images": {
-            "type": "boolean",
-            "title": "Allow Images",
-            "description": "Set to true if the client supports image-based questions.",
-            "default": true
+            "anyOf": [
+              { "$ref": "#/components/schemas/CodingType" },
+              { "type": "null" }
+            ],
+            "description": "The desired coding system for all concepts in the session.",
+            "default": "aut"
           },
           "patient_info": { "$ref": "#/components/schemas/PatientInfoRequest" },
           "input_text": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Input Text",
-            "description": "Optional free-text input describing the patient's symptoms. (May be enterprise-only)."
+            "description": "Free-text input describing the patient's symptoms. Either this or a list of chief symptom codes must be provided.",
+            "examples": [
+              "My tummy hurts, and i feel like i don't want to eat anything"
+            ]
           }
         },
         "type": "object",
-        "required": ["coding_type", "patient_info"],
+        "required": ["patient_info"],
         "title": "NewSessionRequest",
         "description": "Payload to create a new diagnostic session."
       },
@@ -473,13 +430,43 @@
             "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Chief Findings",
-            "description": "The primary symptoms or reasons for the consultation."
+            "description": "The primary symptoms or reasons for the consultation, all of which should have a present status",
+            "examples": [
+              [
+                { "id": "Headache", "status": "present", "term": "Headache" },
+                { "id": "Fever", "status": "present", "term": "Fever" }
+              ],
+              [
+                { "id": "Insomnia", "status": "present", "term": "Insomnia" },
+                {
+                  "id": "Irritability",
+                  "status": "present",
+                  "term": "Irritability"
+                }
+              ]
+            ]
           },
           "findings": {
             "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Findings",
-            "description": "All other symptoms or findings collected during the session."
+            "description": "All symptoms or findings collected during the session.",
+            "examples": [
+              [
+                { "id": "Headache", "status": "present", "term": "Headache" },
+                { "id": "Fever", "status": "present", "term": "Fever" },
+                {
+                  "id": "Nasal block",
+                  "status": "absent",
+                  "term": "Nasal block"
+                },
+                {
+                  "id": "Headache (Occipital region)",
+                  "status": "unsure",
+                  "term": "Headache (Occipital region)"
+                }
+              ]
+            ]
           }
         },
         "type": "object",
@@ -505,13 +492,43 @@
             "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Chief Findings",
-            "description": "The primary symptoms or reasons for the consultation."
+            "description": "The primary symptoms or reasons for the consultation, all of which should have a present status",
+            "examples": [
+              [
+                { "id": "Headache", "status": "present", "term": "Headache" },
+                { "id": "Fever", "status": "present", "term": "Fever" }
+              ],
+              [
+                { "id": "Insomnia", "status": "present", "term": "Insomnia" },
+                {
+                  "id": "Irritability",
+                  "status": "present",
+                  "term": "Irritability"
+                }
+              ]
+            ]
           },
           "findings": {
             "items": { "$ref": "#/components/schemas/Finding" },
             "type": "array",
             "title": "Findings",
-            "description": "All other symptoms or findings collected during the session."
+            "description": "All symptoms or findings collected during the session.",
+            "examples": [
+              [
+                { "id": "Headache", "status": "present", "term": "Headache" },
+                { "id": "Fever", "status": "present", "term": "Fever" },
+                {
+                  "id": "Nasal block",
+                  "status": "absent",
+                  "term": "Nasal block"
+                },
+                {
+                  "id": "Headache (Occipital region)",
+                  "status": "unsure",
+                  "term": "Headache (Occipital region)"
+                }
+              ]
+            ]
           }
         },
         "type": "object",
@@ -534,11 +551,13 @@
             "description": "The biological sex of the patient."
           },
           "chief_findings_codes": {
-            "items": { "type": "string" },
-            "type": "array",
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
             "title": "Chief Findings Codes",
-            "description": "A list of concept IDs for the patient's chief complaints.",
-            "examples": [["snomed-ct:247345003"]]
+            "description": "A list of IDs for the patient's chief complaints. Provided in the session's coding scheme. Either this or input text must be provided.",
+            "examples": [["Headache", "Abdominal pain"]]
           }
         },
         "type": "object",
@@ -555,17 +574,12 @@
             "examples": [1, 2, 3]
           },
           "content": {
-            "oneOf": [
-              { "$ref": "#/components/schemas/ImageQuestion" },
-              { "$ref": "#/components/schemas/TextQuestion" }
-            ],
+            "oneOf": [{ "$ref": "#/components/schemas/TextQuestion" }],
             "title": "Content",
+            "description": "The content of the question",
             "discriminator": {
               "propertyName": "type",
-              "mapping": {
-                "image": "#/components/schemas/ImageQuestion",
-                "text": "#/components/schemas/TextQuestion"
-              }
+              "mapping": { "text": "#/components/schemas/TextQuestion" }
             }
           }
         },
@@ -586,17 +600,24 @@
             "type": "string",
             "const": "text",
             "title": "Type",
-            "description": "The type of question."
+            "description": "The type of question"
           },
           "text": {
             "type": "string",
             "title": "Text",
             "description": "The question to be displayed to the user.",
-            "examples": ["Do you have a fever?"]
+            "examples": ["Do you have a headache?"]
           },
           "target_concept": {
             "$ref": "#/components/schemas/Concept",
-            "description": "The medical concept this question is about."
+            "description": "The medical concept this question is about.",
+            "examples": [
+              {
+                "id": "Headache (Occipital region)",
+                "status": "unsure",
+                "term": "Headache (Occipital region)"
+              }
+            ]
           }
         },
         "type": "object",
@@ -621,25 +642,14 @@
               { "type": "null" }
             ],
             "title": "Answers",
-            "description": "A list of answers for text-based questions."
-          },
-          "image_answers": {
-            "anyOf": [
-              {
-                "additionalProperties": {
-                  "$ref": "#/components/schemas/FindingStatus"
-                },
-                "type": "object"
-              },
-              { "type": "null" }
-            ],
-            "title": "Image Answers",
-            "description": "A dictionary mapping image selection IDs to their status for image-based questions."
+            "description": "A list of answers for text-based questions. Either this object or input_text must be provided",
+            "examples": [[{ "id": "Headache", "status": "present" }]]
           },
           "input_text": {
             "anyOf": [{ "type": "string" }, { "type": "null" }],
             "title": "Input Text",
-            "description": "Optional additional free-text input from the user. (May be enterprise-only)."
+            "description": "Free-text input from the user. Either this or an answers object must be provided",
+            "examples": ["No, but i find it difficult to sleep at night"]
           }
         },
         "type": "object",
@@ -655,27 +665,32 @@
           },
           "patient_info": {
             "$ref": "#/components/schemas/PatientInfo-Output",
-            "description": "An updated snapshot of the patient's information."
+            "description": "An updated snapshot of the patient's information after the model process new findings. The model may add new concepts by medically supported inductive reasoning. For example, if menstruation is found to be present. The model may add pregnancy to be absent depending on the patient case.",
+            "examples": [
+              {
+                "patient_info": {
+                  "age": 34,
+                  "chief_findings": [
+                    {
+                      "id": "Headache",
+                      "status": "present",
+                      "term": "Headache"
+                    }
+                  ],
+                  "findings": [
+                    { "id": "Fever", "status": "present", "term": "Fever" },
+                    { "id": "Cough", "status": "absent", "term": "Cough" }
+                  ],
+                  "sex": "female"
+                }
+              }
+            ]
           }
         },
         "type": "object",
         "required": ["question", "patient_info"],
         "title": "UpdateSessionResponse",
-        "description": "Response to an answer submission. Contains either the next question or the final assessment.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined assessment/diagnosis endpoint."
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": { "type": "string", "title": "Message" },
-          "type": { "type": "string", "title": "Error Type" }
-        },
-        "type": "object",
-        "required": ["loc", "msg", "type"],
-        "title": "ValidationError"
+        "description": "Response to an answer submission. Contains either the next question or null.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined diagnosis endpoint."
       }
     },
     "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
