@@ -47,7 +47,7 @@ sequenceDiagram
     participant Avey Conditions Classifier
     participant Avey ICD Engine
 
-    Developer->>Avey ICD API: Send clinical_note
+    Developer->>Avey ICD API: Send Clinical Note
     Avey ICD API->>Avey Conditions Classifier: Identify conditions/diseases
     Avey Conditions Classifier-->>Avey ICD API: conditions[]
     Avey Conditions Classifier->>Avey ICD Engine: Map conditions to ICD-10
