@@ -1,238 +1,61 @@
 ---
-title: Overview
-description: ICD code extraction from symptom and diagnosis descriptions
+title: ICD API
+sidebar_title: Overview
+description: Convert free‑text clinical notes into structured medical concepts and ICD‑10 codes
 ---
 
-## Overview
+## Use ICD API for
 
-This API enables healthcare applications to:
+<Cards>
+  <Card
+    title="ICD coding from notes"
+    description="Turn a clinician's free‑text note into ICD‑10 codes"
+  />
+  <Card
+    title="Condition extraction"
+    description="Identify medical conditions/diseases mentioned in the note"
+  />
+</Cards>
 
-- Extract ICD-10 codes from natural language descriptions
-- Handle multiple symptoms or conditions in a single request
-- Return both specific and related ICD codes
-- Provide confidence scores for code accuracy
-- Support various medical terminology and abbreviations
-- Include both primary and secondary diagnoses
+## How to use the API
 
-## Authentication
+Provide a single clinical note as input. Use **`extract-conditions`** to get a list of conditions mentioned in the note, or **`classify-note`** to get ICD‑10 codes that represent those conditions (both generic and complete/specific when available). This is typically used after a visit when converting documentation into billable codes.
 
-All requests require authentication via API key in the request headers:
+### Input Parameters
 
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
+| Field                                                  | Type     | Description |
+|-------------------------------------------------------|----------|-------------|
+| `clinical_note`<span style={{ color: "red" }}>*</span> | `string` | Full, plain‑text clinical note to analyze. |
 
-## Endpoint specification
+### Output
 
-### POST /icd-coding
+- **extract-conditions**  
+  Returns: `conditions: string[]` — medical conditions/diseases mentioned in the note.
 
-Extracts ICD codes from free-text descriptions of symptoms or diagnoses.
+- **classify-note**  
+  Returns: `icd10: string[]` — ICD‑10 codes corresponding to the note’s conditions.  
+  May include both **generic** (e.g., `A00`) and **complete/specific** codes (e.g., `A00.0`).  
 
-**URL:** `https://api.avey.com/v1/icd-coding`
+## How it works
 
-**Method:** `POST`
+The ICD API routes your clinical note through Avey’s coding pipeline. Avey parses the note, identifies clinical conditions, and classifies them into standardized ICD‑10 codes using Avey’s internal ICD Engine.
 
-**Content-Type:** `application/json`
+<Mermaid chart={`
+sequenceDiagram
+    participant Developer
+    participant Avey ICD API
+    participant Avey Note Parser
+    participant Avey Condition Extractor
+    participant Avey ICD Engine
 
-## Request schema
+    Developer->>Avey ICD API: Send clinical_note
+    Avey ICD API->>Avey Note Parser: Normalize and segment note
+    Avey Note Parser->>Avey Condition Extractor: Identify conditions/diseases
+    Avey Condition Extractor-->>Avey ICD API: conditions[]
+    Avey Condition Extractor->>Avey ICD Engine: Map conditions to ICD-10
+    Avey ICD Engine-->>Avey ICD API: icd10[]
+    Avey ICD API-->>Developer: conditions[] and/or icd10[]
+`}/>
 
-```json
-{
-  "descriptions": [
-    {
-      "text": "string",
-      "context": "string (optional)",
-      "severity": "mild" | "moderate" | "severe" | "unspecified (optional)"
-    }
-  ],
-  "patient_context": {
-    "age": "number (optional)",
-    "gender": "male" | "female" | "other" | "prefer_not_to_say (optional)",
-    "pregnancy_status": "pregnant" | "not_pregnant" | "unknown (optional)"
-  },
-  "code_type": "icd10" | "icd9" | "both (optional, default: icd10)",
-  "include_unspecified": "boolean (optional, default: true)"
-}
-```
+## Base URL
 
-## Response schema
-
-```json
-{
-  "success": true,
-  "data": {
-    "results": [
-      {
-        "input_text": "chest pain",
-        "icd_codes": [
-          {
-            "code": "R07.9",
-            "description": "Chest pain, unspecified",
-            "confidence_score": 0.95,
-            "code_type": "icd10",
-            "category": "Symptoms, signs and abnormal clinical and laboratory findings",
-            "specificity": "unspecified",
-            "related_codes": [
-              {
-                "code": "R07.1",
-                "description": "Chest pain on breathing",
-                "confidence_score": 0.85
-              },
-              {
-                "code": "R07.2",
-                "description": "Precordial pain",
-                "confidence_score": 0.8
-              }
-            ]
-          }
-        ],
-        "processing_time_ms": 120
-      }
-    ],
-    "summary": {
-      "total_descriptions": 1,
-      "total_codes_found": 3,
-      "average_confidence": 0.87
-    }
-  },
-  "metadata": {
-    "request_id": "req_123456789",
-    "timestamp": "2024-01-15T10:30:00Z"
-  }
-}
-```
-
-## Request examples
-
-### Single symptom
-
-```bash
-curl -X POST https://api.avey.com/v1/icd-coding \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "descriptions": [
-      {
-        "text": "shortness of breath"
-      }
-    ]
-  }'
-```
-
-### Multiple symptoms with context
-
-```bash
-curl -X POST https://api.avey.com/v1/icd-coding \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "descriptions": [
-      {
-        "text": "chest pain",
-        "context": "Patient reports pressure-like chest pain",
-        "severity": "severe"
-      },
-      {
-        "text": "shortness of breath",
-        "context": "Occurs with minimal exertion",
-        "severity": "moderate"
-      },
-      {
-        "text": "nausea",
-        "context": "Associated with chest pain",
-        "severity": "mild"
-      }
-    ],
-    "patient_context": {
-      "age": 65,
-      "gender": "male"
-    }
-  }'
-```
-
-### Diagnosis with patient context
-
-```bash
-curl -X POST https://api.avey.com/v1/icd-coding \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "descriptions": [
-      {
-        "text": "diabetes mellitus type 2"
-      }
-    ],
-    "patient_context": {
-      "age": 45,
-      "gender": "female"
-    },
-    "code_type": "icd10",
-    "include_unspecified": false
-  }'
-```
-
-## Rate limits
-
-- **Free Plan**: 100 requests/month
-- **Professional Plan**: 1,000 requests/month
-- **Enterprise Plan**: 10,000 requests/month
-
-## Error codes
-
-| Code                  | HTTP Status | Description                                      |
-| --------------------- | ----------- | ------------------------------------------------ |
-| `INVALID_INPUT`       | 400         | Invalid request parameters or empty descriptions |
-| `RATE_LIMIT_EXCEEDED` | 429         | Rate limit exceeded for your plan                |
-| `UNAUTHORIZED`        | 401         | Invalid or missing API key                       |
-| `INTERNAL_ERROR`      | 500         | Internal server error                            |
-
-## Best practices
-
-1. **Descriptive Input**: Provide detailed symptom descriptions for better accuracy.
-
-2. **Context Usage**: Include relevant clinical context when available to improve code selection.
-
-3. **Patient Context**: Provide patient demographics when known to improve specificity.
-
-4. **Confidence Scores**: Use confidence scores to determine reliability. Scores below 0.7 should be reviewed manually.
-
-5. **Related Codes**: Review related codes for more specific alternatives when appropriate.
-
-6. **Code Specificity**: Consider whether you need specific or unspecified codes based on your use case.
-
-## Limitations
-
-- Maximum 10 descriptions per request
-- Free plan limited to 5 descriptions per request
-- Descriptions should be in English
-- Some rare or complex conditions may not be recognized
-- Confidence scores are estimates and should not replace clinical judgment
-- ICD-9 codes are deprecated but still supported for historical data
-
-## Supported ICD categories
-
-The API supports all major ICD-10 categories:
-
-- **A00-B99**: Certain infectious and parasitic diseases
-- **C00-D49**: Neoplasms
-- **D50-D89**: Diseases of the blood and blood-forming organs
-- **E00-E89**: Endocrine, nutritional and metabolic diseases
-- **F01-F99**: Mental, Behavioral and Neurodevelopmental disorders
-- **G00-G99**: Diseases of the nervous system
-- **I00-I99**: Diseases of the circulatory system
-- **J00-J99**: Diseases of the respiratory system
-- **K00-K95**: Diseases of the digestive system
-- **L00-L99**: Diseases of the skin and subcutaneous tissue
-- **M00-M99**: Diseases of the musculoskeletal system and connective tissue
-- **N00-N99**: Diseases of the genitourinary system
-- **O00-O9A**: Pregnancy, childbirth and the puerperium
-- **P00-P96**: Certain conditions originating in the perinatal period
-- **Q00-Q99**: Congenital malformations, deformations and chromosomal abnormalities
-- **R00-R99**: Symptoms, signs and abnormal clinical and laboratory findings
-- **S00-T88**: Injury, poisoning and certain other consequences of external causes
-- **V00-Y99**: External causes of morbidity
-- **Z00-Z99**: Factors influencing health status and contact with health services
-
-## Code updates
-
-ICD codes are updated annually. The API uses the most current version available at the time of your request. Historical codes may be available for specific date ranges.
