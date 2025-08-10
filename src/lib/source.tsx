@@ -25,7 +25,7 @@ export const source = loader({
             {node.name}
 
             {data.new && (
-              <span className="ml-1 text-white dark:text-av-blue-100 rounded-full bg-blue-400 px-2.5 py-0.5 text-xs font-medium text-right">
+              <span className="ml-1 text-white  rounded-full bg-av-blue-900 px-2.5 py-0.5 text-xs font-medium text-right">
                 NEW!
               </span>
             )}
