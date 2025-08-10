@@ -10,7 +10,7 @@ export default function NotFound() {
         removed.
       </p>
       <div className="mt-8">
-        <Link href="/" className="text-av-blue-900 underline">
+        <Link href="/" className="text-av-blue-900 underline" prefetch={true}>
           Go back home
         </Link>
       </div>
