@@ -1,13 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap");
-
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
 @import 'fumadocs-openapi/css/preset.css';
 
 @theme {
-    /* This replaces Tailwind's font-sans stack */
-    --font-sans: "Nunito", sans-serif;
+    /* Use Nunito loaded via next/font variable --nunito */
+    --font-sans: var(--nunito), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --color-av-blue-900: #004766;
     
     /* Light Mode Colors (600 variants) */
