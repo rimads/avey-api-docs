@@ -1,6 +1,6 @@
 import { App, Octokit } from 'octokit';
 import type { ActionResponse, Feedback } from '@/components/rate';
-import { GITHUB_APP_ID, GITHUB_APP_PRIVATE_KEY } from '../../config';
+import { getGithubAppSecrets } from '../../config';
 
 export const repo = 'avey-api-docs';
 export const owner = 'mohanedwalid05';
@@ -10,8 +10,7 @@ let instance: Octokit | undefined;
 
 async function getOctokit(): Promise<Octokit> {
   if (instance) return instance;
-  const appId = GITHUB_APP_ID;
-  const privateKey = GITHUB_APP_PRIVATE_KEY;
+  const { appId, privateKey } = getGithubAppSecrets();
 
   if (!appId || !privateKey) {
     throw new Error(
@@ -133,6 +132,6 @@ export async function onRateAction(
   }
 
   return {
-    githubUrl: discussion.url,
+    githubUrl: discussion?.url ?? '',
   };
 }

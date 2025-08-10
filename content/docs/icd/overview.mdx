@@ -44,15 +44,13 @@ The ICD API routes your clinical note through Avey’s coding pipeline. Avey par
 sequenceDiagram
     participant Developer
     participant Avey ICD API
-    participant Avey Note Parser
-    participant Avey Condition Extractor
+    participant Avey Conditions Classifier
     participant Avey ICD Engine
 
     Developer->>Avey ICD API: Send clinical_note
-    Avey ICD API->>Avey Note Parser: Normalize and segment note
-    Avey Note Parser->>Avey Condition Extractor: Identify conditions/diseases
-    Avey Condition Extractor-->>Avey ICD API: conditions[]
-    Avey Condition Extractor->>Avey ICD Engine: Map conditions to ICD-10
+    Avey ICD API->>Avey Conditions Classifier: Identify conditions/diseases
+    Avey Conditions Classifier-->>Avey ICD API: conditions[]
+    Avey Conditions Classifier->>Avey ICD Engine: Map conditions to ICD-10
     Avey ICD Engine-->>Avey ICD API: icd10[]
     Avey ICD API-->>Developer: conditions[] and/or icd10[]
 `}/>
