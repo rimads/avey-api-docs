@@ -16,6 +16,7 @@
     "gen:ndc": "node ./scripts/generate-docs.mjs ndc"
   },
   "dependencies": {
+    "@orama/orama": "^3.1.11",
     "fumadocs-core": "15.6.6",
     "fumadocs-mdx": "11.7.1",
     "fumadocs-openapi": "^9.1.6",

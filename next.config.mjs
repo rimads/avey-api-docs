@@ -4,17 +4,17 @@ const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  output: "standalone",
+  output: "export",
   reactStrictMode: true,
 
-  async rewrites() {
-    return [
-      {
-        source: "/admin",
-        destination: "/admin/index.html",
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/admin",
+  //       destination: "/admin/index.html",
+  //     },
+  //   ];
+  // },
 };
 
 export default withMDX(config);
