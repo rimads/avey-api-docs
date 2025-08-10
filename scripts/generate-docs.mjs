@@ -1,10 +1,27 @@
 import { generateFiles } from "fumadocs-openapi";
 
-void generateFiles({
-  // the OpenAPI schema, you can also give it an external URL.
-  input: ["./avey-api.json"],
-  output: "./content/docs",
-  // we recommend to enable it
-  // make sure your endpoint description doesn't break MDX syntax.
+const target = (process.argv[2] || "").toLowerCase();
+
+const inputs = {
+  procedure: "./json/procedure.json",
+  diagnosis: "./json/diagnosis.json",
+  drug: "./json/drug.json",
+  cpt: "./json/cpt.json",
+  icd: "./json/icd.json",
+  ndc: "./json/ndc.json",
+};
+
+if (!inputs[target]) {
+  console.error(
+    "Usage: node scripts/generate-docs.mjs <procedure|diagnosis|drug|cpt|icd|ndc>"
+  );
+  process.exit(1);
+}
+
+await generateFiles({
+  input: [inputs[target]],
+  output: `./content/docs/${target}`,
   includeDescription: true,
 });
+
+console.log(`Generated docs for ${target}`);

@@ -30,38 +30,125 @@ description: Conversational AI for clinical data gathering and differential diag
 https://api.avey.ai/ddx
 ```
 
+## How to use the API
+
+1. Create a session to initialize patient context and receive the first question.
+   - Endpoint: POST `/ddx/session/`
+   - Provide either `input_text` (e.g., "I have a headache and a fever") or `chief_findings_codes`, plus basic demographics (age, sex) and desired coding systems.
+   - Response includes a `session_id` and the first `question`.
+
+2. Continue the session by submitting answers and retrieving the next question.
+   - Endpoint: POST `/ddx/session/{session_id}`
+   - Send user free text or a structured `answers` object.
+   - The model updates `patient_info` and returns the next `question`. Repeat until `question` is `null`.
+
+3. Generate the final outputs (differential diagnosis, triage, specialist, self‑management advice).
+   - Endpoint: POST `/ddx/diagnose/`
+   - Use the final `patient_info` from the session. You can also call this earlier if you only need quick recommendations, but accuracy may be reduced.
+
+
+### Input Parameters
+
+#### Create Session (POST `/ddx/session/`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `coding_type` | `string` (`icd-10-cm` \| `snomed-ct` \| `aut`) | Desired coding system for concept IDs. Default: `aut`. |
+| `patient_info`<span style={{ color: "red" }}>*</span> | `PatientInfoRequest` | Initial patient info used to start a session. |
+| `input_text` | `string` | Free‑text symptom description. Provide this or `chief_findings_codes` (see below). |
+
+PatientInfoRequest shape:
+```ts
+type PatientInfoRequest = {
+  age: number;           // required
+  sex: 'male' | 'female';// required
+  chief_findings_codes?: string[]; // optional; IDs in the chosen coding_type
+}
+```
+
+Note: Either `input_text` or `chief_findings_codes` must be provided.
+
+#### Continue Session (POST `/ddx/session/{session_id}`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `session_id` | `string` (path) | The session identifier returned from Create Session. |
+| `question_id` | `number` | The ID of the question being answered. |
+| `answers` | `FindingAnswer[]` | Structured answers to the previous question. Either this or `input_text` must be provided. |
+| `input_text` | `string` |  User's free‑text answer. Either this or `answers` must be provided. |
+
+FindingAnswer shape:
+```ts
+type FindingAnswer = {
+  id: string;
+  status: 'present' | 'absent' | 'unsure';
+}
+```
+
+#### Diagnose (POST `/ddx/diagnose/`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `patient_info`<span style={{ color: "red" }}>*</span> | `PatientInfo` | Complete patient profile used for diagnosis. |
+| `differential` | `boolean` (query) | Return differential diagnosis. Default: `true`. |
+| `self_management` | `boolean` (query) | Return self‑management advice. Default: `true`. |
+| `urgency` | `boolean` (query) | Assess urgency level. Default: `true`. |
+| `specialist` | `boolean` (query) | Recommend a specialist. Default: `true`. |
+
+PatientInfo (input) shape:
+```ts
+type PatientInfo = {
+  age: number;
+  sex: 'male' | 'female';
+  chief_findings: Finding[]; // each with status 'present'
+  findings: Finding[];       // all collected findings
+}
+```
+
+Finding shape:
+```ts
+type Finding = {
+  id: string;
+  term: string;
+  status: 'present' | 'absent' | 'unsure';
+}
+```
+
+### Output
+
+#### Create Session (POST `/ddx/session/`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `session_id` | `string` | Session identifier |
+| `question` | `Question` | First question to ask |
+| `patient_info` | `PatientInfo` | Snapshot of patient information |
+
+#### Continue Session (POST `/ddx/session/{session_id}`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `question` | `Question` or `null` | Next question to ask. Null when the session is complete. |
+| `patient_info` | `PatientInfo` | Updated snapshot of patient information |
+
+When `question` is `null`, the Q&A phase is complete. Use the returned `patient_info` for `/ddx/diagnose/`.
+
+#### Diagnose (POST `/ddx/diagnose/`)
+
+| Field | Type | Description |
+|------|------|-------------|
+| `differential_diagnosis` | `Disease[]` or `null` | Ranked possible conditions |
+| `self_management` | `string` or `null` | At‑home guidance |
+| `urgency` | `string` or `null` | One of: Home Treatable, Non‑Urgent, Urgent, Emergency |
+| `specialist` | `string` or `null` | Recommended specialty |
+
+
 ## Data types
 
 ### Coding systems
 
-- `icd-10-cm`: ICD-10 Clinical Modification
-- `snomed-ct`: SNOMED CT Clinical Terms
-- `avey-kr`: Avey Knowledge Representation
-
-### Finding status
-
-- `present`: Patient has symptom
-- `absent`: Patient doesn't have symptom
-- `unsure`: Patient uncertain
-
-### Question types
-
 - **Text**: Standard yes/no questions
 - **Image**: Body maps for location identification
-
-### Urgency levels
-
-- 'Emergency': Immediate medical care required.
-- `Urgent`: Medical attention needed due to problematic presentation
-- `Non-Urgent`: Professional medical support is needed but time is not very critical
-- `Home Treatable`: Self-manageable
-
-## Workflow
-
-1. Create session with basic patient info, and provide chief complaints as free text or using codes
-2. Ask questions and submit answers, using free text or codes, and receive an updated `patient_info` object
-3. Repeat until session complete (`question: null`).
-4. Generate generate diagnosis, specialist, triage, and self_management advice with final `patient_info` object by sending it to /diagnose.
 
 <Mermaid chart={`
 sequenceDiagram
@@ -84,3 +171,4 @@ sequenceDiagram
 
 - `401`: Unauthorized
 - `422`: Validation Error
+
