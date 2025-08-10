@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 text-center">
@@ -8,9 +10,9 @@ export default function NotFound() {
         removed.
       </p>
       <div className="mt-8">
-        <a href="/" className="text-av-blue-900 underline">
+        <Link href="/" className="text-av-blue-900 underline">
           Go back home
-        </a>
+        </Link>
       </div>
     </main>
   );

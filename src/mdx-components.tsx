@@ -2,7 +2,7 @@ import defaultComponents from "fumadocs-ui/mdx";
 import { APIPage } from "fumadocs-openapi/ui";
 import { openapi } from "@/lib/source";
 import type { MDXComponents } from "mdx/types";
-import myDark from "@/theme/my-dark-theme";
+
 import { Mermaid } from "./components/mdx/mermaid";
 import * as TabsComponents from "fumadocs-ui/components/tabs";
 

@@ -1,4 +1,3 @@
-import ClientNav from "@/components/TopBar";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 
 /**
