@@ -22,7 +22,13 @@ export default function Layout({ children }: { children: ReactNode }) {
       <body className="flex flex-col min-h-screen">
         <Provider>
           {" "}
-          <DocsLayout tree={source.pageTree} {...baseOptions}>
+          <DocsLayout
+            sidebar={{
+              prefetch: true,
+            }}
+            tree={source.pageTree}
+            {...baseOptions}
+          >
             <ClientNav />
             {children}
           </DocsLayout>
