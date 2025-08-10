@@ -6,6 +6,7 @@ export default function ClientNav() {
       <Link
         href="https://avey.ai/contact-us"
         className="text-fd-muted-foreground font-semibold text-md"
+        prefetch
       >
         Support
       </Link>
@@ -13,6 +14,7 @@ export default function ClientNav() {
       <Link
         href="https://avey.ai/apis"
         className="flex items-center  gap-1   text-sm font-medium bg-fd-primary text-white dark:text-black pl-4 pr-2  py-1 rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition-all duration-300"
+        prefetch
       >
         Dashboard
         <svg
