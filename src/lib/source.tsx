@@ -11,7 +11,6 @@ export const source = loader({
       if (!file) return node;
 
       const data = file.data;
-      // Use sidebar_title if available, otherwise keep the default title
       if (data.sidebar_title) {
         node.name = data.sidebar_title;
       }
@@ -23,7 +22,7 @@ export const source = loader({
 
             {data.new && (
               <span className="ml-1 text-white  rounded-full bg-av-blue-900 px-2.5 py-0.5 text-xs font-medium text-right">
-                NEW!
+                NEW
               </span>
             )}
           </span>

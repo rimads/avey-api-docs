@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           {" "}
           <DocsLayout
             sidebar={{
-              prefetch: false,
+              prefetch: true,
             }}
             tree={source.pageTree}
             {...baseOptions}
