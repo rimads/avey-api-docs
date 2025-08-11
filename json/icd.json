@@ -1,29 +1,13 @@
 {
   "openapi": "3.1.0",
   "info": { "title": "FastAPI", "version": "0.1.0" },
-  "servers": [
-    {
-      "url": "https://api.avey.ai",
-      "description": "Production API"
-    }
-  ],
+  "servers": [{ "url": "https://api.avey.ai" }],
   "paths": {
-    "/": {
-      "get": {
-        "summary": "Read Root",
-        "operationId": "read_root__get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": { "application/json": { "schema": {} } }
-          }
-        }
-      }
-    },
-    "/classify-note": {
+    "/classify": {
       "post": {
-        "summary": "Classify Note",
-        "operationId": "classify_note_classify_note_post",
+        "summary": "Classify a clinical note or medical condition into ICD10-CM code(s)",
+        "description": "Classify a clinical note or medical condition into ICD10-CM code(s)",
+        "operationId": "classify",
         "requestBody": {
           "content": {
             "application/json": {
@@ -34,7 +18,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful ICD10-CM codes classification",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ICD10CMLabels" }
@@ -52,10 +36,11 @@
         }
       }
     },
-    "/extract-conditions": {
+    "/extract": {
       "post": {
-        "summary": "Extract Conditions",
-        "operationId": "extract_conditions_extract_conditions_post",
+        "summary": "Extract medical conditions from a clinical note",
+        "description": "Extract medical conditions from a clinical note",
+        "operationId": "extract",
         "requestBody": {
           "content": {
             "application/json": {
@@ -66,7 +51,7 @@
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful extraction of medical conditions",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/MedicalConditions" }
@@ -88,7 +73,14 @@
   "components": {
     "schemas": {
       "ClinicalNote": {
-        "properties": { "note": { "type": "string", "title": "Note" } },
+        "properties": {
+          "note": {
+            "type": "string",
+            "title": "Clinical Note",
+            "description": "Unstructured free-text input provided by a healthcare professional. May include symptoms, observations, diagnoses, and other relevant medical context.",
+            "example": "The patient reports shortness of breath and intermittent chest pain over the last 3 days."
+          }
+        },
         "type": "object",
         "required": ["note"],
         "title": "ClinicalNote"
@@ -109,7 +101,9 @@
           "labels": {
             "items": { "type": "string" },
             "type": "array",
-            "title": "Labels"
+            "title": "ICD-10-CM Code List",
+            "description": "List of ICD-10-CM codes identified or assigned based on the clinical note. Each code follows the standard ICD-10-CM format.",
+            "examples": ["R06.02", "R07.9"]
           }
         },
         "type": "object",
@@ -121,8 +115,9 @@
           "conditions": {
             "items": { "type": "string" },
             "type": "array",
-            "title": "Conditions",
-            "description": "Medical condition/disease mentioned in the clinical note"
+            "title": "Extracted Medical Conditions",
+            "description": "List of medical conditions or diseases mentioned in the clinical note. These are plain English terms such as 'diabetes mellitus', 'asthma', or 'hypertension'.",
+            "examples": ["shortness of breath", "chest pain"]
           }
         },
         "type": "object",
