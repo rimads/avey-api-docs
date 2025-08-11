@@ -100,7 +100,8 @@ export function Rate({
           className={cn(
             rateButtonVariants({
               active: activeOpinion === "good",
-            })
+            }),
+            "cursor-pointer hover:bg-fd-accent hover:text-fd-accent-foreground transition-colors duration-200"
           )}
           onClick={() => {
             setOpinion("good");
@@ -114,7 +115,8 @@ export function Rate({
           className={cn(
             rateButtonVariants({
               active: activeOpinion === "bad",
-            })
+            }),
+            "cursor-pointer hover:bg-fd-accent hover:text-fd-accent-foreground transition-colors duration-200"
           )}
           onClick={() => {
             setOpinion("bad");
@@ -174,6 +176,7 @@ export function Rate({
                 }
               }}
             />
+            good
             <button
               type="submit"
               className={cn(buttonVariants({ color: "outline" }), "w-fit px-3")}
