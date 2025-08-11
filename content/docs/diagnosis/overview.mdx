@@ -1,170 +1,83 @@
 ---
 title: Overview
-description: Conversational AI for clinical data gathering and differential diagnosis generation
+description: Conversational AI for clinical data gathering and differential diagnosis generation.
 ---
 
-## Use Diagnostic API For
+The Diagnosis API enables conversational, structured clinical data gathering and generates differential diagnoses, triage recommendations, specialist referrals, and self-management advice.
 
-<Cards>
-  <Card
-    title="Differential Diagnosis"
-    description="Get a list of medical conditions the patient is suffering from"
-  />
-  <Card
-    title="Self Management Advice"
-    description="Provides practical guidance to help individuals manage their symptoms safely at home"
-  />
-  <Card
-    title="Triage Recommendation"
-    description="Suggests the appropriate level of care based on patient input."
-  />
-  <Card
-    title="Specialist Recommendation"
-    description="Recommends the appropriate medical specialty to visit based on patient input."
-  />
+## When to use
+- To interactively collect patient information via text or structured answers.
+- To produce a ranked list of possible conditions (differential diagnosis).
+- To provide self-management guidance and appropriate care level recommendations.
+- To identify the medical specialty most relevant to the patient’s presentation.
 
-</Cards>
-## Base URL
+## Capabilities
+- Differential diagnosis generation from patient symptoms and context.
+- Self-management advice based on collected patient data.
+- Triage recommendation to determine care urgency.
+- Specialist recommendation based on likely conditions.
 
-```
-https://api.avey.ai/ddx
-```
+## Endpoints at a glance
+| Method | Path                       | Purpose |
+|--------|----------------------------|---------|
+| POST   | `/ddx/session/`             | Create a session, initialize patient context, and receive the first question. |
+| POST   | `/ddx/session/{session_id}` | Continue an existing session by submitting answers and receiving the next question. |
+| POST   | `/ddx/diagnose/`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
 
-## Endpoints
-
-### 1. Create Session
-
-**POST** `/diagnosis/session`
-
-```json
-{
-  "coding_type": "snomed-ct",
-  "allow_images": true,
-  "patient_info": {
-    "age": 34,
-    "sex": "female",
-    "chief_findings_codes": ["snomed-ct:247345003"]
-  }
-}
-```
-
-**Response:**
-
-```json
-{
-  "session_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-  "question": {
-    "id": 1,
-    "content": {
-      "type": "text",
-      "text": "Do you have a fever?",
-      "target_concept": {
-        "id": "snomed-ct:49727002",
-        "term": "Fever"
-      }
-    }
-  },
-  "patient_info": {
-    /* updated patient info */
-  }
-}
-```
-
-### 2. Update Session
-
-**POST** `/diagnosis/session/{session_id}`
-
-```json
-{
-  "question_id": 1,
-  "answers": [
-    {
-      "id": "snomed-ct:49727002",
-      "status": "present"
-    }
-  ],
-  "image_answers": {
-    "img_head_left": "present"
-  }
-}
-```
-
-**Response:** Next question or `null` if session complete.
-
-### 3. Generate Diagnosis
-
-**POST** `/diagnosis/diagnose`
-
-```json
-{
-  "patient_info": {
-    "age": 34,
-    "sex": "female",
-    "chief_findings": [
-      {
-        "id": "snomed-ct:247345003",
-        "term": "Headache",
-        "status": "present"
-      }
-    ],
-    "findings": [
-      /* all collected findings */
-    ]
-  }
-}
-```
-
-**Response:**
-
-```json
-{
-  "differential_diagnosis": [
-    {
-      "id": "snomed-ct:73211009",
-      "term": "Migraine",
-      "description": "A primary headache disorder...",
-      "treatment": "Pain management, lifestyle modifications..."
-    }
-  ],
-  "self_management": "Rest in a quiet, dark room...",
-  "urgency": "Non-Urgent"
-}
-```
-
-## Data Types
-
-### Coding Systems
-
-- `icd-10-cm`: ICD-10 Clinical Modification
-- `snomed-ct`: SNOMED CT Clinical Terms
-- `avey-kr`: Avey Knowledge Representation
-
-### Finding Status
-
-- `present`: Patient has symptom
-- `absent`: Patient doesn't have symptom
-- `unsure`: Patient uncertain
-
-### Question Types
-
-- **Text**: Standard yes/no questions
-- **Image**: Body maps for location identification
-
-### Urgency Levels
-
-- 'Emergency': Immediate medical care required.
-- `Urgent`: Medical attention needed due to problematic presentation
-- `Non-Urgent`: Professional medical support is needed but time is not very critical
-- `Home Treatable`: Self-manageable
+Full details and "Try it" functionality are available in the [API Reference](#api-reference).
 
 ## Workflow
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant Patient
+    participant AveyDDX as Avey DDX
+    participant AveySession as Avey Session Manager
+    participant AveyQNA as Avey QNA Engine
 
-1. Create session with basic patient info, and provide chief complaints as free text or using codes
-2. Ask questions and submit answers, using free text or codes, and receive an updated `patient_info` object
-3. Repeat until session complete (`question: null`).
-4. Generate generate diagnosis, specialist, triage, and self_management advice with final `patient_info` object by sending it to /diagnose.
+    Patient->>AveySession: Create session with patient details and chief symptoms
+    AveySession->>AveyQNA: Start QNA for patient session
+    loop QNA Loop
+        AveyQNA->>Patient: Question
+        Patient->>AveyQNA: Answer
+    end
+    AveyQNA->>AveyDDX: Request differential diagnosis and specialist recommendation
+    AveyDDX->>Patient: Present differential diagnosis and recommendations
+    AveySession-->AveySession: Clean up session data
+`}
+/>
 
-## Error Codes
+## Quick example
+```bash
+curl -X POST "https://api.avey.ai/ddx/session/" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "input_text": "I have a headache and a fever",
+    "age": 35,
+    "sex": "male",
+    "coding_systems": ["icd10"]
+  }'
+```
 
-- `401`: Unauthorized
-- `422`: Validation Error
+Example response (truncated):
+
+```json
+{
+  "session_id": "abc123",
+  "question": "How long have you had these symptoms?"
+}
+
+```
+
+## Key points before using
+
+
+- **Authentication**: Bearer token. 
+- **Accuracy improves with complete Q&A cycles**: early calls to /ddx/diagnose/ may reduce precision.
+
+## API Reference
+- [Create Session](/docs/diagnosis/new_diagnosis_ddx_diagnose__post)
+- [Continue Session](/docs/diagnosis/update_session_ddx_session__session_id__post)
+- [Diagnose](/docs/diagnosis/new_diagnosis_ddx_diagnose__post)
+

@@ -43,6 +43,4 @@ Submits an answer to the previous question and retrieves the next one.
 5.  If more questions are needed, a new `question` object is returned.
 6.  If the model converges towards a final diagnosis, the `question` field in the response will be. At this point, you should use the final `patient_info` object to call the main `/diagnose` endpoint.
 
-
-
-<APIPage document={"avey-api.json"} operations={[{"path":"/ddx/session/{session_id}","method":"post"}]} webhooks={[]} hasHead={false} />
+<APIPage document={"json/diagnosis.json"} operations={[{"path":"/ddx/session/{session_id}","method":"post"}]} webhooks={[]} hasHead={false} />
