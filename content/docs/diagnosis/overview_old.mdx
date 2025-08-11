@@ -1,0 +1,73 @@
+---
+title: Overview old
+description: Conversational AI for clinical data gathering and differential diagnosis generation
+---
+
+## Use diagnostic API for
+
+<Cards>
+  <Card
+    title="Differential diagnosis"
+    description="Get a list of medical conditions the patient is suffering from"
+  />
+  <Card
+    title="Self management advice"
+    description="Provides practical guidance to help individuals manage their symptoms safely at home"
+  />
+  <Card
+    title="Triage recommendation"
+    description="Suggests the appropriate level of care based on patient input."
+  />
+  <Card
+    title="Specialist recommendation"
+    description="Recommends the appropriate medical specialty to visit based on patient input."
+  />
+
+</Cards>
+
+
+## How to use the API
+
+1. Create a session to initialize patient context and receive the first question.
+   - Endpoint: POST `/ddx/session/`
+   - Provide either `input_text` (e.g., "I have a headache and a fever") or `chief_findings_codes`, plus basic demographics (age, sex) and desired coding systems.
+   - Response includes a `session_id` and the first `question`.
+
+2. Continue the session by submitting answers and retrieving the next question.
+   - Endpoint: POST `/ddx/session/{session_id}`
+   - Send user free text or a structured `answers` object.
+   - The model updates `patient_info` and returns the next `question`. Repeat until `question` is `null`.
+
+3. Generate the final outputs (differential diagnosis, triage, specialist, self‑management advice).
+   - Endpoint: POST `/ddx/diagnose/`
+   - Use the final `patient_info` from the session. You can also call this earlier if you only need quick recommendations, but accuracy may be reduced.
+
+
+
+### Coding systems
+
+- **Text**: Standard yes/no questions
+- **Image**: Body maps for location identification
+
+<Mermaid chart={`
+sequenceDiagram
+    participant Patient
+    participant Avey DDX
+    participant Avey Session Manager
+    participant Avey QNA Engine
+
+    Patient->>Avey Session Manager: Create session with patient details and chief symptoms
+    Avey Session Manager->>Avey QNA Engine: Start QNA for patient session
+    loop QNA Loop
+        Avey QNA Engine->>Patient: Question
+        Patient->>Avey QNA Engine: Answer
+    end
+    Avey QNA Engine->>Avey DDX: Request differential diagnosis and specialist recommendation.
+    Avey DDX->>Patient: Present differential diagnosis and recommendations
+    Avey Session Manager-->Avey Session Manager: Clean up session data`}/>
+
+## Error codes
+
+- `401`: Unauthorized
+- `422`: Validation Error
+
