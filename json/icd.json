@@ -83,7 +83,8 @@
         },
         "type": "object",
         "required": ["note"],
-        "title": "ClinicalNote"
+        "title": "ClinicalNote",
+        "description": "Schema representing an unstructured clinical note provided by a healthcare professional.\n\nThis note typically contains free-text observations, reported symptoms, diagnostic impressions,\nand other relevant medical information used for downstream medical processing or coding."
       },
       "HTTPValidationError": {
         "properties": {
@@ -108,7 +109,8 @@
         },
         "type": "object",
         "required": ["labels"],
-        "title": "ICD10CMLabels"
+        "title": "ICD10CMLabels",
+        "description": "Schema representing a list of ICD-10-CM diagnostic codes derived from a clinical note.\n\nThese codes reflect structured medical classifications assigned based on the content\nof the unstructured clinical note."
       },
       "MedicalConditions": {
         "properties": {
@@ -122,7 +124,8 @@
         },
         "type": "object",
         "required": ["conditions"],
-        "title": "MedicalConditions"
+        "title": "MedicalConditions",
+        "description": "Schema representing medical conditions extracted from a clinical note.\n\nThese conditions are plain-language descriptors (not formal codes) and typically correspond\nto symptoms or diagnoses mentioned in the unstructured text."
       },
       "ValidationError": {
         "properties": {
