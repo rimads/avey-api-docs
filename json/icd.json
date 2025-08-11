@@ -1,0 +1,148 @@
+{
+  "openapi": "3.1.0",
+  "info": { "title": "FastAPI", "version": "0.1.0" },
+  "servers": [
+    {
+      "url": "https://api.avey.ai",
+      "description": "Production API"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Read Root",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        }
+      }
+    },
+    "/classify-note": {
+      "post": {
+        "summary": "Classify Note",
+        "operationId": "classify_note_classify_note_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClinicalNote" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ICD10CMLabels" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/extract-conditions": {
+      "post": {
+        "summary": "Extract Conditions",
+        "operationId": "extract_conditions_extract_conditions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ClinicalNote" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedicalConditions" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ClinicalNote": {
+        "properties": { "note": { "type": "string", "title": "Note" } },
+        "type": "object",
+        "required": ["note"],
+        "title": "ClinicalNote"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ICD10CMLabels": {
+        "properties": {
+          "labels": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Labels"
+          }
+        },
+        "type": "object",
+        "required": ["labels"],
+        "title": "ICD10CMLabels"
+      },
+      "MedicalConditions": {
+        "properties": {
+          "conditions": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Conditions",
+            "description": "Medical condition/disease mentioned in the clinical note"
+          }
+        },
+        "type": "object",
+        "required": ["conditions"],
+        "title": "MedicalConditions"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
