@@ -1,13 +1,12 @@
 ---
-title: Getting Started
+title: Getting Started with Avey
+sidebar_title: Getting Started
+description: Overview of the Avey API platform and initial integration steps.
 ---
 
-Welcome to the Avey API documentation. Our suite of APIs provides comprehensive medical coding, diagnostic assistance, and clinical decision support capabilities for healthcare applications.
+The Avey API platform provides advanced healthcare capabilities, including medical coding for diagnoses, procedures, and medications. It supports the extraction of clinical conditions from unstructured text, mapping to ICD-10 standards, validation of drugs and procedures, triage recommendations, and assessment of treatment compatibility.
 
-## Available APIs
-
-
-
+## What we offer:
 <Cards>
   <Card
     title="Diagnostic API"
@@ -41,18 +40,84 @@ Welcome to the Avey API documentation. Our suite of APIs provides comprehensive 
   />
 </Cards>
 
-## Quick Start
+## Onboarding Steps
 
-### Authentication
+1. **Request Access**  
+   Request access to the Avey API platform by contacting support@avey.ai.
 
-All APIs require authentication via API key. Include your API key in the request headers:
+2. **Obtain API Credentials**  
+   Upon approval, an API key (Bearer token) will be provided. This token must be stored securely and should never be exposed in public client-side applications.
 
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
+3. **Review Core Concepts**  
+   Familiarize yourself with the authentication process before integration.
+
+4. **Validate Connectivity**  
+   Use the Quick Example below to confirm successful authentication and basic request processing.
+
+5. **Proceed to Full Integration**  
+   Refer to the API Reference for comprehensive endpoint documentation and implementation guidelines.
+
+---
+
+## Prerequisites
+
+- **API Key (Bearer Token)** issued by Avey  
+- An HTTP client (e.g., cURL, Postman, or a server-side HTTP library)  
+
+---
+
+## Core Concepts
 
 ### Base URL
 
+Base URL for all Avey APIs:
+
 ```
-https://api.avey.ai/ddx
+https://api.avey.ai
 ```
+
+
+### Authentication
+Avey APIs require Bearer token authentication. The token must be included in the `Authorization` header of each request:
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+
+
+
+---
+
+## Quick Example
+
+The following example demonstrates the **Extract Conditions** API. This endpoint accepts a clinical note and returns a list of normalized medical conditions.
+
+```bash
+curl -X POST "https://api.avey.ai/extract-conditions" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "clinical_note": "Patient presents with hypertension and type 2 diabetes."
+  }'
+```
+### Expected Response (truncated):
+
+```json
+{
+  "conditions": [
+    { "name": "Hypertension" },
+    { "name": "Type 2 diabetes mellitus" }
+  ]
+}
+```
+
+## Next steps
+
+
+- [Diagnosis API Overview](/diagnosis/overview)
+- [Procedure API Overview](/procedure/overview)
+- [Drug API Overview](/drug/overview)
+- [ICD API Overview](/icd/overview)
+- [CPT API Overview](/cpt/overview)
+- [NDC API Overview](/ndc/overview)
