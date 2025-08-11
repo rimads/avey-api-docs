@@ -176,7 +176,6 @@ export function Rate({
                 }
               }}
             />
-            good
             <button
               type="submit"
               className={cn(buttonVariants({ color: "outline" }), "w-fit px-3")}
