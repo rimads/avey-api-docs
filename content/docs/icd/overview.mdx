@@ -5,56 +5,45 @@ sidebar_title: Overview
 
 The ICD API transforms unstructured clinical text into structured, standardized data by identifying medical conditions and assigning them corresponding ICD-10 codes.  
 It streamlines coding workflows, reduces manual effort, and ensures consistency across healthcare systems.
-
-## Use Cases
-
+## Use cases
 <Cards>
   <Card
     title="Automated ICD Coding"
     description="Manual coding slows workflows. Instantly convert clinical text into ICD-10 codes with a single API call."
   />
   <Card
-    title="Billing & Claims"
+    title="Billing & claims"
     description="Claim rejections often stem from coding errors. Ensure accurate ICD coding for faster, cleaner reimbursement."
   />
   <Card
-    title="Data Standardization"
+    title="Data standardization"
     description="Inconsistent diagnosis terms cause system mismatches. Standardize all records using ICD-10 codes."
   />
   <Card
-    title="Decision Support"
+    title="Decision support"
     description="Decision tools need structured data. Supply them with accurate, codified condition outputs."
   />
 </Cards>
 
 
-## Endpoints
-| Method | Path        | Purpose |
-|--------|-------------|---------|
-| POST   | `/extract`  | Extract medical conditions from a clinical note. |
-| POST   | `/classify` | Classify a clinical note or condition into ICD‑10 codes. |
-
-Full details and "Try it" functionality are available in the [API Reference](#api-reference).
 
 ## How to use the API
+Call the ICD API to either extract conditions or return ICD-10 codes.
 
-Provide a single clinical note as input. Use `POST /extract` to get conditions mentioned in the note, or `POST /classify` to get ICD‑10 codes that represent those conditions.
+<Cards>
+  <Card title="Extract">
+    Send free text and receive a list of identified clinical conditions.
+  </Card>
+  <Card title="Classify">
+    Send free text and receive ICD-10 codes for the conditions in the text.
+  </Card>
+</Cards>
 
-### Input Parameters
+<Callout type="info">Classification may include both generic and complete/specific ICD‑10 codes when available.</Callout>
 
-| Field                                                  | Type     | Description |
-|-------------------------------------------------------|----------|-------------|
-| `clinical_note`<span style={{ color: "red" }}>*</span> | `string` | Full, plain‑text clinical note to analyze. |
+For complete specifications and live testing, visit the [API Reference](#api-reference).
 
-### Output
-
-- Extract  
-  Returns: `conditions: string[]` — medical conditions/diseases mentioned in the note.
-
-- Classify  
-  Returns: `icd10: string[]` — ICD‑10 codes corresponding to the note’s conditions. May include both generic and specific codes.
-
-## How it works
+## Architecture
 
 The ICD API routes your clinical note through Avey’s coding pipeline. Avey parses the note, identifies clinical conditions, and classifies them into standardized ICD‑10 codes using Avey’s internal ICD Engine.
 
@@ -75,34 +64,14 @@ sequenceDiagram
 `}
 />
 
-## Base URL
 
-`https://api.avey.ai`
+## Requirements
+- **Authentication**: The API uses a bearer token for [authentication](/#authentication).
 
-## Quick example
 
-```bash
-curl -X POST "https://api.avey.ai/classify" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{
-    "clinical_note": "Patient presents with fever and productive cough for 3 days."
-  }'
-```
+## API reference
 
-Example response (truncated):
-
-```json
-{
-  "icd10": ["J18.9", "R50.9"]
-}
-```
-
-## Notes
-
-- Authentication: Bearer token.
-- Classification may include both generic and complete/specific ICD‑10 codes when available.
-
-## API Reference
-- [Extract](/icd/extract)
-- [Classify](/icd/classify)
+<Cards>
+  <Card title="Extract" href="/icd/extract"/> 
+  <Card title="Classify" href="/icd/classify"/> 
+</Cards>
