@@ -1,246 +1,110 @@
 ---
 title: MCP
-description: Model Context Protocol integration for AI-powered differential diagnosis
+description: Model Context Protocol integration for Avey Diagnosis APIs
 new: true
 ---
 
-## MCP Integration for Diagnosis APIs
+## Introduction
+The Avey Model Communication Protocol (MCP) provides a standardized, secure way to access the Diagnosis API.
+It enables applications to manage full diagnostic sessions — from initiating patient interviews to retrieving structured assessments — through a single, consistent integration layer.
 
-The Avey Diagnosis APIs provide conversational AI capabilities for clinical data gathering and differential diagnosis generation. This guide explains how to integrate these APIs using the Model Context Protocol (MCP) framework.
+### Using MCP with the Diagnosis API offers:
+<Cards className="grid grid-cols-3">
+  <Card title="Unified access" >
+    All session management, question flow, and final results handled over one protocol.
+  </Card>
+  <Card title="Flexible workflows" >
+    Call tools directly from your code or delegate flow control to an LLM.
+  </Card>
+  <Card title="Seamless scaling" >
+    Same integration pattern across usage tiers, from development to enterprise.
+  </Card>
+</Cards>
 
-## Overview
+## Prerequisites for this guide
 
-The diagnosis system enables AI agents to:
+- Avey API key with Diagnosis API access.
+- Prior knowledge of [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) and [MCP Clients](https://modelcontextprotocol.io/quickstart/client) .
 
-- Conduct interactive symptom assessments through structured conversations
-- Generate differential diagnoses with confidence scores
-- Provide triage recommendations and urgency assessments  
-- Suggest appropriate medical specialists
-- Offer self-management advice for patients
+## Configuration
+Use the following details to connect your MCP client to the Avey Diagnosis API.
+You can also experiment and validate your setup using the [MCP Inspector](https://modelcontextprotocol.io/inspector) before integrating it into your workflow.
 
-## MCP Integration Architecture
 
-<Mermaid chart={`
-graph LR
-    A[MCP Client] --> B[Avey Diagnosis API]
-    B --> C[Session Manager]
-    B --> D[QNA Engine]
-    B --> E[Diagnosis Engine]
-    
-    C --> F[Patient Session]
-    D --> G[Question Generation]
-    E --> H[Differential Diagnosis]
-    E --> I[Specialist Recommendation]
-    E --> J[Triage Assessment]
-    E --> K[Self-Management Advice]
-    `}/>
-
-## Core Workflow
-
-### 1. Session Initialization
-
-Start a new diagnostic session with basic patient information and chief complaints:
-
-```json
-{
-  "coding_type": "icd-10-cm",
-  "allow_images": true,
-  "patient_info": {
-    "age": 34,
-    "sex": "female",
-    "chief_findings": [
-      {
-        "concept": {
-          "id": "25064002",
-          "name": "Headache",
-          "coding_system": "snomed-ct"
-        },
-        "status": "present"
-      }
-    ],
-    "findings": []
-  },
-  "input_text": "Patient reports severe headache for 3 days"
-}
+### MCP server URL
+```http
+https://mcp.avey.ai/ddx
 ```
 
-### 2. Interactive Question Loop
+### Authentication
 
-The system will return questions to gather more information. Continue asking questions until `question` is `null`:
-
-```json
-{
-  "session_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-  "question": {
-    "id": "q001",
-    "text": "Is the headache throbbing or pounding?",
-    "type": "text",
-    "selections": [
-      {"selection_id": "yes", "text": "Yes"},
-      {"selection_id": "no", "text": "No"},
-      {"selection_id": "unsure", "text": "I'm not sure"}
-    ]
-  },
-  "patient_info": { /* updated patient data */ }
-}
+```http
+Authorization: Bearer <your-api-key>
 ```
 
-### 3. Answer Submission
+### Quickstart
 
-Submit answers to progress through the assessment:
+<div className="fd-steps">
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 1 — Obtain your API key
+Email **support@avey.ai** to receive your API key.
+    </div> 
+  </div>
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 2 — Test with MCP Inspector
+    Use the [MCP Inspector](https://modelcontextprotocol.io/inspector) to validate your setup and check that tools are available.
+    </div> 
+  </div>
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 3 — Integrate  
+Run a test call, then proceed with your integration.
+    </div> 
+  </div>
+</div>
 
-```json
-{
-  "question_id": "q001",
-  "answer": {
-    "selection_id": "yes",
-    "text": "Yes, it's a throbbing pain"
-  }
-}
-```
 
-### 4. Final Diagnosis
 
-Once all questions are answered, generate the final diagnosis and recommendations:
+## Tools
 
-```json
-{
-  "patient_info": { /* complete patient data */ },
-  "differential": true,
-  "self_management": true,
-  "urgency": true,
-  "specialist": true
-}
-```
+| Tool Name | Purpose | API  |
+|-----------|---------|---------------------|
+| `start_new_session` | Starts a new diagnostic interview. | [Create a session](./new_session__post.mdx) |
+| `process_session_update` | Continues the diagnostic interview based on the user's answer. | [Update a session](./update_session__session_id__post.mdx) |
+| `create_diagnosis` | Generates the final clinical summary and recommendations. | [Diagnose](./new_diagnosis_diagnosis__post.mdx) |
 
-## Data Types and Coding Systems
+## Resources
 
-### Supported Coding Systems
+- [MCP Inspector](https://modelcontextprotocol.io/inspector)
+- [MCP Client](https://modelcontextprotocol.io/quickstart/client)
+- [MCP Server](https://modelcontextprotocol.io/quickstart/server)
 
-- **ICD-10-CM**: ICD-10 Clinical Modification codes
-- **SNOMED CT**: SNOMED Clinical Terms  
-- **Avey-KR**: Avey Knowledge Representation
 
-### Finding Status Values
+## FAQs 
 
-- `present`: Patient has the symptom
-- `absent`: Patient doesn't have the symptom  
-- `unsure`: Patient is uncertain about the symptom
+<Accordions type="single" >
+  <Accordion title="Can I use the Avey MCP without an MCP client?">
+    While it’s possible to call the API endpoints directly, using a supported MCP client 
+    (such as [FastMCP](https://modelcontextprotocol.io/quickstart/client)) is strongly 
+    recommended for streamlined session handling and tool orchestration.
+  </Accordion>
 
-### Question Types
+  <Accordion title="What’s the difference between calling the Diagnosis API directly and using MCP?">
+    MCP provides a unified interface for session creation, question flow, and diagnosis 
+    generation, reducing the need for manual state management.
+  </Accordion>
 
-- **Text**: Standard yes/no/multiple choice questions
-- **Image**: Body maps for anatomical location identification
+  <Accordion title="Is there a sandbox or testing environment?">
+    Yes. You can experiment with your configuration using the 
+    [MCP Inspector](https://modelcontextprotocol.io/inspector) before moving to production.
+  </Accordion>
 
-### Urgency Classifications
+  <Accordion title="Which authentication method is supported?">
+    The Avey MCP uses Bearer token authentication. Include your API key in the 
+    `Authorization` header.
+  </Accordion>
+</Accordions>
 
-- `Emergency`: Immediate medical care required
-- `Urgent`: Medical attention needed due to problematic presentation
-- `Non-Urgent`: Professional medical support needed but not time-critical
-- `Home Treatable`: Self-manageable condition
-
-## MCP Tool Implementations
-
-### Session Management Tools
-
-#### create_diagnosis_session
-
-Creates a new diagnostic session with patient information.
-
-**Parameters:**
-
-- `patient_age` (integer): Patient age in years (0-130)
-- `patient_sex` (string): "male", "female", or "other"  
-- `chief_complaints` (array): Array of primary symptoms
-- `coding_system` (string): Preferred coding system
-- `allow_images` (boolean): Whether to allow image-based questions
-
-#### update_diagnosis_session
-
-Updates an existing session with question answers.
-
-**Parameters:**
-
-- `session_id` (string): Unique session identifier
-- `question_id` (string): ID of the question being answered
-- `answer` (object): Answer object with selection and optional text
-
-#### get_diagnosis
-
-Generates final diagnosis and recommendations from completed session.
-
-**Parameters:**
-
-- `patient_info` (object): Complete patient information object
-- `include_differential` (boolean): Include differential diagnosis
-- `include_specialist` (boolean): Include specialist recommendations
-- `include_triage` (boolean): Include urgency/triage assessment
-- `include_self_care` (boolean): Include self-management advice
-
-## Example MCP Implementation
-
-```python
-import asyncio
-import json
-from typing import Dict, List, Optional, Any
-
-class AveyDiagnosisMCP:
-    def __init__(self, api_key: str, base_url: str = "https://api.avey.ai"):
-        self.api_key = api_key
-        self.base_url = base_url
-        self.headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        }
-    
-    async def create_session(self, patient_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Create a new diagnostic session"""
-        url = f"{self.base_url}/ddx/session"
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=patient_info, headers=self.headers)
-            return response.json()
-    
-    async def update_session(self, session_id: str, answer: Dict[str, Any]) -> Dict[str, Any]:
-        """Update session with question answer"""
-        url = f"{self.base_url}/ddx/session/{session_id}"
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=answer, headers=self.headers)
-            return response.json()
-    
-    async def get_diagnosis(self, patient_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Generate final diagnosis and recommendations"""
-        url = f"{self.base_url}/ddx/diagnose"
-        async with httpx.AsyncClient() as client:
-            response = await client.post(url, json=patient_info, headers=self.headers)
-            return response.json()
-    
-    async def conduct_full_assessment(self, initial_patient_info: Dict[str, Any]) -> Dict[str, Any]:
-        """Conduct complete diagnostic assessment"""
-        # Create session
-        session_data = await self.create_session(initial_patient_info)
-        session_id = session_data["session_id"]
-        
-        # Interactive question loop
-        while session_data.get("question"):
-            question = session_data["question"]
-            
-            # Present question to user/agent and get answer
-            answer = await self.get_answer_for_question(question)
-            
-            # Submit answer and get next question
-            session_data = await self.update_session(session_id, {
-                "question_id": question["id"],
-                "answer": answer
-            })
-        
-        # Generate final diagnosis
-        diagnosis = await self.get_diagnosis(session_data["patient_info"])
-        return diagnosis
-    
-    async def get_answer_for_question(self, question: Dict[str, Any]) -> Dict[str, Any]:
-        """Get answer for a question (implement based on your UI/logic)"""
-        # This would typically involve presenting the question to a user
-        # or using an AI agent to answer based on available information
-        pass
-```
 
