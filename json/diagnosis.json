@@ -16,7 +16,7 @@
       "post": {
         "tags": ["New Diagnosis"],
         "summary": "Create a Clinical Diagnosis",
-        "description": "Generates a comprehensive clinical diagnosis and patient recommendations based on a patient's collected information. This endpoint takes a complete patient profile and returns a set of potential diagnoses and care recommendations.\n\n### Query parameters can be used to toggle specific features:\n\n* Differential Diagnosis\n* Urgency (Triage)\n* Specialist Recommendation\n* Suggested Health Management Advice\n<br>",
+        "description": "Generates a comprehensive clinical diagnosis and patient recommendations based on a patient's collected information. This endpoint takes a complete patient profile and returns a set of potential diagnoses and care recommendations.\n\n### Query parameters can be used to toggle specific features:\n\n* Differential Diagnosis\n* Urgency (Triage)\n* Specialist Recommendation\n* Suggested Health Management Advice\n",
         "operationId": "new_diagnosis_ddx_diagnose__post",
         "security": [
           {
@@ -503,7 +503,7 @@
             "examples": [34]
           },
           "sex": {
-            "$ref": "#/components/schemas/Sex",
+            "allOf": [{ "$ref": "#/components/schemas/Sex" }],
             "description": "The biological sex of the patient."
           },
           "chief_findings": {
@@ -589,7 +589,7 @@
             "examples": [34]
           },
           "sex": {
-            "$ref": "#/components/schemas/Sex",
+            "allOf": [{ "$ref": "#/components/schemas/Sex" }],
             "description": "The biological sex of the patient."
           },
           "chief_findings": {
@@ -675,7 +675,7 @@
             "examples": [34]
           },
           "sex": {
-            "$ref": "#/components/schemas/Sex",
+            "allOf": [{ "$ref": "#/components/schemas/Sex" }],
             "description": "The biological sex of the patient."
           },
           "chief_findings_codes": {
@@ -732,7 +732,6 @@
       "Sex": {
         "type": "string",
         "enum": ["male", "female"],
-        "title": "Sex",
         "description": "Biological sex of the patient."
       },
       "TextQuestion": {
