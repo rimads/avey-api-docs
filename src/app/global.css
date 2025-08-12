@@ -17,7 +17,6 @@
     --color-blue-400: #77E0FF;
     --color-red-400: #ED7273;
     --color-yellow-400: #FFDE6F;
-    /* --color-fd-info: #004766 !important; */
 
   }
 
@@ -28,10 +27,17 @@
   }
 
 
+
+
+
 html.light{
   --color-fd-primary: #171717!important;
   --color-fd-foreground: #171717 !important;
+  --color-fd-info: var(--color-blue-600);
+
 }
 
-
+html.dark{
+  --color-fd-info: var(--color-blue-400);
+}
 
