@@ -1,21 +1,34 @@
 ---
-title: ICD API
+title: What is the ICD API?
 sidebar_title: Overview
 ---
 
-The ICD API converts a clinician’s free‑text note into structured medical concepts and ICD‑10 codes.
+The ICD API transforms unstructured clinical text into structured, standardized data by identifying medical conditions and assigning them corresponding ICD-10 codes.  
+It streamlines coding workflows, reduces manual effort, and ensures consistency across healthcare systems.
 
-## When to use
-- Convert documentation into billable ICD‑10 codes.
-- Extract medical conditions/diseases mentioned in a clinical note.
-- Support post‑visit coding workflows.
+## Use Cases
 
-## Capabilities
-- Condition extraction from unstructured text.
-- ICD‑10 classification of notes/conditions.
-- Returns both generic (e.g., `A00`) and complete/specific codes (e.g., `A00.0`) when available.
+<Cards>
+  <Card
+    title="Automated ICD Coding"
+    description="Manual coding slows workflows. Instantly convert clinical text into ICD-10 codes with a single API call."
+  />
+  <Card
+    title="Billing & Claims"
+    description="Claim rejections often stem from coding errors. Ensure accurate ICD coding for faster, cleaner reimbursement."
+  />
+  <Card
+    title="Data Standardization"
+    description="Inconsistent diagnosis terms cause system mismatches. Standardize all records using ICD-10 codes."
+  />
+  <Card
+    title="Decision Support"
+    description="Decision tools need structured data. Supply them with accurate, codified condition outputs."
+  />
+</Cards>
 
-## Endpoints at a glance
+
+## Endpoints
 | Method | Path        | Purpose |
 |--------|-------------|---------|
 | POST   | `/extract`  | Extract medical conditions from a clinical note. |
