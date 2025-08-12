@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/cn";
 import { buttonVariants } from "fumadocs-ui/components/ui/button";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { ThumbsDown, ThumbsUp, Loader2 } from "lucide-react";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
 import {
   Collapsible,
@@ -181,6 +181,7 @@ export function Rate({
               className={cn(buttonVariants({ color: "outline" }), "w-fit px-3")}
               disabled={isPending}
             >
+              {isPending && <Loader2 className="size-4 animate-spin mr-2" />}
               Submit
             </button>
           </form>

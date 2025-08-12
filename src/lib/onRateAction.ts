@@ -131,7 +131,11 @@ export async function onRateAction(
     discussion = result.discussion;
   }
 
+  if (!discussion?.url) {
+    throw new Error('Failed to create or retrieve GitHub discussion');
+  }
+
   return {
-    githubUrl: discussion?.url ?? '',
+    githubUrl: discussion.url,
   };
 }
