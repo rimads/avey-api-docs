@@ -49,20 +49,26 @@ The ICD API routes your clinical note through Avey’s coding pipeline. Avey par
 
 <Mermaid
   chart={`
-sequenceDiagram
-    participant Developer
-    participant Avey ICD API
-    participant Avey Conditions Classifier
-    participant Avey ICD Engine
+  %%{init: { "sequence": { "actorMargin": 140, "messageMargin": 36, "diagramMarginY": 24, "noteMargin": 16, "boxMargin": 16, "mirrorActors": false }}}%%
 
-    Developer->>Avey ICD API: Send Clinical Note
-    Avey ICD API->>Avey Conditions Classifier: Identify conditions/diseases
-    Avey Conditions Classifier-->>Avey ICD API: conditions[]
-    Avey Conditions Classifier->>Avey ICD Engine: Map conditions to ICD-10
-    Avey ICD Engine-->>Avey ICD API: icd10[]
-    Avey ICD API-->>Developer: conditions[] and/or icd10[]
+sequenceDiagram
+  participant Client
+  participant Extract as ICD Extract API
+  participant Classify as ICD Classify API
+
+  alt Extract conditions
+    Client->>Extract: POST /icd/extract (clinical note text)
+    Extract-->>Client: conditions[string] (list of extracted conditions)
+  else Classify to ICD-10
+    Client->>Classify: POST /icd/classify (clinical note text)
+    Classify-->>Client: icd10[string] (list of ICD-10 codes)
+  end
 `}
 />
+
+
+
+
 
 
 ## Requirements

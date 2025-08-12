@@ -25,7 +25,23 @@ export function Mermaid({ chart }: { chart: string }) {
           securityLevel: "loose",
           fontFamily: "inherit",
           themeCSS: "margin: 1.5rem auto 0;",
-          theme: resolvedTheme === "dark" ? "dark" : "default",
+          theme: "base",
+          themeVariables: {
+            // Brand colors
+            primaryColor: "transparent",
+            primaryBorderColor:
+              resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            primaryTextColor: resolvedTheme === "dark" ? "#ffffff" : "#121212",
+            // Node styles
+            nodeTextColor: resolvedTheme === "dark" ? "#ffffff" : "#121212",
+            fontSize: "14px",
+
+            // Edge styles
+            lineColor: resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            edgeLabelBackground: "transparent",
+            // Background
+            background: "transparent",
+          },
         });
 
         const { svg, bindFunctions } = await mermaid.render(
