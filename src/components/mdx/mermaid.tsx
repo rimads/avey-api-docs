@@ -39,6 +39,26 @@ export function Mermaid({ chart }: { chart: string }) {
             // Edge styles
             lineColor: resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
             edgeLabelBackground: "transparent",
+
+            // Line width standardization (1px for all lines)
+            strokeWidth: "20px",
+            lineWidth: "20px",
+            edgeStroke: "20px",
+            primaryBorderWidth: "20px",
+            secondaryBorderWidth: "20px",
+            tertiaryBorderWidth: "20px",
+
+            // Sequence diagram line styles
+            activationBorderColor:
+              resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            activationBkgColor: "transparent",
+            sequenceNumberColor:
+              resolvedTheme === "dark" ? "#ffffff" : "#121212",
+
+            // Flowchart line styles
+            clusterBkg: "transparent",
+            clusterBorder: resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+
             // Background
             background: "transparent",
           },

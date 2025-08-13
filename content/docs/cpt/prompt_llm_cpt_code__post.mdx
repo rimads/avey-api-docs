@@ -1,9 +1,9 @@
 ---
-title: Infer CPT Codes
+title: CPT API
 full: true
 _openapi:
   method: POST
-  route: /api/infer/
+  route: /cpt/code/
   toc: []
   structuredData:
     headings: []
@@ -23,4 +23,4 @@ This endpoint analyzes a given medical procedure text and returns a ranked list 
 
 You can specify the number of top codes to return using the `k` parameter.
 
-<APIPage document={"json/cpt.json"} operations={[{"path":"/api/infer/","method":"post"}]} webhooks={[]} hasHead={false} />
+<APIPage document={"json/cpt.json"} operations={[{"path":"/cpt/code/","method":"post"}]} webhooks={[]} hasHead={false} />

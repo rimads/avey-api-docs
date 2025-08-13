@@ -5,12 +5,18 @@
     "description": "API for CPT code inference using LLM technology",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://api.avey.ai/cpt",
+      "description": "Production"
+    }
+  ],
   "paths": {
-    "/api/infer/": {
+    "/cpt/code/": {
       "post": {
-        "summary": "Infer CPT Codes",
+        "summary": "CPT API",
         "description": "This endpoint analyzes a given medical procedure text and returns a ranked list of relevant CPT codes.\n\nYou can specify the number of top codes to return using the `k` parameter.",
-        "operationId": "prompt_llm_api_infer__post",
+        "operationId": "prompt_llm_cpt_code__post",
         "parameters": [
           {
             "name": "k",
@@ -18,8 +24,10 @@
             "required": false,
             "schema": {
               "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "description": "The number of top codes to return. If None, returns all ranked codes.",
               "title": "K"
-            }
+            },
+            "description": "The number of top codes to return. If None, returns all ranked codes."
           }
         ],
         "requestBody": {
@@ -84,15 +92,15 @@
             "title": "Prompt",
             "description": "The original procedure text"
           },
-          "response": {
+          "cpt_codes": {
             "items": { "type": "string" },
             "type": "array",
-            "title": "Response",
+            "title": "Cpt Codes",
             "description": "List of ranked CPT codes"
           }
         },
         "type": "object",
-        "required": ["prompt", "response"],
+        "required": ["prompt", "cpt_codes"],
         "title": "InferenceResponse",
         "description": "Response model for CPT code inference API."
       },

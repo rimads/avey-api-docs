@@ -3,11 +3,11 @@
   "info": { "title": "FastAPI", "version": "0.1.0" },
   "servers": [{ "url": "https://api.avey.ai" }],
   "paths": {
-    "/classify": {
+    "/code": {
       "post": {
-        "summary": "Classify a clinical note or medical condition into ICD10-CM code(s)",
-        "description": "Classify a clinical note or medical condition into ICD10-CM code(s)",
-        "operationId": "classify",
+        "summary": "Code Free Text",
+        "description": "Code a clinical note or medical condition using ICD10-CM code(s)",
+        "operationId": "code",
         "requestBody": {
           "content": {
             "application/json": {
@@ -38,7 +38,7 @@
     },
     "/extract": {
       "post": {
-        "summary": "Extract medical conditions from a clinical note",
+        "summary": "Extract Medical Conditions",
         "description": "Extract medical conditions from a clinical note",
         "operationId": "extract",
         "requestBody": {
@@ -84,7 +84,7 @@
         "type": "object",
         "required": ["note"],
         "title": "ClinicalNote",
-        "description": "Schema representing an unstructured clinical note provided by a healthcare professional.\n\nThis note typically contains free-text observations, reported symptoms, diagnostic impressions,\nand other relevant medical information used for downstream medical processing or coding."
+        "description": "Schema representing an unstructured clinical note provided by a healthcare professional."
       },
       "HTTPValidationError": {
         "properties": {
@@ -100,15 +100,19 @@
       "ICD10CMLabels": {
         "properties": {
           "labels": {
-            "items": { "type": "string" },
+            "items": {
+              "type": "string",
+              "title": "ICD-10-CM Code",
+              "description": "An individual ICD-10-CM code in standard format.",
+              "example": "R06.02"
+            },
             "type": "array",
             "title": "ICD-10-CM Code List",
-            "description": "List of ICD-10-CM codes identified or assigned based on the clinical note. Each code follows the standard ICD-10-CM format.",
+            "description": "List of ICD-10-CM codes identified or assigned based on the clinical note.",
             "examples": ["R06.02", "R07.9"]
           }
         },
         "type": "object",
-        "required": ["labels"],
         "title": "ICD10CMLabels",
         "description": "Schema representing a list of ICD-10-CM diagnostic codes derived from a clinical note.\n\nThese codes reflect structured medical classifications assigned based on the content\nof the unstructured clinical note."
       },
@@ -125,7 +129,7 @@
         "type": "object",
         "required": ["conditions"],
         "title": "MedicalConditions",
-        "description": "Schema representing medical conditions extracted from a clinical note.\n\nThese conditions are plain-language descriptors (not formal codes) and typically correspond\nto symptoms or diagnoses mentioned in the unstructured text."
+        "description": "Schema representing medical conditions extracted from a clinical note."
       },
       "ValidationError": {
         "properties": {
