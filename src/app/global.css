@@ -7,6 +7,7 @@
     /* Use Nunito loaded via next/font variable --nunito */
     --font-sans: var(--nunito), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     --color-av-blue-900: #004766;
+    --color-av-gray-500:#949494;
     
     /* Light Mode Colors (600 variants) */
     --color-blue-600: #44BEDF;
