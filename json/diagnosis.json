@@ -8,7 +8,7 @@
   "servers": [
     {
       "url": "https://api.avey.ai/ddx",
-      "description": "Production API"
+      "description": "Production"
     }
   ],
   "paths": {
@@ -17,8 +17,12 @@
         "tags": ["New Diagnosis"],
         "summary": "Create a Clinical Diagnosis",
         "description": "Generates a clinical diagnosis and patient recommendations based on a patient's profile.\n    Query parameters can be used to toggle:\n        * Differential Diagnosis\n        * Urgency (Triage)\n        * Specialist Recommendation\n        * Suggested Health Management Advice",
-        "operationId": "new_diagnosis_diagnosis__post",
-        "security": [{ "HTTPBearer": [] }],
+        "operationId": "diagnose",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "differential",
@@ -73,7 +77,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/DiagnoseRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/DiagnoseRequest"
+              }
             }
           }
         },
@@ -82,11 +88,15 @@
             "description": "Successful clinical assessment.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/DiagnoseResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/DiagnoseResponse"
+                }
               }
             }
           },
-          "401": { "description": "Invalid or missing authentication token." },
+          "401": {
+            "description": "Invalid or missing authentication token."
+          },
           "422": {
             "description": "Validation Error: The request body is malformed."
           }
@@ -98,11 +108,13 @@
         "tags": ["Session Management"],
         "summary": "Create a New Session",
         "description": "Starts a new interactive diagnostic session. Provide the patient's initial information\n    (age, sex, and chief complaints) to create a session and receive the first question.\n    A unique `session_id` is returned, which you must use for all subsequent calls.",
-        "operationId": "new_session__post",
+        "operationId": "create_session",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/NewSessionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/NewSessionRequest"
+              }
             }
           },
           "required": true
@@ -112,7 +124,9 @@
             "description": "Session successfully created and first question returned.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/NewSessionResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/NewSessionResponse"
+                }
               }
             }
           },
@@ -120,16 +134,24 @@
             "description": "Validation Error, e.g., could not extract any symptoms from input text."
           }
         },
-        "security": [{ "HTTPBearer": [] }]
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
       }
     },
     "/session/{session_id}": {
       "post": {
         "tags": ["Session Management"],
-        "summary": "Continue a Session",
+        "summary": "Update a Session",
         "description": "Submits an answer to the previous question and retrieves the next one.\n    When the model has enough information, or if the question limit set for the session is reached, the `question` field in the response will be `null`.",
-        "operationId": "update_session__session_id__post",
-        "security": [{ "HTTPBearer": [] }],
+        "operationId": "update_session",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
         "parameters": [
           {
             "name": "session_id",
@@ -148,7 +170,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/UpdateSessionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSessionRequest"
+              }
             }
           }
         },
@@ -163,8 +187,12 @@
               }
             }
           },
-          "404": { "description": "Session with the given ID was not found." },
-          "422": { "description": "Validation Error in the request body." }
+          "404": {
+            "description": "Session with the given ID was not found."
+          },
+          "422": {
+            "description": "Validation Error in the request body."
+          }
         }
       }
     }
@@ -204,21 +232,27 @@
             "description": "The complete patient profile",
             "examples": [
               {
-                "patient_info": {
-                  "age": 34,
-                  "chief_findings": [
-                    {
-                      "id": "Headache",
-                      "status": "present",
-                      "term": "Headache"
-                    }
-                  ],
-                  "findings": [
-                    { "id": "Fever", "status": "present", "term": "Fever" },
-                    { "id": "Cough", "status": "absent", "term": "Cough" }
-                  ],
-                  "sex": "female"
-                }
+                "age": 34,
+                "chief_findings": [
+                  {
+                    "id": "Headache",
+                    "status": "present",
+                    "term": "Headache"
+                  }
+                ],
+                "findings": [
+                  {
+                    "id": "Fever",
+                    "status": "present",
+                    "term": "Fever"
+                  },
+                  {
+                    "id": "Cough",
+                    "status": "absent",
+                    "term": "Cough"
+                  }
+                ],
+                "sex": "female"
               }
             ]
           }
@@ -233,10 +267,14 @@
           "differential_diagnosis": {
             "anyOf": [
               {
-                "items": { "$ref": "#/components/schemas/Disease" },
+                "items": {
+                  "$ref": "#/components/schemas/Disease"
+                },
                 "type": "array"
               },
-              { "type": "null" }
+              {
+                "type": "null"
+              }
             ],
             "title": "Differential Diagnosis",
             "description": "A ranked list of possible conditions matching the patient's profile.",
@@ -260,7 +298,14 @@
             ]
           },
           "self_management": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Self Management",
             "description": "Advice for managing symptoms at home.",
             "examples": [
@@ -268,7 +313,14 @@
             ]
           },
           "urgency": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Urgency",
             "description": "A high-level indicator of the situation's urgency",
             "examples": [
@@ -279,7 +331,14 @@
             ]
           },
           "specialist": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Specialist",
             "description": "Recommended Specialist For the Patient to visit",
             "examples": ["General Practitioner"]
@@ -304,17 +363,38 @@
             "examples": ["Headache", "Fever"]
           },
           "description": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Description",
             "description": "A clinical description of the disease."
           },
           "note": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Note",
             "description": "Additional notes about the disease."
           },
           "treatment": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Treatment",
             "description": "General information about treatment options."
           }
@@ -357,7 +437,9 @@
             "description": "The concept ID of the finding being answered.",
             "examples": ["Fever"]
           },
-          "status": { "$ref": "#/components/schemas/FindingStatus" }
+          "status": {
+            "$ref": "#/components/schemas/FindingStatus"
+          }
         },
         "type": "object",
         "required": ["id", "status"],
@@ -374,20 +456,40 @@
         "properties": {
           "coding_type": {
             "anyOf": [
-              { "$ref": "#/components/schemas/CodingType" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/CodingType"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The desired coding system for all concepts in the session.",
             "default": "aut"
           },
           "max_questions": {
-            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Max Questions",
             "description": "The maximum number of questions the model should ask during the session. By default, the model takes on average around 10-20 questions before it converges to an accurate medical diagnosis."
           },
-          "patient_info": { "$ref": "#/components/schemas/PatientInfoRequest" },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfoRequest"
+          },
           "input_text": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Input Text",
             "description": "Free-text input describing the patient's symptoms. Either this or a list of chief symptom codes must be provided.",
             "examples": [
@@ -410,11 +512,17 @@
           },
           "question": {
             "anyOf": [
-              { "$ref": "#/components/schemas/Question" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/Question"
+              },
+              {
+                "type": "null"
+              }
             ]
           },
-          "patient_info": { "$ref": "#/components/schemas/PatientInfo-Output" }
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo-Output"
+          }
         },
         "type": "object",
         "required": ["session_id", "patient_info"],
@@ -436,17 +544,31 @@
             "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           },
           "chief_findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
             "title": "Chief Findings",
             "description": "The primary symptoms or reasons for the consultation, all of which should have a present status",
             "examples": [
               [
-                { "id": "Headache", "status": "present", "term": "Headache" },
-                { "id": "Fever", "status": "present", "term": "Fever" }
+                {
+                  "id": "Headache",
+                  "status": "present",
+                  "term": "Headache"
+                },
+                {
+                  "id": "Fever",
+                  "status": "present",
+                  "term": "Fever"
+                }
               ],
               [
-                { "id": "Insomnia", "status": "present", "term": "Insomnia" },
+                {
+                  "id": "Insomnia",
+                  "status": "present",
+                  "term": "Insomnia"
+                },
                 {
                   "id": "Irritability",
                   "status": "present",
@@ -456,14 +578,24 @@
             ]
           },
           "findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
             "title": "Findings",
             "description": "All symptoms or findings collected during the session.",
             "examples": [
               [
-                { "id": "Headache", "status": "present", "term": "Headache" },
-                { "id": "Fever", "status": "present", "term": "Fever" },
+                {
+                  "id": "Headache",
+                  "status": "present",
+                  "term": "Headache"
+                },
+                {
+                  "id": "Fever",
+                  "status": "present",
+                  "term": "Fever"
+                },
                 {
                   "id": "Nasal block",
                   "status": "absent",
@@ -498,17 +630,31 @@
             "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           },
           "chief_findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
             "title": "Chief Findings",
             "description": "The primary symptoms or reasons for the consultation, all of which should have a present status",
             "examples": [
               [
-                { "id": "Headache", "status": "present", "term": "Headache" },
-                { "id": "Fever", "status": "present", "term": "Fever" }
+                {
+                  "id": "Headache",
+                  "status": "present",
+                  "term": "Headache"
+                },
+                {
+                  "id": "Fever",
+                  "status": "present",
+                  "term": "Fever"
+                }
               ],
               [
-                { "id": "Insomnia", "status": "present", "term": "Insomnia" },
+                {
+                  "id": "Insomnia",
+                  "status": "present",
+                  "term": "Insomnia"
+                },
                 {
                   "id": "Irritability",
                   "status": "present",
@@ -518,14 +664,24 @@
             ]
           },
           "findings": {
-            "items": { "$ref": "#/components/schemas/Finding" },
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
             "type": "array",
             "title": "Findings",
             "description": "All symptoms or findings collected during the session.",
             "examples": [
               [
-                { "id": "Headache", "status": "present", "term": "Headache" },
-                { "id": "Fever", "status": "present", "term": "Fever" },
+                {
+                  "id": "Headache",
+                  "status": "present",
+                  "term": "Headache"
+                },
+                {
+                  "id": "Fever",
+                  "status": "present",
+                  "term": "Fever"
+                },
                 {
                   "id": "Nasal block",
                   "status": "absent",
@@ -561,8 +717,15 @@
           },
           "chief_findings_codes": {
             "anyOf": [
-              { "items": { "type": "string" }, "type": "array" },
-              { "type": "null" }
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
             ],
             "title": "Chief Findings Codes",
             "description": "A list of IDs for the patient's chief complaints. Provided in the session's coding scheme. Either this or input text must be provided.",
@@ -640,17 +803,35 @@
           "answers": {
             "anyOf": [
               {
-                "items": { "$ref": "#/components/schemas/FindingAnswer" },
+                "items": {
+                  "$ref": "#/components/schemas/FindingAnswer"
+                },
                 "type": "array"
               },
-              { "type": "null" }
+              {
+                "type": "null"
+              }
             ],
             "title": "Answers",
             "description": "A list of answers for text-based questions. Either this object or input_text must be provided",
-            "examples": [[{ "id": "Headache", "status": "present" }]]
+            "examples": [
+              [
+                {
+                  "id": "Headache",
+                  "status": "present"
+                }
+              ]
+            ]
           },
           "input_text": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Input Text",
             "description": "Free-text input from the user. Either this or an answers object must be provided",
             "examples": ["No, but i find it difficult to sleep at night"]
@@ -665,8 +846,12 @@
         "properties": {
           "question": {
             "anyOf": [
-              { "$ref": "#/components/schemas/Question" },
-              { "type": "null" }
+              {
+                "$ref": "#/components/schemas/Question"
+              },
+              {
+                "type": "null"
+              }
             ],
             "description": "The next question to ask. If null, the interview phase is complete."
           },
@@ -685,8 +870,16 @@
                     }
                   ],
                   "findings": [
-                    { "id": "Fever", "status": "present", "term": "Fever" },
-                    { "id": "Cough", "status": "absent", "term": "Cough" }
+                    {
+                      "id": "Fever",
+                      "status": "present",
+                      "term": "Fever"
+                    },
+                    {
+                      "id": "Cough",
+                      "status": "absent",
+                      "term": "Cough"
+                    }
                   ],
                   "sex": "female"
                 }
@@ -700,6 +893,11 @@
         "description": "Response to an answer submission. Contains either the next question or null.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined diagnosis endpoint."
       }
     },
-    "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
   }
 }
