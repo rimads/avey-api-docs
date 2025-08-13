@@ -1,34 +1,67 @@
 ---
-title: Overview
-description: Automatic CPT code identification for medical procedures
+title: What is the CPT API?
+sidebar_title: Overview
 ---
+The CPT API transforms plain-language procedure descriptions into standardized CPT codes.
+It streamlines coding workflows, reduces manual effort, and ensures accuracy in billing and claims processing.
 
-# CPT Coding API
+## Use cases
+<Cards className="grid grid-cols-3">
+  <Card title="Accurate Coding">
+    Turn procedure descriptions into correct CPT codes to ensure compliance and reduce claim rejections.
+  </Card>
+  <Card title="Faster Claims">
+    Speed up approvals with properly coded procedures to cut delays and rework.
+  </Card>
+  <Card title="Quick New Procedure Coding">
+    Code new or rare services instantly without manual research.
+  </Card>
+</Cards>
 
-This API enables healthcare applications to:
+## How to use the API
+The CPT API is designed for simplicity — only two steps are required.
+<div className="fd-steps">
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 1 — Send procedure description 
+    Submit your description to the CPT API endpoint.
+    </div> 
+  </div>
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 2 — Receive ranked CPT codes
+    Get a ranked list of relevant CPT codes.
+    </div> 
+  </div>
+</div>
+For complete specifications and live testing, visit the [API Reference](#api-reference).
 
-- Extract CPT codes from natural language procedure descriptions
-- Supports multiple procedures in a single request
-- Return semantically relevant codes
+## Architecture
 
-## Authentication
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant Client
+    participant Service as Avey CPT service
+    participant Validator as Avey validation & ranking
 
-All requests require authentication via API key in the request headers:
-
-```bash
-Authorization: Bearer YOUR_API_KEY
-```
-
-## Endpoint specification
-
-### POST /cpt-coding
-
-Identifies CPT codes from free-text procedure descriptions.
-
-**URL:** `https://api.avey.com/v1/cpt-coding`
-
-**Method:** `POST`
-
-**Content-Type:** `application/json`
+    Client->>Service: Submit procedure description + k
+    Service->>Validator: Analyze, match & rank codes
+    Validator-->>Service: Validated, prioritized list
+    Service-->>Client: Deliver top CPT codes
+`}
+/>
+<Callout>
+  **Note:** `k` specifies the maximum number of CPT codes to return. For example, if `k = 1`, the API will return only the top-ranked code.
+</Callout>
 
 
+## Requirements
+- **Authentication**: The API uses a bearer token for [authentication](/#authentication).
+
+
+## API reference
+
+<Cards>
+  <Card title="Code" href="/cpt/prompt_llm_api_infer__post" /> 
+</Cards>
