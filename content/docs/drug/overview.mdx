@@ -1,0 +1,76 @@
+---
+title: Drug API
+sidebar_title: Overview
+description: Validate medications for necessity, safety, and correct dosage based on diagnoses and patient context
+---
+
+## Use Drug API for
+
+<Cards>
+  <Card
+    title="Medical justification"
+    description="Check if a medication is clinically appropriate for one or more conditions"
+  />
+  <Card
+    title="Contraindication detection"
+    description="Detect any safety concerns or risks due to drug-disease or drug-drug interactions"
+  />
+  <Card
+    title="Dosage validation"
+    description="Ensure that prescribed dosages are within acceptable clinical limits"
+  />
+    <Card
+    title="Dosage recommendation"
+    description="Receive recommended dosage ranges for medications that fall outside safe boundaries"
+  />
+
+</Cards>
+
+
+
+
+## How to use the API
+This API accepts patient context (diagnoses and demographics) and one or more medications as input. It returns clinical validation results indicating whether the medications are necessary, safe, and appropriately dosed. You’ll typically call this API during the treatment recommendation stage, or when reviewing a medication list for contraindications or dosage concerns.
+
+
+### Input Parameters
+
+| Field              | Type       | Description |
+|-------------------|------------|-------------|
+| `ndcs`<span style={{ color: "red" }}>*</span>            | `string[]` | One or more NDC codes representing medications. |
+| `primary_icd`<span style={{ color: "red" }}>*</span>     | `string`   | Primary diagnosis (ICD-10 code). |
+| `secondary_icds`  | `string[]` | Additional diagnoses (ICD-10 codes). |
+| `age`<span style={{ color: "red" }}>*</span>             | `number`   | Patient's age. |
+| `gender`           | `string`   | Patient's gender. |
+| `weight`           | `number`   | Patient's weight (in kg). |
+
+
+### Output
+
+Returns an object that includes:
+  - Validation results for each medication:
+  - Medical necessity (`justified` or not)
+  - Any detected drug-drug or drug-disease interactions
+  - Dosage validation (valid/invalid)
+  - Recommended dosage if applicable
+
+## How it works
+
+The Drug API routes your input through Avey's clinical validation pipeline. It checks whether each medication is medically appropriate for the provided conditions, flags any safety risks, and returns dosage recommendations when needed — all handled by Avey’s internal Drug Engine.
+
+No need to manually check clinical guidelines — the Drug API ensures smarter medication validation in real time.
+
+<Mermaid chart={`
+sequenceDiagram
+    participant Developer
+    participant Avey Drug API
+    participant Avey Validator
+    participant Avey Drug Engine
+
+    Developer->>Avey Drug API: Send NDCs, ICDs, age, gender, weight
+    Avey Drug API->>Avey Drug Engine: Analyze medication + diagnosis context
+    Avey Drug Engine->>Avey Validator: Validate safety, necessity, dosage
+    Avey Validator-->>Avey Drug API: Return validation results
+    Avey Drug API-->>Developer: Final drug report with justifications and recommendations
+`}/>
+

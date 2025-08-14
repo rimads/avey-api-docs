@@ -7,17 +7,17 @@
   },
   "servers": [
     {
-      "url": "https://api.avey.ai",
-      "description": "Production API"
+      "url": "https://api.avey.ai/ddx",
+      "description": "Production"
     }
   ],
   "paths": {
-    "/ddx/diagnose/": {
+    "/diagnosis/": {
       "post": {
         "tags": ["New Diagnosis"],
-        "summary": "Create a Clinical Diagnosis",
-        "description": "Generates a comprehensive clinical diagnosis and patient recommendations based on a patient's collected information. This endpoint takes a complete patient profile and returns a set of potential diagnoses and care recommendations.\n\n### Query parameters can be used to toggle specific features:\n\n* Differential Diagnosis\n* Urgency (Triage)\n* Specialist Recommendation\n* Suggested Health Management Advice\n<br>",
-        "operationId": "new_diagnosis_ddx_diagnose__post",
+        "summary": "Create a clinical diagnosis",
+        "description": "generates a clinical diagnosis and patient recommendations based on a patient's profile.\n    Query parameters can be used to toggle:\n        * Differential Diagnosis\n        * Urgency (Triage)\n        * Specialist Recommendation\n        * Suggested Health Management Advice",
+        "operationId": "diagnose",
         "security": [
           {
             "HTTPBearer": []
@@ -95,20 +95,50 @@
             }
           },
           "401": {
-            "description": "Invalid or missing authentication token."
+            "description": "Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Not authenticated"
+                }
+              }
+            }
           },
           "422": {
-            "description": "Validation Error: The request body is malformed."
+            "description": "Validation error: the request body is malformed.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": [
+                    {
+                      "loc": ["body", "patient_info", "age"],
+                      "msg": "Input should be a valid integer",
+                      "type": "int_parsing"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "An unexpected internal error occurred."
+                }
+              }
+            }
           }
         }
       }
     },
-    "/ddx/session/": {
+    "/session/": {
       "post": {
-        "tags": ["Session Management"],
-        "summary": "Create a New Session",
-        "description": "Starts a new interactive diagnostic session.\n\nSpecify coding scheme for concepts and provide the patient's initial information (age, sex, and chief complaints) to create a session and receive the first question. The session is stateful and managed on the server.\n\n### Workflow\n1.  Provide either `input_text` (e.g., \"I have a headache and a fever\") or a list of `chief_findings_codes`.\n2.  The system processes the initial data and generates the first, most relevant question.\n3.  A unique `session_id` is returned, which you must use for all subsequent calls to the `update_session` endpoint.",
-        "operationId": "new_session_ddx_session__post",
+        "tags": ["Session management"],
+        "summary": "Create a new session",
+        "description": "Starts a new interactive diagnostic session. provide the patient's initial information\n    (age, sex, and the input text of the patient) to create a session and receive the first question.\n    A unique `session_id` is returned, which you must use for all subsequent calls.",
+        "operationId": "create_session",
         "requestBody": {
           "content": {
             "application/json": {
@@ -130,8 +160,46 @@
               }
             }
           },
+          "401": {
+            "description": "Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Not authenticated"
+                }
+              }
+            }
+          },
           "422": {
-            "description": "Validation Error, e.g., could not extract any symptoms from the provided input text."
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_input": {
+                    "summary": "Missing input",
+                    "value": {
+                      "detail": "Either 'input_text' or 'chief_findings_codes' must be provided."
+                    }
+                  },
+                  "extraction_failure": {
+                    "summary": "Extraction failure",
+                    "value": {
+                      "detail": "Could not extract any chief findings from the provided 'input_text'."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "An unexpected internal error occurred."
+                }
+              }
+            }
           }
         },
         "security": [
@@ -141,12 +209,12 @@
         ]
       }
     },
-    "/ddx/session/{session_id}": {
+    "/session/{session_id}": {
       "post": {
-        "tags": ["Session Management"],
-        "summary": "Continue a Session",
-        "description": "Submits an answer to the previous question and retrieves the next one.\n\n### Workflow after session creation:\n1.  The client displays the question received from the previous call.\n2.  The user provides an answer.\n3.  The client sends this answer in the request body to this endpoint, either as the free text of a user, or as an `answers` object.\n4.  The diagnostic model processes the answer, updates the patient's profile, and determines the next best question.\n5.  If more questions are needed, a new `question` object is returned.\n6.  If the model converges towards a final diagnosis, the `question` field in the response will be. At this point, you should use the final `patient_info` object to call the main `/diagnose` endpoint.",
-        "operationId": "update_session_ddx_session__session_id__post",
+        "tags": ["Session management"],
+        "summary": "Update a session",
+        "description": "Submits an answer to the previous question and retrieves the next one.\n    When the model has enough information, or if the question limit set for the session is reached, the `question` field in the response will be `null`.",
+        "operationId": "update_session",
         "security": [
           {
             "HTTPBearer": []
@@ -159,11 +227,11 @@
             "required": true,
             "schema": {
               "type": "string",
-              "description": "The unique identifier for the session, obtained from the 'new_session' response.",
+              "description": "The unique identifier for the session.",
+              "examples": ["f47ac10b-58cc-4372-a567-0e02b2c3d479"],
               "title": "Session Id"
             },
-            "description": "The unique identifier for the session, obtained from the 'new_session' response.",
-            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+            "description": "The unique identifier for the session."
           }
         ],
         "requestBody": {
@@ -178,7 +246,7 @@
         },
         "responses": {
           "200": {
-            "description": "Answer processed successfully. Returns the next question or a null question if the session is complete.",
+            "description": "Answer processed successfully. Returns next question or null.",
             "content": {
               "application/json": {
                 "schema": {
@@ -187,11 +255,45 @@
               }
             }
           },
+          "401": {
+            "description": "Invalid or missing authentication token.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Not authenticated"
+                }
+              }
+            }
+          },
           "404": {
-            "description": "Session with the given ID was not found."
+            "description": "Session not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Session not found or has expired."
+                }
+              }
+            }
           },
           "422": {
-            "description": "Validation Error in the request body."
+            "description": "Validation error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "Could not extract answers from raw text or object input"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "detail": "An unexpected internal error occurred."
+                }
+              }
+            }
           }
         }
       }
@@ -203,7 +305,7 @@
         "type": "string",
         "enum": ["icd-10-cm", "snomed-ct", "aut"],
         "title": "CodingType",
-        "description": "Specifies the medical coding system used for concept identifiers. Avey Unified Terminology (aut) describes our internally developed naming system designed to be simple for developers to work with while remaining medically expressive. It covers\nWe created it using a combination of SNOMED-CT, ICD, and terms that we have curated for AI - patient interaction in the development of the diagnostic model.\nThe current version uses unique strings for each name, making it convenient to use the name as the term's identifier."
+        "description": "Specifies the medical coding system used for documenting patient findings. Avey Unified Terminology (aut) is our internally developed naming system designed to be simple for developers to work with while remaining medically expressive. It uses unique strings for each name, making it convenient to use the name as the term's identifier."
       },
       "Concept": {
         "properties": {
@@ -232,29 +334,27 @@
             "description": "The complete patient profile",
             "examples": [
               {
-                "patient_info": {
-                  "age": 34,
-                  "chief_findings": [
-                    {
-                      "id": "Headache",
-                      "status": "present",
-                      "term": "Headache"
-                    }
-                  ],
-                  "findings": [
-                    {
-                      "id": "Fever",
-                      "status": "present",
-                      "term": "Fever"
-                    },
-                    {
-                      "id": "Cough",
-                      "status": "absent",
-                      "term": "Cough"
-                    }
-                  ],
-                  "sex": "female"
-                }
+                "age": 34,
+                "chief_findings": [
+                  {
+                    "id": "Headache",
+                    "status": "present",
+                    "term": "Headache"
+                  }
+                ],
+                "findings": [
+                  {
+                    "id": "Fever",
+                    "status": "present",
+                    "term": "Fever"
+                  },
+                  {
+                    "id": "Cough",
+                    "status": "absent",
+                    "term": "Cough"
+                  }
+                ],
+                "sex": "female"
               }
             ]
           }
@@ -262,7 +362,7 @@
         "type": "object",
         "required": ["patient_info"],
         "title": "DiagnoseRequest",
-        "description": "Request the Clinical Diagnosis of a Patient Profile."
+        "description": "Request the clinical diagnosis of a patient profile."
       },
       "DiagnoseResponse": {
         "properties": {
@@ -326,10 +426,10 @@
             "title": "Urgency",
             "description": "A high-level indicator of the situation's urgency",
             "examples": [
-              "Home Treatable",
-              "Non-Urgent, but schedule a visit with your physician",
-              "Urgent, seek medical care and watch your symptoms closely",
-              "Emergency, seek medical care immediately"
+              "home treatable",
+              "non-urgent, but schedule a visit with your physician",
+              "urgent, seek medical care and watch your symptoms closely",
+              "emergency, seek medical care immediately"
             ]
           },
           "specialist": {
@@ -342,14 +442,13 @@
               }
             ],
             "title": "Specialist",
-            "description": "Recommended Specialist For the Patient to visit",
+            "description": "recommended specialist for the patient to visit",
             "examples": ["General Practitioner"]
           }
         },
         "type": "object",
-        "required": ["self_management", "urgency", "specialist"],
         "title": "DiagnoseResponse",
-        "description": "Clinical Diagnosis of a Patient."
+        "description": "Clinical diagnosis of a patient."
       },
       "Disease": {
         "properties": {
@@ -366,17 +465,38 @@
             "examples": ["Headache", "Fever"]
           },
           "description": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Description",
             "description": "A clinical description of the disease."
           },
           "note": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Note",
             "description": "Additional notes about the disease."
           },
           "treatment": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Treatment",
             "description": "General information about treatment options."
           }
@@ -448,20 +568,25 @@
             "description": "The desired coding system for all concepts in the session.",
             "default": "aut"
           },
-          "patient_info": {
-            "$ref": "#/components/schemas/PatientInfoRequest"
-          },
-          "input_text": {
+          "max_questions": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "integer"
               },
               {
                 "type": "null"
               }
             ],
+            "title": "Max Questions",
+            "description": "The maximum number of questions the model should ask during the session. By default, the model automatically ends a session after takes on average around 10-20 questions."
+          },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfoRequest"
+          },
+          "input_text": {
+            "type": "string",
             "title": "Input Text",
-            "description": "Free-text input describing the patient's symptoms. Either this or a list of chief symptom codes must be provided.",
+            "description": "Free-text input describing the patient's symptoms.",
             "examples": [
               "My tummy hurts, and i feel like i don't want to eat anything"
             ]
@@ -481,14 +606,21 @@
             "examples": ["f47ac10b-58cc-4372-a567-0e02b2c3d479"]
           },
           "question": {
-            "$ref": "#/components/schemas/Question"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Question"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "patient_info": {
             "$ref": "#/components/schemas/PatientInfo-Output"
           }
         },
         "type": "object",
-        "required": ["session_id", "question", "patient_info"],
+        "required": ["session_id", "patient_info"],
         "title": "NewSessionResponse",
         "description": "Response from creating a new session, containing the first question."
       },
@@ -504,7 +636,7 @@
           },
           "sex": {
             "$ref": "#/components/schemas/Sex",
-            "description": "The biological sex of the patient."
+            "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           },
           "chief_findings": {
             "items": {
@@ -590,7 +722,7 @@
           },
           "sex": {
             "$ref": "#/components/schemas/Sex",
-            "description": "The biological sex of the patient."
+            "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           },
           "chief_findings": {
             "items": {
@@ -676,29 +808,13 @@
           },
           "sex": {
             "$ref": "#/components/schemas/Sex",
-            "description": "The biological sex of the patient."
-          },
-          "chief_findings_codes": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Chief Findings Codes",
-            "description": "A list of IDs for the patient's chief complaints. Provided in the session's coding scheme. Either this or input text must be provided.",
-            "examples": [["Headache", "Abdominal pain"]]
+            "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           }
         },
         "type": "object",
         "required": ["age", "sex"],
         "title": "PatientInfoRequest",
-        "description": "Initial patient information used to start a new session."
+        "description": "initial patient information used to start a new session."
       },
       "Question": {
         "properties": {
@@ -709,25 +825,14 @@
             "examples": [1, 2, 3]
           },
           "content": {
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/TextQuestion"
-              }
-            ],
-            "title": "Content",
-            "description": "The content of the question",
-            "discriminator": {
-              "propertyName": "type",
-              "mapping": {
-                "text": "#/components/schemas/TextQuestion"
-              }
-            }
+            "$ref": "#/components/schemas/TextQuestion",
+            "description": "The content of the question"
           }
         },
         "type": "object",
         "required": ["id", "content"],
         "title": "Question",
-        "description": "A container for a question, using a discriminated union for the content."
+        "description": "Container object for a question returned by the model."
       },
       "Sex": {
         "type": "string",
@@ -819,7 +924,14 @@
       "UpdateSessionResponse": {
         "properties": {
           "question": {
-            "$ref": "#/components/schemas/Question",
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Question"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "description": "The next question to ask. If null, the interview phase is complete."
           },
           "patient_info": {
@@ -855,9 +967,9 @@
           }
         },
         "type": "object",
-        "required": ["question", "patient_info"],
+        "required": ["patient_info"],
         "title": "UpdateSessionResponse",
-        "description": "Response to an answer submission. Contains either the next question or null.\nWhen 'question' is null, the session is over. The client should then copy the returned\n'patient_info' and use it to make a final call to the defined diagnosis endpoint."
+        "description": "Response to an answer submission. contains either the next question or null.\nWhen 'question' is null, the session is over. the client should then copy the returned\n'patient_info' and use it to make a final call to the defined diagnosis endpoint."
       }
     },
     "securitySchemes": {

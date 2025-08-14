@@ -1,60 +1,83 @@
 "use client";
 
-import { use, useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 
 export function Mermaid({ chart }: { chart: string }) {
-  const [mounted, setMounted] = useState(false);
+  const id = useId();
+  const [svg, setSvg] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const currentChartRef = useRef<string>(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (currentChartRef.current === chart || !containerRef.current) return;
+    const container = containerRef.current;
+    currentChartRef.current = chart;
 
-  if (!mounted) return;
-  return <MermaidContent chart={chart} />;
-}
+    async function renderChart() {
+      const { default: mermaid } = await import("mermaid");
 
-const cache = new Map<string, Promise<unknown>>();
+      try {
+        // configure mermaid
+        mermaid.initialize({
+          startOnLoad: false,
+          securityLevel: "loose",
+          fontFamily: "inherit",
+          themeCSS: "margin: 1.5rem auto 0;",
+          theme: "base",
+          themeVariables: {
+            // Brand colors
+            primaryColor: "transparent",
+            primaryBorderColor:
+              resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            primaryTextColor: resolvedTheme === "dark" ? "#ffffff" : "#121212",
+            // Node styles
+            nodeTextColor: resolvedTheme === "dark" ? "#ffffff" : "#121212",
+            fontSize: "14px",
 
-function cachePromise<T>(
-  key: string,
-  setPromise: () => Promise<T>
-): Promise<T> {
-  const cached = cache.get(key);
-  if (cached) return cached as Promise<T>;
+            // Edge styles
+            lineColor: resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            edgeLabelBackground: "transparent",
 
-  const promise = setPromise();
-  cache.set(key, promise);
-  return promise;
-}
+            // Line width standardization (1px for all lines)
+            strokeWidth: "20px",
+            lineWidth: "20px",
+            edgeStroke: "20px",
+            primaryBorderWidth: "20px",
+            secondaryBorderWidth: "20px",
+            tertiaryBorderWidth: "20px",
 
-function MermaidContent({ chart }: { chart: string }) {
-  const id = useId();
-  const { resolvedTheme } = useTheme();
-  const { default: mermaid } = use(
-    cachePromise("mermaid", () => import("mermaid"))
-  );
+            // Sequence diagram line styles
+            activationBorderColor:
+              resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
+            activationBkgColor: "transparent",
+            sequenceNumberColor:
+              resolvedTheme === "dark" ? "#ffffff" : "#121212",
 
-  mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: "loose",
-    fontFamily: "inherit",
-    themeCSS: "margin: 1.5rem auto 0;",
-    theme: resolvedTheme === "dark" ? "dark" : "default",
-  });
+            // Flowchart line styles
+            clusterBkg: "transparent",
+            clusterBorder: resolvedTheme === "dark" ? "#44BEDF" : "#77E0FF",
 
-  const { svg, bindFunctions } = use(
-    cachePromise(`${chart}-${resolvedTheme}`, () => {
-      return mermaid.render(id, chart.replaceAll("\\n", "\n"));
-    })
-  );
+            // Background
+            background: "transparent",
+          },
+        });
 
-  return (
-    <div
-      ref={(container) => {
-        if (container) bindFunctions?.(container);
-      }}
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
-  );
+        const { svg, bindFunctions } = await mermaid.render(
+          id,
+          chart.replaceAll("\\n", "\n")
+        );
+
+        bindFunctions?.(container);
+        setSvg(svg);
+      } catch (error) {
+        console.error("Error while rendering mermaid", error);
+      }
+    }
+
+    void renderChart();
+  }, [chart, id, resolvedTheme]);
+
+  return <div ref={containerRef} dangerouslySetInnerHTML={{ __html: svg }} />;
 }

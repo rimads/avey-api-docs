@@ -1,5 +1,4 @@
 {
   "title": "Diagnostic API",
-  "pages": ["overview", "...", "mcp"],
-  "defaultOpen": true
+  "pages": ["overview", "...", "mcp", "!overview_old"]
 }

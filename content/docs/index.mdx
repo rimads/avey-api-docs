@@ -1,44 +1,111 @@
 ---
-title: Avey API Documentation
-description: Comprehensive API documentation for medical coding, diagnostics, and clinical decision support
+title: Introduction
+sidebar_title: Getting started
 ---
 
-Welcome to the Avey API documentation. Our suite of APIs provides comprehensive medical coding, diagnostic assistance, and clinical decision support capabilities for healthcare applications.
-
-## Available APIs
-
+Avey delivers AI-driven healthcare APIs that transform unstructured clinical data into structured, actionable insights. From real-time diagnosis support to automated medical coding and validation, our platform is built to integrate seamlessly into healthcare applications and workflows.
+## What we offer
 <Cards>
   <Card
     title="Diagnostic API"
-    href="/docs/diagnosis/overview"
+    href="/diagnosis/overview"
     description="Conversational AI for clinical data gathering and differential diagnosis generation"
   />
   <Card
-    title="CPT API (Coming Soon)"
+    title="CPT API (coming soon)"
+    href="/cpt/overview"
     description="Automatic CPT code identification for medical procedures"
   />
   <Card
-    title="ICD API (Coming Soon)"
+    title="ICD API (coming soon)"
+    href="/icd/overview"
     description="ICD code extraction from symptom and diagnosis descriptions"
   />
   <Card
-    title="NDC API (Coming Soon)"
+    title="NDC API (coming soon)"
     description="Medication name to NDC code conversion"
   />
   <Card
-    title="Drug API (Coming Soon)"
+    title="Drug API (coming soon)"
     description="Medication validation, interactions, and contraindications"
   />
   <Card
-    title="Procedure API (Coming Soon)"
+    title="Procedure API (coming soon)"
+
     description="Procedure validation and medical necessity checking"
   />
 </Cards>
 
-## Quick Start
+## Getting started
 
-All APIs require authentication via API key. Include your API key in the request headers:
+<div className="fd-steps">
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 1 — Request API key  
+Email **support@avey.ai** to receive your API key.
+    </div> 
+  </div>
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 2 — Review documentation  
+Explore our docs for endpoints and authentication.
+    </div> 
+  </div>
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 3 — Integrate  
+Run a test call, then proceed with your integration.
+    </div> 
+  </div>
+</div>
 
-```bash
+
+## Prerequisites
+
+- **API Key (Bearer Token)** issued by Avey  
+- An HTTP client (e.g., cURL, Postman, or a server-side HTTP library)  
+
+---
+
+## Core concepts
+
+### Base URL
+
+Base URL for all Avey APIs:
+
+```http
+https://api.avey.ai
+```
+
+
+### Authentication
+Avey APIs require Bearer token authentication. The token must be included in the `Authorization` header of each request:
+
+```javascript
 Authorization: Bearer YOUR_API_KEY
 ```
+
+
+
+## Next steps
+
+<Cards className="grid grid-cols-3 ">
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/diagnosis/overview" title="Diagnosis API overview"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+ title="Procedure API overview"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+ title="Drug API overview"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/icd/overview" title="ICD API overview"/>
+    <Card 
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/cpt/overview" title="CPT API overview"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+ title="NDC API overview"/>
+</Cards>

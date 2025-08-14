@@ -6,16 +6,27 @@
     "build": "next build",
     "dev": "next dev --turbo",
     "start": "next start",
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "fumadocs-mdx",
+    "gen:all": "npm run gen:procedure && npm run gen:diagnosis && npm run gen:drug && npm run gen:cpt && npm run gen:icd && npm run gen:ndc",
+    "gen:procedure": "node ./scripts/generate-docs.mjs procedure",
+    "gen:diagnosis": "node ./scripts/generate-docs.mjs diagnosis",
+    "gen:drug": "node ./scripts/generate-docs.mjs drug",
+    "gen:cpt": "node ./scripts/generate-docs.mjs cpt",
+    "gen:icd": "node ./scripts/generate-docs.mjs icd",
+    "gen:ndc": "node ./scripts/generate-docs.mjs ndc"
   },
   "dependencies": {
+    "@orama/orama": "^3.1.11",
+    "class-variance-authority": "^0.7.1",
     "fumadocs-core": "15.6.6",
     "fumadocs-mdx": "11.7.1",
     "fumadocs-openapi": "^9.1.6",
     "fumadocs-ui": "15.6.6",
+    "lucide-react": "^0.539.0",
     "mermaid": "^11.9.0",
     "next": "15.4.4",
     "next-themes": "^0.4.6",
+    "octokit": "^5.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "shiki": "^3.9.0"

@@ -1,33 +1,74 @@
 ---
-title: Overview
-description: Conversational AI for clinical data gathering and differential diagnosis generation.
+title: What is the Diagnosis API?
+sidebar_title: Overview
 ---
+The Diagnosis API is a backend service that powers intelligent medical question‑and‑answer and diagnostic workflows.
+It’s built around a clinical AI model that can conduct structured medical interviews through iterative questioning, adapt each next question based on previous answers, and build a detailed picture of the patient’s condition — ultimately providing a differential diagnosis along with related care recommendations.
 
-The Diagnosis API enables conversational, structured clinical data gathering and generates differential diagnoses, triage recommendations, specialist referrals, and self-management advice.
+## Use cases
+<Cards>
+  <Card
+    title="Differential diagnosis"
+    description="Get a list of medical conditions the patient is suffering from"
+  />
+  <Card
+    title="Self-management advice"
+    description="Provides practical guidance to help individuals manage their symptoms safely at home"
+  />
+  <Card
+    title="Triage recommendation"
+    description="Suggests the appropriate level of care based on patient input."
+  />
+  <Card
+    title="Specialist recommendation"
+    description="Recommends the appropriate medical specialty to visit based on patient input."
+  />
+</Cards>
 
-## When to use
-- To interactively collect patient information via text or structured answers.
-- To produce a ranked list of possible conditions (differential diagnosis).
-- To provide self-management guidance and appropriate care level recommendations.
-- To identify the medical specialty most relevant to the patient’s presentation.
+## Workflow
+Integrating the Diagnosis API is straightforward — just three API calls to go from patient input to complete diagnostic results.
+<div className="fd-steps">
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 1 — Create a session
+Send patient details to start a session.  
+Receive a `session_id` and the first question.
+    </div> 
+  </div>
+    <div className="fd-step">
+    <div className="fd-step-content">
+### Step 2 — Continue the session
+Send answers with the `session_id`.  
+Repeat until the API returns `null` for the question.
 
-## Capabilities
-- Differential diagnosis generation from patient symptoms and context.
-- Self-management advice based on collected patient data.
-- Triage recommendation to determine care urgency.
-- Specialist recommendation based on likely conditions.
+    </div> 
+  </div>
+    <div className="fd-step">
+    <div className="fd-step-content">
+### Step 3 — Diagnose
+Send final patient data and desired outputs.  
+Receive diagnosis, advice, urgency, and specialist recommendations.
 
-## Endpoints at a glance
+    </div> 
+  </div>
+</div>
+<Callout type="info">You can call the Diagnose endpoint at any point during the session to receive results sooner.
+However, accuracy improves when the session is completed before diagnosis.</Callout>
+
+
+## Endpoints 
 | Method | Path                       | Purpose |
 |--------|----------------------------|---------|
 | POST   | `/ddx/session/`             | Create a session, initialize patient context, and receive the first question. |
 | POST   | `/ddx/session/{session_id}` | Continue an existing session by submitting answers and receiving the next question. |
 | POST   | `/ddx/diagnose/`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
 
-Full details and "Try it" functionality are available in the [API Reference](#api-reference).
-
-## Workflow
+For complete specifications and live testing, visit the 
+<a href="#api-reference" 
+className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">API reference</a>.
+## Architecture
 <Mermaid
+
   chart={`
 sequenceDiagram
     participant Patient
@@ -47,37 +88,26 @@ sequenceDiagram
 `}
 />
 
-## Quick example
-```bash
-curl -X POST "https://api.avey.ai/ddx/session/" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -d '{
-    "input_text": "I have a headache and a fever",
-    "age": 35,
-    "sex": "male",
-    "coding_systems": ["icd10"]
-  }'
-```
 
-Example response (truncated):
-
-```json
-{
-  "session_id": "abc123",
-  "question": "How long have you had these symptoms?"
-}
-
-```
-
-## Key points before using
+## Requirements
+- **Authentication**: The API uses a bearer token for 
+<a href="/authentication" className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">authentication</a>.
 
 
-- **Authentication**: Bearer token. 
-- **Accuracy improves with complete Q&A cycles**: early calls to /ddx/diagnose/ may reduce precision.
+## API reference
+<Cards className="grid grid-cols-3 ">
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/diagnosis/create_session" title="Create a session"/>
+    <Card
 
-## API Reference
-- [Create Session](/docs/diagnosis/new_diagnosis_ddx_diagnose__post)
-- [Continue Session](/docs/diagnosis/update_session_ddx_session__session_id__post)
-- [Diagnose](/docs/diagnosis/new_diagnosis_ddx_diagnose__post)
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+
+href="/diagnosis/update_session" title="Continue a session"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/diagnosis/diagnose" title="Diagnose"
+/>
+</Cards>
+
 
