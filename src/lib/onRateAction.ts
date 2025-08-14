@@ -3,7 +3,7 @@ import type { ActionResponse, Feedback } from '@/components/rate';
 import { getGithubAppSecrets } from '../../config';
 
 export const repo = 'avey-api-docs';
-export const owner = 'mohanedwalid05';
+export const owner = 'rimads';
 export const DocsCategory = 'Ideas';
 
 let instance: Octokit | undefined;
@@ -94,9 +94,9 @@ export async function onRateAction(
   const title = `Feedback for ${url}`;
   const body = `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`;
 
-  let {
+  const {
     search: {
-      nodes: [discussion],
+      nodes: discussions,
     },
   }: {
     search: {
@@ -111,7 +111,11 @@ export async function onRateAction(
             }
           }`);
 
-  if (discussion) {
+  let discussion: { id: string; url: string };
+
+  if (discussions.length > 0) {
+    // Discussion already exists, add a comment
+    discussion = discussions[0];
     await octokit.graphql(`
             mutation {
               addDiscussionComment(input: { body: ${JSON.stringify(body)}, discussionId: "${discussion.id}" }) {
@@ -120,7 +124,9 @@ export async function onRateAction(
             }`);
   } else {
     const result: {
-      discussion: { id: string; url: string };
+      createDiscussion: {
+        discussion: { id: string; url: string };
+      };
     } = await octokit.graphql(`
             mutation {
               createDiscussion(input: { repositoryId: "${destination.id}", categoryId: "${category!.id}", body: ${JSON.stringify(body)}, title: ${JSON.stringify(title)} }) {
@@ -128,7 +134,7 @@ export async function onRateAction(
               }
             }`);
 
-    discussion = result.discussion;
+    discussion = result.createDiscussion.discussion;
   }
 
   if (!discussion?.url) {
