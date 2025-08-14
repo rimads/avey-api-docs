@@ -5,17 +5,11 @@
     "description": "API for CPT code inference using LLM technology",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://api.avey.ai/cpt",
-      "description": "Production"
-    }
-  ],
   "paths": {
     "/cpt/code/": {
       "post": {
-        "summary": "CPT API",
-        "description": "This endpoint analyzes a given medical procedure text and returns a ranked list of relevant CPT codes.\n\nYou can specify the number of top codes to return using the `k` parameter.",
+        "summary": "Classify to CPT Codes",
+        "description": "Send a procedure description and a k value to receive a ranked list of CPT codes.",
         "operationId": "prompt_llm_cpt_code__post",
         "parameters": [
           {
@@ -23,7 +17,14 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
               "description": "The number of top codes to return. If None, returns all ranked codes.",
               "title": "K"
             },
@@ -34,26 +35,28 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/InferenceRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/InferenceRequest"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Successful Response",
+            "description": "Successful response from CPT API.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/InferenceResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/InferenceResponse"
+                }
               }
             }
           },
           "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
-              }
-            }
+            "description": "LLM failed to get response from text."
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -61,17 +64,6 @@
   },
   "components": {
     "schemas": {
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": { "$ref": "#/components/schemas/ValidationError" },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
       "InferenceRequest": {
         "properties": {
           "text": {
@@ -87,36 +79,20 @@
       },
       "InferenceResponse": {
         "properties": {
-          "prompt": {
-            "type": "string",
-            "title": "Prompt",
-            "description": "The original procedure text"
-          },
-          "cpt_codes": {
-            "items": { "type": "string" },
+          "code": {
+            "items": {
+              "type": "string",
+              "description": "A CPT code representing a medical procedure"
+            },
             "type": "array",
-            "title": "Cpt Codes",
+            "title": "Code",
             "description": "List of ranked CPT codes"
           }
         },
         "type": "object",
-        "required": ["prompt", "cpt_codes"],
+        "required": ["code"],
         "title": "InferenceResponse",
         "description": "Response model for CPT code inference API."
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": { "type": "string", "title": "Message" },
-          "type": { "type": "string", "title": "Error Type" }
-        },
-        "type": "object",
-        "required": ["loc", "msg", "type"],
-        "title": "ValidationError"
       }
     }
   }

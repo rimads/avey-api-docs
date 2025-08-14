@@ -5,30 +5,23 @@ new: true
 ---
 
 ## Introduction
-The Avey Model Communication Protocol (MCP) provides a standardized, secure way to access the Diagnosis API.
-It enables applications to manage full diagnostic sessions — from initiating patient interviews to retrieving structured assessments — through a single, consistent integration layer.
-
+**Avey now supports MCP!** 
+Empower your agentic workflows with end-to-end self-diagnostic capabilities — from launching sessions to guiding Q&As, generating structured assessments, and beyond, all in one frictionless flow.
 ### Using MCP with the Diagnosis API offers:
-<Cards className="grid grid-cols-3">
-  <Card title="Unified access" >
-    All session management, question flow, and final results handled over one protocol.
-  </Card>
+<Cards className="grid grid-cols-2">
+
   <Card title="Flexible workflows" >
     Call tools directly from your code or delegate flow control to an LLM.
   </Card>
-  <Card title="Seamless scaling" >
-    Same integration pattern across usage tiers, from development to enterprise.
-  </Card>
+<Card title="Easy integration">
+  Connect once and use across agents, tools, and workflows.
+</Card>
 </Cards>
 
 ## Prerequisites for this guide
 
 - Avey API key with Diagnosis API access.
-- Prior knowledge of [MCP](https://modelcontextprotocol.io/docs/getting-started/intro) and [MCP Clients](https://modelcontextprotocol.io/quickstart/client) .
 
-## Configuration
-Use the following details to connect your MCP client to the Avey Diagnosis API.
-You can also experiment and validate your setup using the [MCP Inspector](https://modelcontextprotocol.io/inspector) before integrating it into your workflow.
 
 
 ### MCP server URL
@@ -71,9 +64,9 @@ Run a test call, then proceed with your integration.
 
 | Tool Name | Purpose | API  |
 |-----------|---------|---------------------|
-| `start_new_session` | Starts a new diagnostic interview. | [Create a session](./new_session__post.mdx) |
-| `process_session_update` | Continues the diagnostic interview based on the user's answer. | [Update a session](./update_session__session_id__post.mdx) |
-| `create_diagnosis` | Generates the final clinical summary and recommendations. | [Diagnose](./new_diagnosis_diagnosis__post.mdx) |
+| `start_new_session` | Starts a new diagnostic interview. | [Create a session](./create_session.mdx) |
+| `process_session_update` | Continues the diagnostic interview based on the user's answer. | [Update a session](./update_session.mdx) |
+| `get_diagnosis` | Generates the final clinical summary and recommendations. | [Diagnose](./diagnose) |
 
 ## Resources
 
@@ -82,29 +75,5 @@ Run a test call, then proceed with your integration.
 - [MCP Server](https://modelcontextprotocol.io/quickstart/server)
 
 
-## FAQs 
-
-<Accordions type="single" >
-  <Accordion title="Can I use the Avey MCP without an MCP client?">
-    While it’s possible to call the API endpoints directly, using a supported MCP client 
-    (such as [FastMCP](https://modelcontextprotocol.io/quickstart/client)) is strongly 
-    recommended for streamlined session handling and tool orchestration.
-  </Accordion>
-
-  <Accordion title="What’s the difference between calling the Diagnosis API directly and using MCP?">
-    MCP provides a unified interface for session creation, question flow, and diagnosis 
-    generation, reducing the need for manual state management.
-  </Accordion>
-
-  <Accordion title="Is there a sandbox or testing environment?">
-    Yes. You can experiment with your configuration using the 
-    [MCP Inspector](https://modelcontextprotocol.io/inspector) before moving to production.
-  </Accordion>
-
-  <Accordion title="Which authentication method is supported?">
-    The Avey MCP uses Bearer token authentication. Include your API key in the 
-    `Authorization` header.
-  </Accordion>
-</Accordions>
 
 
