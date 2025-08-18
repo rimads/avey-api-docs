@@ -107,22 +107,11 @@ export async function onRateAction(
             search(type: DISCUSSION, query: ${JSON.stringify(`${title} in:title repo:${owner}/${repo} author:@me`)}, first: 1) {
               nodes {
                 ... on Discussion { id, url }
-
               }
-            }`);
-    
-    discussions = (searchResult as any).search.nodes;
-    console.log('Search successful, found discussions:', discussions.length);
-  } catch (searchError) {
-    console.error('Search failed, skipping to create new discussion:', searchError);
-    // If search fails, we'll just create a new discussion
-    discussions = [];
-  }
+            }
+          }`);
 
   let discussion: { id: string; url: string };
-
-  let discussion: { id: string; url: string };
-
 
   if (discussions.length > 0) {
     // Discussion already exists, add a comment
