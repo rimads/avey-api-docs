@@ -3,7 +3,7 @@ import type { ActionResponse, Feedback } from '@/components/rate';
 import { getGithubAppSecrets } from '../../config';
 
 export const repo = 'avey-api-docs';
-export const owner = 'mohanedwalid05';
+export const owner = 'rimads';
 export const DocsCategory = 'Ideas';
 
 let instance: Octokit | undefined;
@@ -94,24 +94,36 @@ export async function onRateAction(
   const title = `Feedback for ${url}`;
   const body = `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`;
 
-  let {
-    search: {
-      nodes: [discussion],
-    },
-  }: {
-    search: {
-      nodes: { id: string; url: string }[];
-    };
-  } = await octokit.graphql(`
-          query {
-            search(type: DISCUSSION, query: ${JSON.stringify(`${title} in:title repo:${owner}/${repo} author:@me`)}, first: 1) {
-              nodes {
-                ... on Discussion { id, url }
-              }
-            }
-          }`);
+  // Log the search query for debugging
+  // Simplified search without author filter since GitHub Apps might not support @me
+  const searchQuery = `${title} in:title repo:${owner}/${repo}`;
+  console.log('Search query:', searchQuery);
 
-  if (discussion) {
+  let discussions: { id: string; url: string }[] = [];
+  
+  try {
+    const searchResult = await octokit.graphql(`
+            query {
+              search(type: DISCUSSION, query: ${JSON.stringify(searchQuery)}, first: 1) {
+                nodes {
+                  ... on Discussion { id, url }
+                }
+              }
+            }`);
+    
+    discussions = (searchResult as any).search.nodes;
+    console.log('Search successful, found discussions:', discussions.length);
+  } catch (searchError) {
+    console.error('Search failed, skipping to create new discussion:', searchError);
+    // If search fails, we'll just create a new discussion
+    discussions = [];
+  }
+
+  let discussion: { id: string; url: string };
+
+  if (discussions.length > 0) {
+    // Discussion already exists, add a comment
+    discussion = discussions[0];
     await octokit.graphql(`
             mutation {
               addDiscussionComment(input: { body: ${JSON.stringify(body)}, discussionId: "${discussion.id}" }) {
@@ -120,7 +132,9 @@ export async function onRateAction(
             }`);
   } else {
     const result: {
-      discussion: { id: string; url: string };
+      createDiscussion: {
+        discussion: { id: string; url: string };
+      };
     } = await octokit.graphql(`
             mutation {
               createDiscussion(input: { repositoryId: "${destination.id}", categoryId: "${category!.id}", body: ${JSON.stringify(body)}, title: ${JSON.stringify(title)} }) {
@@ -128,7 +142,7 @@ export async function onRateAction(
               }
             }`);
 
-    discussion = result.discussion;
+    discussion = result.createDiscussion.discussion;
   }
 
   if (!discussion?.url) {
