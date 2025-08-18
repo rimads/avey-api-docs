@@ -94,20 +94,20 @@ export async function onRateAction(
   const title = `Feedback for ${url}`;
   const body = `[${feedback.opinion}] ${feedback.message}\n\n> Forwarded from user feedback.`;
 
-  // Log the search query for debugging
-  // Simplified search without author filter since GitHub Apps might not support @me
-  const searchQuery = `${title} in:title repo:${owner}/${repo}`;
-  console.log('Search query:', searchQuery);
+  const {
+    search: {
+      nodes: discussions,
+    },
+  }: {
+    search: {
+      nodes: { id: string; url: string }[];
+    };
+  } = await octokit.graphql(`
+          query {
+            search(type: DISCUSSION, query: ${JSON.stringify(`${title} in:title repo:${owner}/${repo} author:@me`)}, first: 1) {
+              nodes {
+                ... on Discussion { id, url }
 
-  let discussions: { id: string; url: string }[] = [];
-  
-  try {
-    const searchResult = await octokit.graphql(`
-            query {
-              search(type: DISCUSSION, query: ${JSON.stringify(searchQuery)}, first: 1) {
-                nodes {
-                  ... on Discussion { id, url }
-                }
               }
             }`);
     
@@ -120,6 +120,9 @@ export async function onRateAction(
   }
 
   let discussion: { id: string; url: string };
+
+  let discussion: { id: string; url: string };
+
 
   if (discussions.length > 0) {
     // Discussion already exists, add a comment

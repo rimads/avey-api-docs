@@ -23,17 +23,15 @@ Avey delivers AI-driven healthcare APIs that transform unstructured clinical dat
   />
   <Card
     title="NDC API (coming soon)"
-    href="/ndc/overview"
     description="Medication name to NDC code conversion"
   />
   <Card
     title="Drug API (coming soon)"
-    href="/drug/overview"
     description="Medication validation, interactions, and contraindications"
   />
   <Card
     title="Procedure API (coming soon)"
-    href="/procedure/overview"
+
     description="Procedure validation and medical necessity checking"
   />
 </Cards>
@@ -65,7 +63,6 @@ Run a test call, then proceed with your integration.
 ## Prerequisites
 
 - **API Key (Bearer Token)** issued by Avey  
-- An HTTP client (e.g., cURL, Postman, or a server-side HTTP library)  
 
 ---
 
@@ -97,10 +94,10 @@ Authorization: Bearer YOUR_API_KEY
 href="/diagnosis/overview" title="Diagnosis API overview"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/procedure/overview" title="Procedure API overview"/>
+ title="Procedure API overview"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/drug/overview" title="Drug API overview"/>
+ title="Drug API overview"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
 href="/icd/overview" title="ICD API overview"/>
@@ -109,5 +106,5 @@ href="/icd/overview" title="ICD API overview"/>
 href="/cpt/overview" title="CPT API overview"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/ndc/overview" title="NDC API overview"/>
+ title="NDC API overview"/>
 </Cards>

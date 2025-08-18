@@ -6,15 +6,6 @@ const withMDX = createMDX();
 const config = {
   output: "standalone",
   reactStrictMode: true,
-
-  async rewrites() {
-    return [
-      {
-        source: "/admin",
-        destination: "/admin/index.html",
-      },
-    ];
-  },
 };
 
 export default withMDX(config);
