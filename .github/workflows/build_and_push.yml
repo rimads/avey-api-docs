@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  SERVICE_NAME: avey-api-docs
+  SERVICE_NAME: api-docs
   IMAGE_REGISTRY: registry.avey.ai
   IMAGE_REGISTRY_USERNAME: avey
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.AVEY_REGISTRY_PASSWORD }}
