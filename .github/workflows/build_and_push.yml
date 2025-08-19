@@ -52,6 +52,6 @@ jobs:
         uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
         with:
           auth_token: ${{ secrets.DOKPLOY_APIKEY }}
-          dokploy_url: ${{ env.DOKPLOY_URL }}
+          dokploy_url: ${{ secrets.DOKPLOY_URL }}
           compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
 
