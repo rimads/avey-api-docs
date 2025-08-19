@@ -10,6 +10,7 @@ env:
   IMAGE_REGISTRY: registry.avey.ai
   IMAGE_REGISTRY_USERNAME: avey
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.AVEY_REGISTRY_PASSWORD }}
+  DOKPLOY_COMPOSE_ID: aj0SVfeJGv2cs764_5qTC
 
 jobs:
   build:
@@ -46,3 +47,11 @@ jobs:
             ${{ env.IMAGE_REGISTRY }}/${{ env.SERVICE_NAME }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Dokploy Deployment
+        uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
+        with:
+          auth_token: ${{ secrets.DOKPLOY_APIKEY }}
+          dokploy_url: ${{ env.DOKPLOY_URL }}
+          compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
+
