@@ -3,7 +3,7 @@ title: Create session
 full: true
 _openapi:
   method: POST
-  route: /session/
+  route: /session
   toc: []
   structuredData:
     headings: []
@@ -21,4 +21,4 @@ Starts a new interactive diagnostic session. provide the patient's initial infor
     (age, sex, and the input text of the patient) to create a session and receive the first question.
     A unique `session_id` is returned, which you must use for all subsequent calls.
 
-<APIPage document={"json/diagnosis.json"} operations={[{"path":"/session/","method":"post"}]} webhooks={[]} hasHead={false} />
+<APIPage document={"json/diagnosis.json"} operations={[{"path":"/session","method":"post"}]} webhooks={[]} hasHead={false} />
