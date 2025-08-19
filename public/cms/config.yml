@@ -50,7 +50,7 @@ collections:
 
   - name: "cpt"
     label: "CPT Documentation"
-    folder: "content/docs/CPT"
+    folder: "content/docs/cpt"
     extension: "mdx"
     format: "frontmatter"
     create: true
@@ -72,7 +72,7 @@ collections:
 
   - name: "diagnostic"
     label: "Diagnostic Documentation"
-    folder: "content/docs/Diagnostic"
+    folder: "content/docs/diagnosis"
     extension: "mdx"
     format: "frontmatter"
     create: true
@@ -94,7 +94,7 @@ collections:
 
   - name: "drug"
     label: "Drug Documentation"
-    folder: "content/docs/Drug"
+    folder: "content/docs/drug"
     extension: "mdx"
     format: "frontmatter"
     create: true
@@ -116,7 +116,7 @@ collections:
 
   - name: "icd"
     label: "ICD Documentation"
-    folder: "content/docs/ICD"
+    folder: "content/docs/icd"
     extension: "mdx"
     format: "frontmatter"
     create: true
@@ -138,7 +138,7 @@ collections:
 
   - name: "ndc"
     label: "NDC Documentation"
-    folder: "content/docs/NDC"
+    folder: "content/docs/ndc"
     extension: "mdx"
     format: "frontmatter"
     create: true
@@ -160,7 +160,7 @@ collections:
 
   - name: "procedure"
     label: "Procedure Documentation"
-    folder: "content/docs/Procedure"
+    folder: "content/docs/procedure"
     extension: "mdx"
     format: "frontmatter"
     create: true
