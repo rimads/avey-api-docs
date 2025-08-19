@@ -41,7 +41,7 @@ jobs:
           push: true
           context: .
           file: Dockerfile
-          target: runner
+          target: production
           tags: |
             ${{ env.IMAGE_REGISTRY }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
             ${{ env.IMAGE_REGISTRY }}/${{ env.SERVICE_NAME }}:latest
