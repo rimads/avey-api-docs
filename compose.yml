@@ -4,7 +4,7 @@ networks:
     
 services:
   docs:
-    image: registry.avey.ai/avey-api-docs:latest
+    image: registry.avey.ai/api-docs:latest
     networks:
       - dokploy-network
     environment:
@@ -25,4 +25,4 @@ services:
       resources:
         limits:
           cpus: '0.25'
-          memory: 512M
+          memory: 256M
