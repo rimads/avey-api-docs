@@ -56,11 +56,12 @@ However, accuracy improves when the session is completed before diagnosis.</Call
 
 
 ## Endpoints
-| Method | Path                       | Purpose |
+
+| Method | Path                      | Purpose |
 |--------|----------------------------|---------|
-| POST   | `/ddx/session/`             | Create a session, initialize patient context, and receive the first question. |
+| POST   | `/ddx/session`             | Create a session, initialize patient context, and receive the first question. |
 | POST   | `/ddx/session/{session_id}` | Update an existing session by submitting answers and receiving the next step in the patient's assessment. |
-| Get   | `/ddx/diagnose/`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
+| GET   | `/ddx/session/{session_id}/diagnose`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
 
 For complete specifications and live testing, visit the 
 <a href="#api-reference" 
