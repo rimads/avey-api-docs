@@ -26,7 +26,7 @@ Seamlessly coordinate multi-step diagnostic workflows.
 
 ### MCP server URL
 ```http
-https://mcp.avey.ai/mcp/ddx
+https://mcp.avey.ai/ddx
 ```
 
 ### Authentication
@@ -47,7 +47,7 @@ Email **support@avey.ai** to receive your API key.
   <div className="fd-step">
     <div className="fd-step-content">
 ### Step 2 — Test with MCP Inspector
-    Use the [MCP Inspector](https://modelcontextprotocol.io/inspector) to validate your setup and check that tools are available.
+    Use the [MCP Inspector](https://modelcontextprotocol.io/legacy/tools/inspector) to validate your setup and check that tools are available.
     </div> 
   </div>
   <div className="fd-step">
@@ -64,9 +64,9 @@ Run a test call, then proceed with your integration.
 
 | Tool Name | Purpose | API  |
 |-----------|---------|---------------------|
-| `start_new_session` | Starts a new diagnostic interview. | [Create a session](./create_session.mdx) |
-| `process_session_update` | Continues the diagnostic interview based on the user's answer. | [Update a session](./update_session.mdx) |
-| `get_diagnosis` | Generates the final clinical summary and recommendations. | [Diagnose](./diagnose) |
+| `start_diagnostic_session` | Starts a new interactive diagnostic session. | [Create session](./create_session.mdx) |
+| `answer_diagnostic_question` | Submits a user’s answer and returns the next step in the patient’s assessment. | [Update session](./update_session.mdx) |
+| `get_patient_assessment` | Generates the final patient assessment and recommendations. | [Get diagnosis](./diagnose) |
 
 ## Resources
 

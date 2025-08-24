@@ -1,4 +1,4 @@
 {
-  "title": "Diagnostic API",
-  "pages": ["overview", "...", "mcp", "!overview_old"]
+  "title": "Diagnosis API",
+  "pages": ["overview", "...", "diagnose", "mcp"]
 }
