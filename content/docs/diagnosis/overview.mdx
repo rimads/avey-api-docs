@@ -37,7 +37,7 @@ Receive a `session_id` and the first question.
   </div>
     <div className="fd-step">
     <div className="fd-step-content">
-### Step 2 — Continue the session
+### Step 2 — Update the session
 Send answers with the `session_id`.  
 Repeat until the API returns `null` for the question.
 
@@ -45,9 +45,8 @@ Repeat until the API returns `null` for the question.
   </div>
     <div className="fd-step">
     <div className="fd-step-content">
-### Step 3 — Diagnose
-Send final patient data and desired outputs.  
-Receive diagnosis, advice, urgency, and specialist recommendations.
+### Step 3 — Get diagnosis
+Provide a session ID to retrieve diagnosis from existing patient data.
 
     </div> 
   </div>
@@ -56,12 +55,12 @@ Receive diagnosis, advice, urgency, and specialist recommendations.
 However, accuracy improves when the session is completed before diagnosis.</Callout>
 
 
-## Endpoints 
+## Endpoints
 | Method | Path                       | Purpose |
 |--------|----------------------------|---------|
 | POST   | `/ddx/session/`             | Create a session, initialize patient context, and receive the first question. |
-| POST   | `/ddx/session/{session_id}` | Continue an existing session by submitting answers and receiving the next question. |
-| POST   | `/ddx/diagnose/`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
+| POST   | `/ddx/session/{session_id}` | Update an existing session by submitting answers and receiving the next step in the patient's assessment. |
+| Get   | `/ddx/diagnose/`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
 
 For complete specifications and live testing, visit the 
 <a href="#api-reference" 
@@ -98,15 +97,15 @@ sequenceDiagram
 <Cards className="grid grid-cols-3 ">
   <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/diagnosis/create_session" title="Create a session"/>
+href="/diagnosis/create_session" title="Create session"/>
     <Card
 
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
 
-href="/diagnosis/update_session" title="Continue a session"/>
+href="/diagnosis/update_session" title="Update session"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/diagnosis/diagnose" title="Diagnose"
+href="/diagnosis/diagnose" title="Get diagnosis"
 />
 </Cards>
 
