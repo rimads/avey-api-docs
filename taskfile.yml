@@ -1,0 +1,18 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: Start development
+    deps: [setup]
+    cmds:
+      - bun run dev
+
+  setup:
+    desc: Setup local dependencies
+    cmds:
+      - bun install
+
+  gen:
+    desc: Generate docs
+    cmds:
+      - bun run gen -- {{.CLI_ARGS}}
