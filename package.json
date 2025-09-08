@@ -7,13 +7,7 @@
     "dev": "next dev --turbo",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
-    "gen:all": "npm run gen:procedure && npm run gen:diagnosis && npm run gen:drug && npm run gen:cpt && npm run gen:icd && npm run gen:ndc",
-    "gen:procedure": "node ./scripts/generate-docs.mjs procedure",
-    "gen:diagnosis": "node ./scripts/generate-docs.mjs diagnosis",
-    "gen:drug": "node ./scripts/generate-docs.mjs drug",
-    "gen:cpt": "node ./scripts/generate-docs.mjs cpt",
-    "gen:icd": "node ./scripts/generate-docs.mjs icd",
-    "gen:ndc": "node ./scripts/generate-docs.mjs ndc"
+    "gen": "node ./scripts/generate-docs.mjs"
   },
   "dependencies": {
     "@orama/orama": "^3.1.11",
