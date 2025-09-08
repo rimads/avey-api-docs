@@ -9,6 +9,7 @@ const inputs = {
   cpt: "./json/cpt.json",
   icd: "./json/icd.json",
   ndc: "./json/ndc.json",
+  cowriter: "./json/cowriter.json",
 };
 
 if (!inputs[target]) {

@@ -1,0 +1,2657 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Cowriter Manager API",
+    "contact": {
+      "name": "Ahmed Abdou",
+      "email": "ahmed.abdou@avey.ai"
+    },
+    "version": "1.0"
+  },
+  "host": "api.localhost/cowriter",
+  "basePath": "/v1",
+  "paths": {
+    "/healthz": {
+      "get": {
+        "description": "Health check endpoint",
+        "produces": ["text/plain"],
+        "summary": "Healthz endpoint",
+        "operationId": "healthz",
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/session": {
+      "post": {
+        "description": "create session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Create Session",
+        "parameters": [
+          {
+            "description": "session \u0026 patient data",
+            "name": "session",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.CreateSessionReq"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/contract.Session"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}": {
+      "get": {
+        "description": "get session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Get Session",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.GetSessionRes"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/alerts": {
+      "get": {
+        "description": "Gets the alerts for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Get Alerts",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.Alert"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/alerts/start": {
+      "post": {
+        "description": "Marks that the review process has started for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Mark Review Started",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.GenericSuccessRes"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/alerts/status": {
+      "get": {
+        "description": "Gets the review status for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Get Review Status",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ReviewStatusRes"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/assessments": {
+      "get": {
+        "description": "get session assessments",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "Get Assessments",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.Assessment"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "set session assessments\nthis completely overrides the existing assessments data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["assessments"],
+        "summary": "Set Assessments",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "assessments",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SetAssessmentsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/findings": {
+      "get": {
+        "description": "get session findings",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["findings"],
+        "summary": "Get Findings",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.Finding"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/findings/snapshot": {
+      "post": {
+        "description": "add a new session finding\nthis function does care about session state",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["findings"],
+        "summary": "Add Finding",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "finding",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.AddFindingSnapshotReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/medications": {
+      "get": {
+        "description": "get session medications",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["medications"],
+        "summary": "Get Medications",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.Medication"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "set session medications\nthis completely overrides the existing medications data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["medications"],
+        "summary": "Set Medications",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "medications",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SetMedicationsReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/notifications": {
+      "get": {
+        "description": "A Server Sent Event stream that notifies the client of session state changes.\nIt listens on all session states changes on redis and relays them back to the client.\nThese changes include but are not limited to:\n- New Diarized Transcription\n- A change in the signs and symptoms list\n- A new question from maven",
+        "produces": ["application/json"],
+        "tags": ["notifications"],
+        "summary": "Session State StreamNotifications",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/procedures": {
+      "get": {
+        "description": "get session procedures",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["procedures"],
+        "summary": "Get Procedures",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.Procedure"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "set session procedures\nthis completely overrides the existing procedures data",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["procedures"],
+        "summary": "Set Procedures",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "procedures",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SetProceduresReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/save": {
+      "post": {
+        "description": "Saves the complete session data and summaries to EMR-on-FHIR service",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Save Session to EMR",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSessionRes"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/stopped": {
+      "patch": {
+        "description": "mark session stopped (idempotic)\nthis endpoint is does not care if the session actually exists\nit just adds the ID to the stopped set and removes it from the active set",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["session"],
+        "summary": "Mark Session Stopped",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/all/init": {
+      "post": {
+        "description": "Initializes all summary types for a session. If a summary exists in Redis, returns that; otherwise generates it using the respective summarizer.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Initialize All Summaries",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all summaries",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.AllSummariesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/all/replace": {
+      "post": {
+        "description": "Replaces all summaries for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Replace All Summaries",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "Request body containing all summaries",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ReplaceSummariesReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "all summaries",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.AllSummariesResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/assessment": {
+      "get": {
+        "description": "Gets the assessment summary for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Get Assessment Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Saves an assessment summary for a session. Combines the provided text with current assessments.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Save Assessment Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "summary text",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "saved summary",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/assessment/generate": {
+      "get": {
+        "description": "Generates an assessment summary based on the previous summary, patient profile, and current assessments.\nIt does not save the returned summary to the session state, it only returns it to the client.",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "tags": ["summary"],
+        "summary": "Generate Assessment Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/medication": {
+      "get": {
+        "description": "Gets the medication summary for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Get Medication Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Saves a medication summary for a session. Combines the provided text with current medications.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Save Medication Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "summary text",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "saved summary",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/medication/generate": {
+      "get": {
+        "description": "Generates a medication summary based on the previous summary, patient profile, and current medications.\nIt does not save the returned summary to the session state, it only returns it to the client.",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "tags": ["summary"],
+        "summary": "Generate Medication Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/objective": {
+      "get": {
+        "description": "Gets the objective summary for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Get Objective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Saves an objective summary for a session. Combines the provided text with current findings.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Save Objective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "summary text",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "saved summary",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/objective/generate": {
+      "get": {
+        "description": "Generates an objective summary based on the previous summary, patient profile, and current findings.\nIt does not save the returned summary to the session state, it only returns it to the client.",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "tags": ["summary"],
+        "summary": "Generate Objective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/procedure": {
+      "get": {
+        "description": "Gets the procedure summary for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Get Procedure Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Saves a procedure summary for a session. Combines the provided text with current procedures.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Save Procedure Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "summary text",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "saved summary",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/procedure/generate": {
+      "get": {
+        "description": "Generates a procedure summary based on the previous summary, patient profile, and current procedures.\nIt does not save the returned summary to the session state, it only returns it to the client.",
+        "consumes": ["application/json"],
+        "produces": ["text/plain"],
+        "tags": ["summary"],
+        "summary": "Generate Procedure Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/subjective": {
+      "get": {
+        "description": "Gets the subjective summary for a session",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Get Subjective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Saves a subjective summary for a session. Combines the provided text with current findings.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Save Subjective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "summary text",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "saved summary",
+            "schema": {
+              "$ref": "#/definitions/internal_handlers.GetSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/summary/subjective/generate": {
+      "get": {
+        "description": "Generates a subjective summary based on the previous summary, patient profile, current findings, and stored chief complaints.\nIt does not save the returned summary to the session state, it only returns it to the client.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["summary"],
+        "summary": "Generate Subjective Summary",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "summary text and cleaned chief complaints",
+            "schema": {
+              "$ref": "#/definitions/github_com_rimads_cowriter_internal_services_summarizer.SubjectiveSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/echo.HTTPError"
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/transcriptions/diarized": {
+      "get": {
+        "description": "offline diarized transcriptions\nreturns the full diarized transcription so far from redis",
+        "produces": ["application/json"],
+        "tags": ["transcriptions"],
+        "summary": "Offline Diarized Transcriptions",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/contract.OfflineRecognitionResult"
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/session/{session_id}/transcriptions/live": {
+      "get": {
+        "description": "Latest live transcriptions so far",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["transcriptions"],
+        "summary": "Live Transcriptions",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "session id",
+            "name": "session_id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/contract.LiveRecognitionResult"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/echo.HTTPError"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "contract.ActiveIngredient": {
+      "type": "object",
+      "properties": {
+        "concentration": {
+          "type": "string"
+        },
+        "concentration_unit": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "package_size": {
+          "type": "string"
+        },
+        "package_size_unit": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.Alert": {
+      "type": "object",
+      "properties": {
+        "aut_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "problems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.AlertProblem"
+          }
+        },
+        "section": {
+          "$ref": "#/definitions/contract.AlertSection"
+        }
+      }
+    },
+    "contract.AlertProblem": {
+      "type": "object",
+      "properties": {
+        "fixed": {
+          "type": "boolean"
+        },
+        "message_template_enum": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.AlertSection": {
+      "type": "string",
+      "enum": ["procedure", "medication", "assessment"],
+      "x-enum-varnames": [
+        "AlertSectionProcedure",
+        "AlertSectionMedication",
+        "AlertSectionAssessment"
+      ]
+    },
+    "contract.Assessment": {
+      "type": "object",
+      "properties": {
+        "icd10cm_code": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_primary": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "time": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.DurationUnit": {
+      "type": "string",
+      "enum": ["day", "week", "month", "year"],
+      "x-enum-varnames": [
+        "DurationUnitDay",
+        "DurationUnitWeek",
+        "DurationUnitMonth",
+        "DurationUnitYear"
+      ]
+    },
+    "contract.Finding": {
+      "type": "object",
+      "properties": {
+        "classification": {
+          "$ref": "#/definitions/contract.FindingClass"
+        },
+        "icd10cm_code": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_chief": {
+          "type": "boolean"
+        },
+        "legacy_avey_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent_concept": {
+          "$ref": "#/definitions/contract.ParentConcept"
+        },
+        "publisher": {
+          "$ref": "#/definitions/contract.Publisher"
+        },
+        "status": {
+          "$ref": "#/definitions/contract.FindingState"
+        },
+        "time": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.FindingClass": {
+      "type": "string",
+      "enum": ["subjective", "objective"],
+      "x-enum-varnames": ["SubjectiveFindingClass", "ObjectiveFindingClass"]
+    },
+    "contract.FindingState": {
+      "type": "string",
+      "enum": ["present", "absent", "unsure", "deleted"],
+      "x-enum-varnames": [
+        "PresentFindingState",
+        "AbsentFindingState",
+        "UnsureFindingState",
+        "DeletedFindingState"
+      ]
+    },
+    "contract.FrequencyUnit": {
+      "type": "string",
+      "enum": ["hour", "day"],
+      "x-enum-varnames": ["FrequencyUnitHour", "FrequencyUnitDay"]
+    },
+    "contract.LiveRecognitionResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "is_final": {
+          "type": "boolean"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "transcription_info": {
+          "$ref": "#/definitions/contract.TranscriptionInfo"
+        }
+      }
+    },
+    "contract.Medication": {
+      "type": "object",
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "duration_unit": {
+          "$ref": "#/definitions/contract.DurationUnit"
+        },
+        "frequency": {
+          "type": "integer"
+        },
+        "frequency_unit": {
+          "$ref": "#/definitions/contract.FrequencyUnit"
+        },
+        "id": {
+          "type": "string"
+        },
+        "medication_details": {
+          "$ref": "#/definitions/contract.MedicationDetails"
+        }
+      }
+    },
+    "contract.MedicationDetails": {
+      "type": "object",
+      "properties": {
+        "active_ingredient_concentration": {
+          "type": "string"
+        },
+        "active_ingredient_concentration_unit": {
+          "type": "string"
+        },
+        "active_ingredient_name": {
+          "type": "string"
+        },
+        "active_ingredients": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.ActiveIngredient"
+          }
+        },
+        "code": {
+          "type": "string"
+        },
+        "dosage_form": {
+          "type": "string"
+        },
+        "dosage_size": {
+          "type": "string"
+        },
+        "dosage_unit": {
+          "type": "string"
+        },
+        "generic_name": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "trade_name": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.OfflineRecognitionResult": {
+      "type": "object",
+      "properties": {
+        "phrases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.Phrase"
+          }
+        }
+      }
+    },
+    "contract.ParentConcept": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "legacy_avey_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.PatientData": {
+      "type": "object",
+      "required": ["age"],
+      "properties": {
+        "age": {
+          "type": "integer"
+        },
+        "member_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "patient_history": {
+          "$ref": "#/definitions/contract.PatientHistory"
+        },
+        "sex": {
+          "type": "string",
+          "enum": ["Male", "Female", "Other"]
+        }
+      }
+    },
+    "contract.PatientHistory": {
+      "type": "object",
+      "required": [
+        "allergies",
+        "chronic_medications",
+        "family_history",
+        "medical_history",
+        "social_history"
+      ],
+      "properties": {
+        "allergies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.PatientSymptom"
+          }
+        },
+        "chronic_medications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.PatientMedication"
+          }
+        },
+        "family_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.PatientSymptom"
+          }
+        },
+        "medical_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.PatientSymptom"
+          }
+        },
+        "social_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.PatientSymptom"
+          }
+        },
+        "surgical_history": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.SurgicalHistory"
+          }
+        }
+      }
+    },
+    "contract.PatientMedication": {
+      "type": "object",
+      "required": ["cpt_code", "name"],
+      "properties": {
+        "cpt_code": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.PatientSymptom": {
+      "type": "object",
+      "required": ["snomed_code", "title"],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "snomed_code": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.Phrase": {
+      "type": "object",
+      "properties": {
+        "confidence": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "speaker": {
+          "type": "integer"
+        },
+        "start_offset": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/contract.WordInfo"
+          }
+        }
+      }
+    },
+    "contract.Procedure": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.Publisher": {
+      "type": "string",
+      "enum": ["practitioner", "maven"],
+      "x-enum-varnames": ["PractitionerPublisher", "MavenPublisher"]
+    },
+    "contract.Session": {
+      "type": "object",
+      "required": ["id", "patient_data"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "patient_data": {
+          "$ref": "#/definitions/contract.PatientData"
+        }
+      }
+    },
+    "contract.SurgicalHistory": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.TranscriptionInfo": {
+      "type": "object",
+      "properties": {
+        "duration": {
+          "description": "// Empty unless IsFinal is true\nWords []WordInfo `json:\"words\"`",
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "contract.WordInfo": {
+      "type": "object",
+      "properties": {
+        "confidence": {
+          "type": "number"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "start_offset": {
+          "type": "integer"
+        },
+        "word": {
+          "type": "string"
+        }
+      }
+    },
+    "echo.HTTPError": {
+      "type": "object",
+      "properties": {
+        "message": {}
+      }
+    },
+    "github_com_rimads_cowriter_internal_services_summarizer.SubjectiveSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "cleanedChiefComplaints": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.AddFindingSnapshotReq": {
+      "type": "object",
+      "required": ["finding"],
+      "properties": {
+        "finding": {
+          "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.FindingReq"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.CreateSessionReq": {
+      "type": "object",
+      "properties": {
+        "config": {
+          "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.SessionConfig"
+        },
+        "patient_data": {
+          "$ref": "#/definitions/contract.PatientData"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.ErrUnprocessableEntityRes": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.FindingReq": {
+      "type": "object",
+      "required": ["classification", "id", "name", "status"],
+      "properties": {
+        "classification": {
+          "$ref": "#/definitions/contract.FindingClass"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_chief": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent_concept": {
+          "$ref": "#/definitions/contract.ParentConcept"
+        },
+        "status": {
+          "$ref": "#/definitions/contract.FindingState"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.GenericSuccessRes": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.GetSessionRes": {
+      "type": "object",
+      "required": ["id", "patient_data"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        },
+        "patient_data": {
+          "$ref": "#/definitions/contract.PatientData"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.MedicationItem": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "dosage": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "duration_unit": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "integer"
+        },
+        "frequency_unit": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.ProcedureReq": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.ReplaceSummariesReq": {
+      "type": "object",
+      "properties": {
+        "assessment": {
+          "type": "string"
+        },
+        "chief_complaints": {
+          "type": "string"
+        },
+        "medication": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "subjective": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.ReviewStatusRes": {
+      "type": "object",
+      "properties": {
+        "review_started": {
+          "type": "boolean"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SaveSessionRes": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "success": {
+          "type": "boolean"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SaveSummaryReq": {
+      "type": "object",
+      "properties": {
+        "chief_complaints": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SessionConfig": {
+      "type": "object",
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "voice": {
+          "type": "string"
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SetAssessmentsReq": {
+      "type": "object",
+      "required": ["assessments"],
+      "properties": {
+        "assessments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name"],
+            "properties": {
+              "icd10cm_code": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "is_primary": {
+                "type": "boolean"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SetMedicationsReq": {
+      "type": "object",
+      "required": ["medications"],
+      "properties": {
+        "medications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.MedicationItem"
+          }
+        }
+      }
+    },
+    "github_com_rimads_cowriter_internal_types_dto.SetProceduresReq": {
+      "type": "object",
+      "required": ["procedures"],
+      "properties": {
+        "procedures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/github_com_rimads_cowriter_internal_types_dto.ProcedureReq"
+          }
+        }
+      }
+    },
+    "internal_handlers.AllSummariesResponse": {
+      "type": "object",
+      "properties": {
+        "assessment": {
+          "type": "string"
+        },
+        "chief_complaints": {
+          "type": "string"
+        },
+        "medication": {
+          "type": "string"
+        },
+        "objective": {
+          "type": "string"
+        },
+        "procedure": {
+          "type": "string"
+        },
+        "subjective": {
+          "type": "string"
+        }
+      }
+    },
+    "internal_handlers.GetSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "OpenAPI",
+    "url": "https://swagger.io/resources/open-api/"
+  }
+}

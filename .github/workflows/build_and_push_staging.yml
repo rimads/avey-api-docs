@@ -54,4 +54,3 @@ jobs:
           auth_token: ${{ secrets.DOKPLOY_APIKEY }}
           dokploy_url: ${{ secrets.DOKPLOY_URL }}
           compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
-
