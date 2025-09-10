@@ -1,0 +1,4 @@
+{
+  "title": "Cowriter API",
+  "pages": ["createSession", "addFinding", "getFindings", "websocket", "sse"]
+}

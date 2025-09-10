@@ -1,0 +1,523 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Avey Cowriter API",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.avey.ai/cowriter",
+      "description": "Avey Cowriter API"
+    }
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "tags": ["session"],
+        "summary": "Create Session",
+        "operationId": "createSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "title": "Response Createsession"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{session_id}/": {
+      "get": {
+        "tags": ["session"],
+        "summary": "Get Findings",
+        "operationId": "getFindings",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Finding"
+                  },
+                  "title": "Response Getfindings"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{session_id}/findings": {
+      "post": {
+        "tags": ["session"],
+        "summary": "Add Finding",
+        "operationId": "addFinding",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindingReq"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CodingSystem": {
+        "type": "string",
+        "enum": ["snomed", "aut"],
+        "title": "CodingSystem"
+      },
+      "CreateSessionReq": {
+        "properties": {
+          "patient_data": {
+            "$ref": "#/components/schemas/PatientData"
+          },
+          "config": {
+            "$ref": "#/components/schemas/SessionConfig"
+          }
+        },
+        "type": "object",
+        "required": ["patient_data"],
+        "title": "CreateSessionReq"
+      },
+      "Finding": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "classification": {
+            "type": "string",
+            "title": "Classification"
+          },
+          "publisher": {
+            "type": "string",
+            "title": "Publisher"
+          },
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "is_chief": {
+            "type": "boolean",
+            "title": "Is Chief"
+          },
+          "parent_concept": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ParentConcept"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "snomed_id": {
+            "type": "string",
+            "title": "Snomed Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "status",
+          "classification",
+          "publisher",
+          "time",
+          "is_chief",
+          "snomed_id"
+        ],
+        "title": "Finding"
+      },
+      "FindingReq": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "classification": {
+            "type": "string",
+            "title": "Classification"
+          },
+          "is_chief": {
+            "type": "boolean",
+            "title": "Is Chief"
+          },
+          "coding": {
+            "$ref": "#/components/schemas/CodingSystem",
+            "default": "aut"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "status", "classification", "is_chief"],
+        "title": "FindingReq"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ParentConcept": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"],
+        "title": "ParentConcept"
+      },
+      "PatientData": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "sex": {
+            "type": "string",
+            "title": "Sex"
+          },
+          "history": {
+            "$ref": "#/components/schemas/PatientHistory"
+          },
+          "member_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Id"
+          }
+        },
+        "type": "object",
+        "required": ["age", "sex"],
+        "title": "PatientData"
+      },
+      "PatientHistory": {
+        "properties": {
+          "family_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Family History"
+          },
+          "medical_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Medical History"
+          },
+          "social_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Social History"
+          },
+          "allergies": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Allergies"
+          },
+          "chronic_medications": {
+            "items": {
+              "$ref": "#/components/schemas/PatientMedication"
+            },
+            "type": "array",
+            "title": "Chronic Medications"
+          },
+          "surgical_history": {
+            "items": {
+              "$ref": "#/components/schemas/SurgicalHistory"
+            },
+            "type": "array",
+            "title": "Surgical History"
+          }
+        },
+        "type": "object",
+        "title": "PatientHistory"
+      },
+      "PatientMedication": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "cpt_code": {
+            "type": "string",
+            "title": "Cpt Code"
+          },
+          "dosage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dosage"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": ["name", "cpt_code"],
+        "title": "PatientMedication"
+      },
+      "PatientSymptom": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "snomed_code": {
+            "type": "string",
+            "title": "Snomed Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": ["title", "snomed_code"],
+        "title": "PatientSymptom"
+      },
+      "SessionConfig": {
+        "properties": {
+          "medical_alerts_enabled": {
+            "type": "boolean",
+            "title": "Medical Alerts Enabled",
+            "description": "Enable Medical Alerts (drugs, procedures, etc.)",
+            "default": false
+          },
+          "ddx_enabled": {
+            "type": "boolean",
+            "title": "Ddx Enabled",
+            "description": "Enable Differential Diagnosis API",
+            "default": false
+          },
+          "collaborator_enabled": {
+            "type": "boolean",
+            "title": "Collaborator Enabled",
+            "description": "Enable Collaborator QnA Engine",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "SessionConfig"
+      },
+      "SurgicalHistory": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": ["title"],
+        "title": "SurgicalHistory"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
