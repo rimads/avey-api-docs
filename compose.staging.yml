@@ -3,7 +3,7 @@ networks:
     external: true
     
 services:
-  docs:
+  staging-docs:
     image: registry.avey.ai/staging-api-docs:latest
     networks:
       - dokploy-network
