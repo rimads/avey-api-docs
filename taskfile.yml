@@ -3,6 +3,10 @@ version: "3"
 tasks:
   dev:
     desc: Start development
+    cmd: docker compose -f compose.dev.yml --env-file .env up -d
+
+  local:
+    desc: Start local development
     deps: [setup]
     cmds:
       - bun run dev
