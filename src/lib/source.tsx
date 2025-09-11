@@ -1,13 +1,21 @@
 import { docs } from "@/.source";
-import { loader } from "fumadocs-core/source";
+import { loader, type PageFile, type PageData } from "fumadocs-core/source";
 import { createOpenAPI, attachFile } from "fumadocs-openapi/server";
+import type { PageTree } from "fumadocs-core/server";
+
+interface CustomPageData extends PageData {
+  sidebar_title?: string;
+  new?: boolean;
+}
+
+type CustomPageFile = PageFile<CustomPageData>;
 
 // See https://fumadocs.vercel.app/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: "/",
   source: docs.toFumadocsSource(),
   pageTree: {
-    attachFile: ((node: any, file?: any) => {
+    attachFile: (node: PageTree.Item, file?: CustomPageFile) => {
       if (!file) return node;
 
       const data = file.data;
@@ -28,7 +36,7 @@ export const source = loader({
       }
 
       return attachFile(node, file);
-    }) as any,
+    },
   },
 });
 export const openapi = createOpenAPI();
