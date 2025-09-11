@@ -10,7 +10,7 @@ Stream audio from doctor-patient conversations to receive real-time transcriptio
 
 ---
 
-## Connection Details
+## Connection details
 
 #### WebSocket URL
 ```http
@@ -21,29 +21,29 @@ wss://api.avey.ai/cowriter/{session_id}/transcribe
 ```http
 X-API-KEY: YOUR_API_KEY
 ```
-#### Supported Audio Format
+#### Supported audio format
 ``` text
 pcm_f32le
 ```
-#### Path Parameters
+#### Path parameters
 <AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="PathParamsTranscriptionRequest" />
 ---
 
 ## Lifecycle
 
-### Client-to-Server Messages
+### Client-to-Server messages
 
 Upon connection, the client streams audio data as `pcm_f32le` encoded binary chunks using `Float32Array` format.
 
 ---
 
-### Server-to-Client Messages
+### Server-to-Client messages
 The server sends transcription results as JSON objects following this schema:
 
 
 <AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="LiveTranscriptionResponse" />
 
-### Message Flow
+### Message flow
 <Mermaid
   chart={`
 sequenceDiagram
@@ -69,11 +69,11 @@ sequenceDiagram
 ---
 
 
-## Audio Implementation
+## Audio implementation
 
 This web implementation example shows how to capture and send audio data to the WebSocket in React. You'll need two components: an AudioWorklet processor for low-latency background audio processing and a React hook to manage the audio context lifecycle. These work together to capture microphone input, downsample it to 16kHz, and post pcm_f32le chunks ready for speech recognition.
 
-### Audio Processor
+### Audio processor
 
 This AudioWorklet processor runs in a separate audio thread, ensuring minimal latency and smooth audio capture:
 
@@ -187,7 +187,7 @@ registerProcessor("audio-processor", AudioProcessor);
   **Important:** This file must be vanilla JavaScript (not TypeScript) and placed in your `public/` directory.
 </Callout>
 
-### React Hook
+### React hook
 
 This hook integrates the audio processor with your React application, handling microphone permissions and providing audio data via a callback:
 
@@ -308,7 +308,7 @@ export default useAudioProcessor;
 
 ```
 
-### Usage Example
+### Usage example
 
 Here's how to use these components together:
 

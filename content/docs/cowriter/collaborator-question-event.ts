@@ -1,4 +1,4 @@
 export interface CollaboratorQuestionEvent {
-  /** The AI-generated diagnostic question to help guide clinical interviews */
+  /** The recommended AI-generated question to ask the patient */
   question: string;
 }
