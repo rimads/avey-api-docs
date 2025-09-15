@@ -17,7 +17,7 @@ Stream audio from doctor-patient conversations to receive real-time transcriptio
 wss://api.avey.ai/cowriter/{session_id}/transcribe
 ```
 
-#### Authentication
+#### Authentication header
 ```http
 X-API-KEY: YOUR_API_KEY
 ```
@@ -25,8 +25,8 @@ X-API-KEY: YOUR_API_KEY
 ``` text
 pcm_f32le
 ```
-#### Path Parameters
-<AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="PathParamsTranscriptionRequest" />
+#### Query Parameters
+<AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="QueryParamsTranscriptionRequest" />
 ---
 
 ## Lifecycle

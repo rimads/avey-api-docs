@@ -1,4 +1,3 @@
-
 export interface LiveTranscriptionResponse {
   /** Unique identifier for the transcription message */
   id: number;
@@ -19,10 +18,7 @@ export interface LiveTranscriptionResponse {
   };
 }
 
-export interface PathParamsTranscriptionRequest {
-  /** Unique session identifier */
-  session_id: string;
+export interface QueryParamsTranscriptionRequest {
   /** Locale of transcription: English or Arabic */
   locale: "en" | "ar";
 }
-
