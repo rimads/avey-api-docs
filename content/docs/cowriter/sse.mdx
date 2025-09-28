@@ -24,16 +24,16 @@ Receive medical adjudication alerts powered by Avey's state-of-the-art drug, pro
 </Cards>
 ---
 
-## Connection Details
+## Connection details
 
 
-#### SSE Endpoint URL
+#### SSE endpoint URL
 
 ```http
 https://api.avey.ai/cowriter/{session_id}/events
 ```
 
-#### Headers and Authentication
+#### Headers and authentication
 
 ```http
 X-API-KEY: YOUR_API_KEY
@@ -46,13 +46,13 @@ Accept: text/event-stream
   Server-Sent Events are unidirectional (server-to-client), providing an efficient way to stream updates without polling. For interaction requiring client-to-server messaging, consider complementary APIs.
 </Callout>
 
----
+--- 
 
-## Event Payloads and Structure
+## Event payloads and structure
 
 The SSE stream sends discrete events, each containing an `event` type and a JSON `data` payload, corresponding to one of the following schemas.
 
-### Event Data Models
+### Event data models
 
 | Event Name               | Data Model                      |
 |--------------------------|---------------------------------|
@@ -62,7 +62,7 @@ The SSE stream sends discrete events, each containing an `event` type and a JSON
 
 ---
 
-### Data Models
+### Data models
 
 ```Finding Event```
 <AutoTypeTable path="content/docs/cowriter/finding-event.ts" name="FindingEvent" />
@@ -86,9 +86,9 @@ data: {
     {
       "id": "123",
       "name": "Hypertension", 
-      "status": "confirmed",
-      "classification": "chronic",
-      "publisher": "AI Model v1.2",
+      "status": "present",
+      "classification": "subjective",
+      "publisher": "Avey AI Model",
       "time": "2025-09-10T13:00:00Z",
       "is_chief": true,
       "parent_concept": {
@@ -102,7 +102,7 @@ data: {
 ```
 ---
 
-## Event Flow Diagram
+## Event flow diagram
 
 <Mermaid
   chart={`

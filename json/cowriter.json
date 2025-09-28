@@ -6,14 +6,16 @@
   },
   "servers": [
     {
-      "url": "https://api.avey.ai/cowriter",
+      "url": "https://api.avey.ai/cowriter/v1",
       "description": "Avey Cowriter API"
     }
   ],
   "paths": {
     "/": {
       "post": {
-        "tags": ["session"],
+        "tags": [
+          "session"
+        ],
         "summary": "Create Session",
         "operationId": "createSession",
         "requestBody": {
@@ -27,33 +29,60 @@
           "required": true
         },
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "title": "Response Createsession"
+                  "$ref": "#/components/schemas/CreateSessionRes"
                 }
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+          "400": {
+            "description": "Bad Request",
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
               }
-            }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object"
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object"
           }
-        }
+        },
+        "security": [
+          {
+            "API Key Auth": []
+          }
+        ]
       }
     },
     "/{session_id}/": {
       "get": {
-        "tags": ["session"],
+        "tags": [
+          "session"
+        ],
         "summary": "Get Findings",
         "operationId": "getFindings",
         "parameters": [
@@ -82,22 +111,45 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+          "400": {
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
               }
-            }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object",
+            "description": "Bad Request"
+          },
+          "422": {
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object",
+            "description": "Unprocessable Content"
           }
         }
       }
     },
     "/{session_id}/findings": {
       "post": {
-        "tags": ["session"],
+        "tags": [
+          "session"
+        ],
         "summary": "Add Finding",
         "operationId": "addFinding",
         "parameters": [
@@ -130,15 +182,36 @@
               }
             }
           },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
+          "400": {
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
               }
-            }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object",
+            "description": "Bad Request"
+          },
+          "422": {
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object",
+            "description": "Unprocessable Content"
           }
         }
       }
@@ -148,8 +221,33 @@
     "schemas": {
       "CodingSystem": {
         "type": "string",
-        "enum": ["snomed", "aut"],
+        "enum": [
+          "snomed",
+          "aut"
+        ],
         "title": "CodingSystem"
+      },
+      "Concept": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "term": {
+            "type": "string",
+            "title": "Term"
+          },
+          "coding": {
+            "$ref": "#/components/schemas/CodingSystem"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "term",
+          "coding"
+        ],
+        "title": "Concept"
       },
       "CreateSessionReq": {
         "properties": {
@@ -161,18 +259,28 @@
           }
         },
         "type": "object",
-        "required": ["patient_data"],
+        "required": [
+          "patient_data"
+        ],
         "title": "CreateSessionReq"
+      },
+      "CreateSessionRes": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id"
+        ],
+        "title": "CreateSessionRes"
       },
       "Finding": {
         "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
+          "concept": {
+            "$ref": "#/components/schemas/Concept"
           },
           "status": {
             "type": "string",
@@ -193,32 +301,16 @@
           "is_chief": {
             "type": "boolean",
             "title": "Is Chief"
-          },
-          "parent_concept": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ParentConcept"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "snomed_id": {
-            "type": "string",
-            "title": "Snomed Id"
           }
         },
         "type": "object",
         "required": [
-          "id",
-          "name",
+          "concept",
           "status",
           "classification",
           "publisher",
           "time",
-          "is_chief",
-          "snomed_id"
+          "is_chief"
         ],
         "title": "Finding"
       },
@@ -250,39 +342,25 @@
           }
         },
         "type": "object",
-        "required": ["id", "name", "status", "classification", "is_chief"],
+        "required": [
+          "id",
+          "name",
+          "status",
+          "classification",
+          "is_chief"
+        ],
         "title": "FindingReq"
-      },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "ParentConcept": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          }
-        },
-        "type": "object",
-        "required": ["id", "name"],
-        "title": "ParentConcept"
       },
       "PatientData": {
         "properties": {
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "sex": {
+            "type": "string",
+            "title": "Sex"
+          },
           "name": {
             "anyOf": [
               {
@@ -293,17 +371,6 @@
               }
             ],
             "title": "Name"
-          },
-          "age": {
-            "type": "integer",
-            "title": "Age"
-          },
-          "sex": {
-            "type": "string",
-            "title": "Sex"
-          },
-          "history": {
-            "$ref": "#/components/schemas/PatientHistory"
           },
           "member_id": {
             "anyOf": [
@@ -315,20 +382,26 @@
               }
             ],
             "title": "Member Id"
+          },
+          "history": {
+            "$ref": "#/components/schemas/PatientHistory"
           }
         },
         "type": "object",
-        "required": ["age", "sex"],
+        "required": [
+          "age",
+          "sex"
+        ],
         "title": "PatientData"
       },
       "PatientHistory": {
         "properties": {
-          "family_history": {
+          "allergies": {
             "items": {
               "$ref": "#/components/schemas/PatientSymptom"
             },
             "type": "array",
-            "title": "Family History"
+            "title": "Allergies"
           },
           "medical_history": {
             "items": {
@@ -337,6 +410,20 @@
             "type": "array",
             "title": "Medical History"
           },
+          "surgical_history": {
+            "items": {
+              "$ref": "#/components/schemas/SurgicalHistory"
+            },
+            "type": "array",
+            "title": "Surgical History"
+          },
+          "family_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Family History"
+          },
           "social_history": {
             "items": {
               "$ref": "#/components/schemas/PatientSymptom"
@@ -344,26 +431,12 @@
             "type": "array",
             "title": "Social History"
           },
-          "allergies": {
-            "items": {
-              "$ref": "#/components/schemas/PatientSymptom"
-            },
-            "type": "array",
-            "title": "Allergies"
-          },
           "chronic_medications": {
             "items": {
               "$ref": "#/components/schemas/PatientMedication"
             },
             "type": "array",
             "title": "Chronic Medications"
-          },
-          "surgical_history": {
-            "items": {
-              "$ref": "#/components/schemas/SurgicalHistory"
-            },
-            "type": "array",
-            "title": "Surgical History"
           }
         },
         "type": "object",
@@ -414,7 +487,10 @@
           }
         },
         "type": "object",
-        "required": ["name", "cpt_code"],
+        "required": [
+          "name",
+          "cpt_code"
+        ],
         "title": "PatientMedication"
       },
       "PatientSymptom": {
@@ -440,7 +516,10 @@
           }
         },
         "type": "object",
-        "required": ["title", "snomed_code"],
+        "required": [
+          "title",
+          "snomed_code"
+        ],
         "title": "PatientSymptom"
       },
       "SessionConfig": {
@@ -486,37 +565,17 @@
           }
         },
         "type": "object",
-        "required": ["title"],
+        "required": [
+          "title"
+        ],
         "title": "SurgicalHistory"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          }
-        },
-        "type": "object",
-        "required": ["loc", "msg", "type"],
-        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "API Key Auth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
       }
     }
   }
