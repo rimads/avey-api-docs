@@ -11,7 +11,7 @@
     }
   ],
   "paths": {
-    "/": {
+    "/session/": {
       "post": {
         "tags": [
           "session"
@@ -78,7 +78,7 @@
         ]
       }
     },
-    "/{session_id}/": {
+    "/session/{session_id}/": {
       "get": {
         "tags": [
           "session"
@@ -145,7 +145,7 @@
         }
       }
     },
-    "/{session_id}/findings": {
+    "/session/{session_id}/findings": {
       "post": {
         "tags": [
           "session"
