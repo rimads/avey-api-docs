@@ -219,6 +219,14 @@
   },
   "components": {
     "schemas": {
+      "Classification": {
+        "type": "string",
+        "enum": [
+          "subjective",
+          "objective"
+        ],
+        "title": "Classification"
+      },
       "CodingSystem": {
         "type": "string",
         "enum": [
@@ -283,16 +291,13 @@
             "$ref": "#/components/schemas/Concept"
           },
           "status": {
-            "type": "string",
-            "title": "Status"
+            "$ref": "#/components/schemas/Status"
           },
           "classification": {
-            "type": "string",
-            "title": "Classification"
+            "$ref": "#/components/schemas/Classification"
           },
           "publisher": {
-            "type": "string",
-            "title": "Publisher"
+            "$ref": "#/components/schemas/Publisher"
           },
           "time": {
             "type": "string",
@@ -325,12 +330,10 @@
             "title": "Name"
           },
           "status": {
-            "type": "string",
-            "title": "Status"
+            "$ref": "#/components/schemas/Status"
           },
           "classification": {
-            "type": "string",
-            "title": "Classification"
+            "$ref": "#/components/schemas/Classification"
           },
           "is_chief": {
             "type": "boolean",
@@ -522,6 +525,14 @@
         ],
         "title": "PatientSymptom"
       },
+      "Publisher": {
+        "type": "string",
+        "enum": [
+          "practitioner",
+          "maven"
+        ],
+        "title": "Publisher"
+      },
       "SessionConfig": {
         "properties": {
           "medical_alerts_enabled": {
@@ -545,6 +556,15 @@
         },
         "type": "object",
         "title": "SessionConfig"
+      },
+      "Status": {
+        "type": "string",
+        "enum": [
+          "present",
+          "absent",
+          "unsure"
+        ],
+        "title": "Status"
       },
       "SurgicalHistory": {
         "properties": {
