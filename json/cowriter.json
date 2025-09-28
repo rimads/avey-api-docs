@@ -6,7 +6,7 @@
   },
   "servers": [
     {
-      "url": "https://api.avey.ai/cowriter",
+      "url": "https://api.avey.ai/cowriter/v1",
       "description": "Avey Cowriter API"
     }
   ],
