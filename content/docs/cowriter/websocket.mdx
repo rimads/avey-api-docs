@@ -17,16 +17,12 @@ Stream audio from doctor-patient conversations to receive real-time transcriptio
 wss://api.avey.ai/cowriter/{session_id}/transcribe
 ```
 
-#### Authentication
-```http
-X-API-KEY: YOUR_API_KEY
-```
-#### Supported audio format
+#### Supported Audio Format
 ``` text
 pcm_f32le
 ```
-#### Path parameters
-<AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="PathParamsTranscriptionRequest" />
+#### Path Parameters
+<AutoTypeTable path="content/docs/cowriter/types/cowriter-websocket.ts" name="PathParamsTranscriptionRequest" />
 ---
 
 ## Lifecycle
@@ -41,7 +37,7 @@ Upon connection, the client streams audio data as `pcm_f32le` encoded binary chu
 The server sends transcription results as JSON objects following this schema:
 
 
-<AutoTypeTable path="content/docs/cowriter/cowriter-websocket.ts" name="LiveTranscriptionResponse" />
+<AutoTypeTable path="content/docs/cowriter/types/cowriter-websocket.ts" name="LiveTranscriptionResponse" />
 
 ### Message flow
 <Mermaid

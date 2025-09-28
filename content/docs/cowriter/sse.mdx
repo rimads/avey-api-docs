@@ -33,10 +33,9 @@ Receive medical adjudication alerts powered by Avey's state-of-the-art drug, pro
 https://api.avey.ai/cowriter/{session_id}/events
 ```
 
-#### Headers and authentication
+#### Headers 
 
 ```http
-X-API-KEY: YOUR_API_KEY
 Accept: text/event-stream
 ```
 
@@ -65,13 +64,13 @@ The SSE stream sends discrete events, each containing an `event` type and a JSON
 ### Data models
 
 ```Finding Event```
-<AutoTypeTable path="content/docs/cowriter/finding-event.ts" name="FindingEvent" />
+<AutoTypeTable path="content/docs/cowriter/types/finding-event.ts" name="FindingEvent" />
 
 ```Alert Event```
-<AutoTypeTable path="content/docs/cowriter/alert-event.ts" name="AlertEvent" />
+<AutoTypeTable path="content/docs/cowriter/types/alert-event.ts" name="AlertEvent" />
 
 ```Collaborator Question Event```
-<AutoTypeTable path="content/docs/cowriter/collaborator-question-event.ts" name="CollaboratorQuestionEvent" />
+<AutoTypeTable path="content/docs/cowriter/types/collaborator-question-event.ts" name="CollaboratorQuestionEvent" />
 
 
 

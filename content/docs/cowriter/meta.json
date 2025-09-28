@@ -1,4 +1,11 @@
 {
-  "title": "Cowriter API",
-  "pages": ["createSession", "addFinding", "getFindings", "websocket", "sse"]
+  "title": "C-SUITE APIs",
+  "pages": [
+    "overview",
+    "createSession",
+    "addFinding",
+    "getFindings",
+    "websocket",
+    "sse"
+  ]
 }
