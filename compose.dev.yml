@@ -8,3 +8,8 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_MODE=development
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./json
+          target: /app/json
