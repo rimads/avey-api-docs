@@ -1,61 +1,29 @@
 export enum EventType {
   NEW_FINDINGS = "new_findings",
   NEW_COLLABORATOR_QUESTION = "new_collaborator_question",
-  NEW_ALERTS = "new_alerts"
-}
-
-export interface ParentConcept {
-  /** Unique identifier for the parent concept */
-  id: string;
-  /** Name of the parent medical concept */
-  name: string;
-}
-
-export interface Finding {
-  /** Unique identifier for the finding */
-  id: string;
-  /** Name of the clinical finding */
-  name: string;
-  /** Status of the finding (e.g., "confirmed", "suspected") */
-  status: string;
-  /** Classification type (e.g., "chronic", "acute") */
-  classification: string;
-  /** Source that generated this finding */
-  publisher: string;
-  /** ISO 8601 timestamp when finding was identified */
-  time: string;
-  /** Whether this is a chief complaint */
-  is_chief: boolean;
-  /** Related parent medical concept */
-  parent_concept: ParentConcept | null;
-  /** SNOMED CT identifier */
-  snomed_id: string;
+  NEW_ALERTS = "new_alerts",
 }
 
 export interface FindingEvent {
-/** Unique identifier for the finding */
+  /** Unique identifier for the finding */
   id: string;
-  /** Name of the clinical finding */
+  /** Name of the finding */
   name: string;
-  /** Status of the finding (e.g., "confirmed", "suspected") */
-  status: string;
-  /** Classification type (e.g., "chronic", "acute") */
-  classification: string;
+  /** Status of the finding*/
+  status: "present" | "absent" | "unsure";
+  /** Classification type */
+  classification: "subjective" | "objective";
   /** Source that generated this finding */
   publisher: string;
-  /** ISO 8601 timestamp when finding was identified */
+  /** timestamp when finding was identified */
   time: string;
   /** Whether this is a chief complaint */
   is_chief: boolean;
   /** Related parent medical concept */
-  parent_concept:{  /** Unique identifier for the parent concept */
+  parent_concept: {
     id: string;
-    /** Name of the parent medical concept */
     name: string;
-}| null;
+  } | null;
   /** SNOMED CT identifier */
   snomed_id: string;
-    
-  };
-
-
+}
