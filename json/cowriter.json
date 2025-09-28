@@ -1,13 +1,13 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "Avey Cowriter API",
+    "title": "Avey C-Suite APIs",
     "version": "0.1.0"
   },
   "servers": [
     {
       "url": "https://api.avey.ai/cowriter/v1",
-      "description": "Avey Cowriter API"
+      "description": "Avey C-Suite APIs"
     }
   ],
   "paths": {
@@ -78,7 +78,7 @@
         ]
       }
     },
-    "/session/{session_id}/": {
+    "/session/{session_id}/findings": {
       "get": {
         "tags": [
           "session"
@@ -143,9 +143,7 @@
             "description": "Unprocessable Content"
           }
         }
-      }
-    },
-    "/session/{session_id}/findings": {
+      },
       "post": {
         "tags": [
           "session"
