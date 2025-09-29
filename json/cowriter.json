@@ -143,75 +143,6 @@
             "description": "Unprocessable Content"
           }
         }
-      },
-      "post": {
-        "tags": [
-          "session"
-        ],
-        "summary": "Add Finding",
-        "operationId": "addFinding",
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/FindingReq"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "400": {
-            "properties": {
-              "message": {
-                "title": "Message",
-                "type": "string"
-              }
-            },
-            "required": [
-              "message"
-            ],
-            "title": "HTTPError[str]",
-            "type": "object",
-            "description": "Bad Request"
-          },
-          "422": {
-            "properties": {
-              "message": {
-                "additionalProperties": {
-                  "type": "string"
-                },
-                "title": "Message",
-                "type": "object"
-              }
-            },
-            "required": [
-              "message"
-            ],
-            "title": "HTTPError[Dict[str, str]]",
-            "type": "object",
-            "description": "Unprocessable Content"
-          }
-        }
       }
     }
   },
@@ -316,41 +247,6 @@
           "is_chief"
         ],
         "title": "Finding"
-      },
-      "FindingReq": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id"
-          },
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "status": {
-            "$ref": "#/components/schemas/Status"
-          },
-          "classification": {
-            "$ref": "#/components/schemas/Classification"
-          },
-          "is_chief": {
-            "type": "boolean",
-            "title": "Is Chief"
-          },
-          "coding": {
-            "$ref": "#/components/schemas/CodingSystem",
-            "default": "aut"
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "name",
-          "status",
-          "classification",
-          "is_chief"
-        ],
-        "title": "FindingReq"
       },
       "PatientData": {
         "properties": {
@@ -533,6 +429,11 @@
       },
       "SessionConfig": {
         "properties": {
+          "findings_coding_system": {
+            "$ref": "#/components/schemas/CodingSystem",
+            "description": "Coding System for Findings",
+            "default": "aut"
+          },
           "medical_alerts_enabled": {
             "type": "boolean",
             "title": "Medical Alerts Enabled",
