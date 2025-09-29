@@ -4,7 +4,7 @@ networks:
     
 services:
   staging-docs:
-    image: registry.avey.ai/staging-api-docs:latest
+    image: registry.avey.ai/staging-api-docs:f02da0c2e04c85c0dbd52f7817c7d46a6f392cd9
     networks:
       - dokploy-network
     environment:
