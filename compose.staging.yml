@@ -17,10 +17,8 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      # update_config:
-      #   order: start-first
-      labels:
-        - "traefik.enable=true"
+      update_config:
+        order: start-first
       placement:
         constraints:
           - node.role == worker
