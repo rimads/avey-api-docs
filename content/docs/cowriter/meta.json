@@ -1,0 +1,10 @@
+{
+  "title": "C-SUITE APIs",
+  "pages": [
+    "overview",
+    "createSession",
+    "getFindings",
+    "websocket",
+    "sse"
+  ]
+}

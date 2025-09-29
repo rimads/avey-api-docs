@@ -1,13 +1,21 @@
 import { docs } from "@/.source";
-import { loader } from "fumadocs-core/source";
+import { loader, type PageFile, type PageData } from "fumadocs-core/source";
 import { createOpenAPI, attachFile } from "fumadocs-openapi/server";
+import type { PageTree } from "fumadocs-core/server";
+
+interface CustomPageData extends PageData {
+  sidebar_title?: string;
+  new?: boolean;
+}
+
+type CustomPageFile = PageFile<CustomPageData>;
 
 // See https://fumadocs.vercel.app/docs/headless/source-api for more info
 export const source = loader({
   baseUrl: "/",
   source: docs.toFumadocsSource(),
   pageTree: {
-    attachFile(node, file) {
+    attachFile: (node: PageTree.Item, file?: CustomPageFile) => {
       if (!file) return node;
 
       const data = file.data;
@@ -15,19 +23,17 @@ export const source = loader({
         node.name = data.sidebar_title;
       }
 
-      node.name = (
-        <>
+      if (data.new) {
+        const originalName = node.name;
+        node.name = (
           <span className="flex justify-between w-full items-center -pr-8">
-            {node.name}
-
-            {data.new && (
-              <span className="ml-1 text-white  rounded-full bg-av-blue-900 px-2.5 py-0.5 text-xs font-medium text-right">
-                NEW
-              </span>
-            )}
+            {originalName}
+            <span className="ml-1 text-white rounded-full bg-av-blue-900 px-2.5 py-0.5 text-xs font-medium text-right">
+              NEW
+            </span>
           </span>
-        </>
-      );
+        );
+      }
 
       return attachFile(node, file);
     },

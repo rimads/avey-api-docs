@@ -1,0 +1,130 @@
+---
+title: "Notifications SSE"
+description: "Stream real-time clinical event notifications with Server-Sent Events (SSE) for medical findings, collaborator questions, and medical alerts."
+---
+ 
+
+## Overview
+
+This SSE endpoint streams real-time updates about clinical findings, collaborator questions, and alert notifications relevant to the ongoing medical session. It allows clients to receive asynchronous, event-driven notifications without polling.
+
+Our SSE provides the following event types:
+
+
+<Cards className="grid grid-cols-1 ">
+  <Card title="new_findings">
+ Updated or new clinical findings infred from the Doctor-Patient conversation.  
+  </Card>
+  <Card title="new_collaborator_question">
+Avey’s AI delivers precision-guided diagnostic questions to empower clinicians and boost diagnosis accuracy.
+  </Card>
+  <Card title="new_alerts">
+Receive medical adjudication alerts powered by Avey's state-of-the-art drug, procedure, and coding models.
+  </Card>
+</Cards>
+---
+
+## Connection details
+
+
+#### SSE endpoint URL
+
+```http
+https://api.avey.ai/cowriter/{session_id}/events
+```
+
+#### Headers 
+
+```http
+Accept: text/event-stream
+```
+
+
+  
+<Callout type="info">
+  Server-Sent Events are unidirectional (server-to-client), providing an efficient way to stream updates without polling. For interaction requiring client-to-server messaging, consider complementary APIs.
+</Callout>
+
+--- 
+
+## Event payloads and structure
+
+The SSE stream sends discrete events, each containing an `event` type and a JSON `data` payload, corresponding to one of the following schemas.
+
+### Event data models
+
+| Event Name               | Data Model                      |
+|--------------------------|---------------------------------|
+| `new_findings`           | `FindingEvent`                  |
+| `new_collaborator_question` | `CollaboratorQuestionEvent`     |
+| `new_alerts`             | `AlertEvent`                    |
+
+---
+
+### Data models
+
+```Finding Event```
+<AutoTypeTable path="content/docs/cowriter/types/finding-event.ts" name="FindingEvent" />
+
+```Alert Event```
+<AutoTypeTable path="content/docs/cowriter/types/alert-event.ts" name="AlertEvent" />
+
+```Collaborator Question Event```
+<AutoTypeTable path="content/docs/cowriter/types/collaborator-question-event.ts" name="CollaboratorQuestionEvent" />
+
+
+
+
+## Sample SSE event format
+
+SSE messages follow the standard format with `event` and `data` fields.
+```json "
+event: new_findings
+data: {
+  "findings": [
+    {
+      "id": "123",
+      "name": "Hypertension", 
+      "status": "present",
+      "classification": "subjective",
+      "publisher": "Avey AI Model",
+      "time": "2025-09-10T13:00:00Z",
+      "is_chief": true,
+      "parent_concept": {
+        "id": "hc123",
+        "name": "Cardiovascular Diseases"
+      },
+      "snomed_id": "38341003"
+    }
+  ]
+}
+```
+---
+
+## Event flow diagram
+
+<Mermaid
+  chart={`
+sequenceDiagram
+    participant Client
+    participant Server
+    participant AI as Avey AI Model
+
+    Client->>Server: Open SSE
+    Server-->>Client: SSE established
+
+    loop While user interacts
+        Client->>AI: Poll patient encounter data
+        AI-->>Server: Result
+        Server-->>Client: Stream event
+    end
+    
+
+    Client->>Server: Close stream
+    Server-->>Client: Stream closed
+
+  `}
+/>
+
+---
+

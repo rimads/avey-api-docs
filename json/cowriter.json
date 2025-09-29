@@ -1,0 +1,501 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Avey C-Suite APIs",
+    "version": "0.1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.avey.ai/cowriter/v1",
+      "description": "Avey C-Suite APIs"
+    }
+  ],
+  "paths": {
+    "/session": {
+      "post": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Create Session",
+        "operationId": "createSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionReq"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateSessionRes"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object"
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object"
+          }
+        },
+        "security": [
+          {
+            "API Key Auth": []
+          }
+        ]
+      }
+    },
+    "/session/{session_id}/findings": {
+      "get": {
+        "tags": [
+          "session"
+        ],
+        "summary": "Get Findings",
+        "operationId": "getFindings",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Finding"
+                  },
+                  "title": "Response Getfindings"
+                }
+              }
+            }
+          },
+          "400": {
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object",
+            "description": "Bad Request"
+          },
+          "422": {
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object",
+            "description": "Unprocessable Content"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Classification": {
+        "type": "string",
+        "enum": [
+          "subjective",
+          "objective"
+        ],
+        "title": "Classification"
+      },
+      "CodingSystem": {
+        "type": "string",
+        "enum": [
+          "snomed",
+          "aut"
+        ],
+        "title": "CodingSystem"
+      },
+      "Concept": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "term": {
+            "type": "string",
+            "title": "Term"
+          },
+          "coding": {
+            "$ref": "#/components/schemas/CodingSystem"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "term",
+          "coding"
+        ],
+        "title": "Concept"
+      },
+      "CreateSessionReq": {
+        "properties": {
+          "patient_data": {
+            "$ref": "#/components/schemas/PatientData"
+          },
+          "config": {
+            "$ref": "#/components/schemas/SessionConfig"
+          }
+        },
+        "type": "object",
+        "required": [
+          "patient_data"
+        ],
+        "title": "CreateSessionReq"
+      },
+      "CreateSessionRes": {
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "title": "Session Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "session_id"
+        ],
+        "title": "CreateSessionRes"
+      },
+      "Finding": {
+        "properties": {
+          "concept": {
+            "$ref": "#/components/schemas/Concept"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          },
+          "classification": {
+            "$ref": "#/components/schemas/Classification"
+          },
+          "publisher": {
+            "$ref": "#/components/schemas/Publisher"
+          },
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "is_chief": {
+            "type": "boolean",
+            "title": "Is Chief"
+          }
+        },
+        "type": "object",
+        "required": [
+          "concept",
+          "status",
+          "classification",
+          "publisher",
+          "time",
+          "is_chief"
+        ],
+        "title": "Finding"
+      },
+      "PatientData": {
+        "properties": {
+          "age": {
+            "type": "integer",
+            "title": "Age"
+          },
+          "sex": {
+            "type": "string",
+            "title": "Sex"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "member_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Member Id"
+          },
+          "history": {
+            "$ref": "#/components/schemas/PatientHistory"
+          }
+        },
+        "type": "object",
+        "required": [
+          "age",
+          "sex"
+        ],
+        "title": "PatientData"
+      },
+      "PatientHistory": {
+        "properties": {
+          "allergies": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Allergies"
+          },
+          "medical_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Medical History"
+          },
+          "surgical_history": {
+            "items": {
+              "$ref": "#/components/schemas/SurgicalHistory"
+            },
+            "type": "array",
+            "title": "Surgical History"
+          },
+          "family_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Family History"
+          },
+          "social_history": {
+            "items": {
+              "$ref": "#/components/schemas/PatientSymptom"
+            },
+            "type": "array",
+            "title": "Social History"
+          },
+          "chronic_medications": {
+            "items": {
+              "$ref": "#/components/schemas/PatientMedication"
+            },
+            "type": "array",
+            "title": "Chronic Medications"
+          }
+        },
+        "type": "object",
+        "title": "PatientHistory"
+      },
+      "PatientMedication": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "cpt_code": {
+            "type": "string",
+            "title": "Cpt Code"
+          },
+          "dosage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dosage"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "cpt_code"
+        ],
+        "title": "PatientMedication"
+      },
+      "PatientSymptom": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "snomed_code": {
+            "type": "string",
+            "title": "Snomed Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "snomed_code"
+        ],
+        "title": "PatientSymptom"
+      },
+      "Publisher": {
+        "type": "string",
+        "enum": [
+          "practitioner",
+          "maven"
+        ],
+        "title": "Publisher"
+      },
+      "SessionConfig": {
+        "properties": {
+          "findings_coding_system": {
+            "$ref": "#/components/schemas/CodingSystem",
+            "description": "Coding System for Findings",
+            "default": "aut"
+          },
+          "medical_alerts_enabled": {
+            "type": "boolean",
+            "title": "Medical Alerts Enabled",
+            "description": "Enable Medical Alerts (drugs, procedures, etc.)",
+            "default": false
+          },
+          "ddx_enabled": {
+            "type": "boolean",
+            "title": "Ddx Enabled",
+            "description": "Enable Differential Diagnosis API",
+            "default": false
+          },
+          "collaborator_enabled": {
+            "type": "boolean",
+            "title": "Collaborator Enabled",
+            "description": "Enable Collaborator QnA Engine",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "SessionConfig"
+      },
+      "Status": {
+        "type": "string",
+        "enum": [
+          "present",
+          "absent",
+          "unsure"
+        ],
+        "title": "Status"
+      },
+      "SurgicalHistory": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "title": "SurgicalHistory"
+      }
+    },
+    "securitySchemes": {
+      "API Key Auth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
+}

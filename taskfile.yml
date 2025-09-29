@@ -1,0 +1,22 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: Start development
+    cmd: docker compose -f compose.dev.yml --env-file .env up --build -d
+
+  local:
+    desc: Start local development
+    deps: [setup]
+    cmds:
+      - bun run dev
+
+  setup:
+    desc: Setup local dependencies
+    cmds:
+      - bun install
+
+  gen:
+    desc: Generate docs
+    cmds:
+      - bun run gen -- {{.CLI_ARGS}}

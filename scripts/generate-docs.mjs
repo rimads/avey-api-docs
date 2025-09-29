@@ -1,15 +1,30 @@
 import { generateFiles } from "fumadocs-openapi";
+import { readdirSync } from "fs";
+import { basename, join } from "path";
 
 const target = (process.argv[2] || "").toLowerCase();
 
-const inputs = {
-  procedure: "./json/procedure.json",
-  diagnosis: "./json/diagnosis.json",
-  drug: "./json/drug.json",
-  cpt: "./json/cpt.json",
-  icd: "./json/icd.json",
-  ndc: "./json/ndc.json",
-};
+const jsonDir = "./json";
+const files = readdirSync(jsonDir).filter((f) => f.endsWith(".json"));
+
+const inputs = {};
+for (const file of files) {
+  const key = basename(file, ".json");
+  inputs[key] = join(jsonDir, file);
+}
+
+console.log(target);
+if (!target || target === "all") {
+  for (const [key, path] of Object.entries(inputs)) {
+    await generateFiles({
+      input: [path],
+      output: `./content/docs/${key}`,
+      includeDescription: true,
+    });
+    console.log(`Generated docs for ${key}`);
+  }
+  process.exit(0);
+}
 
 if (!inputs[target]) {
   console.error(

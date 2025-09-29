@@ -1,0 +1,141 @@
+---
+title: "Overview"
+---
+
+
+
+Avey's C-SUITE is your state-of-the-art headless set of APIs empowering you to build the best end-to-end doctor copilot tailored for your workflow.
+
+
+## Use cases
+<Cards className="grid grid-cols-2">
+<Card title="Real-time medical documentation">
+Turn every patient conversation into structured notes automatically, freeing practitioners from manual typing.  
+</Card>
+
+<Card title="Clinical insights">
+Identify subjective and objective findings as they emerge, supporting sharper, faster decision-making.  
+</Card>
+
+
+<Card title="Medical adjudication (Coming Soon)">
+Instant checks for drug–drug, procedure–procedure, and drug–procedure interactions to safeguard patients.  
+</Card>
+
+<Card title="Smarter diagnosis (Coming Soon)">
+AI-powered follow-up questions to help practitioners diagnose with confidence.  
+</Card>
+</Cards>
+
+
+## Authentication
+
+An API key is required only when creating a new session. The returned `session_id`
+ then serves as both the unique identifier and session token for all subsequent requests.
+
+```http
+X-API-KEY: YOUR_API_KEY
+```
+
+{/* ## Workflow
+
+
+
+  <Callout type="info">Authentication is only required to create a session.</Callout>
+
+<div className="fd-steps">
+  <div className="fd-step">
+    <div className="fd-step-content">
+### Step 1 — Create a session
+Create a session using the api key.  
+Receive a `session_id`. Use this id for all subsequent calls.
+    </div> 
+  </div>
+    <div className="fd-step">
+    <div className="fd-step-content">
+### Step 2 — Stream audio.
+Connect to the websocket and stream audio.
+Receive transcription results.
+    </div> 
+  </div>
+    <div className="fd-step">
+    <div className="fd-step-content">
+### Step 3 — Receive findings
+Connect to the SSE and receive findings.  
+    </div>
+  </div>
+</div>
+
+<Callout type="info">The websocket and SSE are independent of each other. You can connect to the websocket and SSE at the same time.</Callout> */}
+
+---
+
+## Endpoints
+
+| Method | Path                      | Purpose |
+|--------|----------------------------|---------|
+| POST   | `/session`             | Create a new session. |
+| POST   | `/session/{session_id}/findings` | Add a finding to the session. |
+| GET   | `/session/{session_id}`            | Get all findings. |
+| Transcribe   | `/session/{session_id}/transcribe`            | Transcribe audio. |
+| Events   | `/session/{session_id}/events`            | Receive events. |
+
+For complete specifications and live testing, visit the 
+<a href="#api-reference" 
+className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">API reference</a>.
+
+
+## How it works
+
+<Mermaid
+  chart={`
+sequenceDiagram
+
+    participant Client
+    participant API as C-SUITE API
+    participant WS as WebSocket 
+    participant SSE as SSE 
+
+    Client->>API: /cowriter
+    API-->>Client: session_id
+
+    par websocket
+    Client->>WS: CONNECT cowriter/{session_id}/transcribe
+    WS-->>Client: connected
+    Client-->>WS: audio frames
+    WS-->>Client: transcription results
+
+
+    and SSE
+    Client->>SSE: /cowriter/{session_id}/events
+    SSE-->>Client: finding
+    end
+`}
+/>
+
+
+
+
+## API reference
+<Cards className="grid grid-cols-3 ">
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/cowriter/createSession" title="Create session"/>
+    <Card
+
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+
+href="/cowriter/addFinding" title="Add finding"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/cowriter/getFindings" title="Get findings"
+/>
+
+    <Card className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300" 
+    href="/cowriter/websocket" title="Speech WebSocket"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/cowriter/sse" title="NotificationsSSE"
+/>
+
+</Cards>
