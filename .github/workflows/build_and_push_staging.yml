@@ -10,7 +10,7 @@ env:
   IMAGE_REGISTRY: registry.avey.ai
   IMAGE_REGISTRY_USERNAME: avey
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.AVEY_REGISTRY_PASSWORD }}
-  DOKPLOY_APPLICATION_ID: kHMlKVevRSh4Zq6Rh01lp
+  DOKPLOY_COMPOSE_ID: z4FaJRn1ceJQjU2_JbgOl
 
 jobs:
   build:
@@ -53,5 +53,5 @@ jobs:
         with:
           auth_token: ${{ secrets.DOKPLOY_APIKEY }}
           dokploy_url: ${{ secrets.DOKPLOY_URL }}
-          application_id: ${{ env.DOKPLOY_APPLICATION_ID }}
+          compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
 
