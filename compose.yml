@@ -4,7 +4,7 @@ networks:
 
 services:
   docs:
-    image: registry.avey.ai/api-docs:cd89fbfe0f8b56f38a530eb19afa35973594d4e8
+    image: registry.avey.ai/api-docs:latest
     networks:
       - dokploy-network
     environment:
