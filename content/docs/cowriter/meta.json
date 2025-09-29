@@ -3,7 +3,6 @@
   "pages": [
     "overview",
     "createSession",
-    "addFinding",
     "getFindings",
     "websocket",
     "sse"
