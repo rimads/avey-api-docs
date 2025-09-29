@@ -75,8 +75,7 @@ Connect to the SSE and receive findings.
 | Method | Path                      | Purpose |
 |--------|----------------------------|---------|
 | POST   | `/session`             | Create a new session. |
-| POST   | `/session/{session_id}/findings` | Add a finding to the session. |
-| GET   | `/session/{session_id}`            | Get all findings. |
+| GET   | `/session/{session_id}/findings`            | Get all findings. |
 | Transcribe   | `/session/{session_id}/transcribe`            | Transcribe audio. |
 | Events   | `/session/{session_id}/events`            | Receive events. |
 
@@ -120,22 +119,17 @@ sequenceDiagram
 <Cards className="grid grid-cols-3 ">
   <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/cowriter/createSession" title="Create session"/>
-    <Card
-
-      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-
-href="/cowriter/addFinding" title="Add finding"/>
-    <Card
-      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/cowriter/getFindings" title="Get findings"
-/>
-
-    <Card className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300" 
-    href="/cowriter/websocket" title="Speech WebSocket"/>
-    <Card
-      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/cowriter/sse" title="NotificationsSSE"
-/>
-
+      href="/cowriter/createSession" title="Create session"
+  />
+  <Card className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300" 
+    href="/cowriter/websocket" title="Speech WebSocket"
+  />
+  <Card
+    className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+    href="/cowriter/sse" title="Notifications SSE"
+  />
+  <Card
+    className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+    href="/cowriter/getFindings" title="Get findings"
+  />
 </Cards>

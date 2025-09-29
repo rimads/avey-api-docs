@@ -1,7 +1,7 @@
 networks:
   dokploy-network:
     external: true
-    
+
 services:
   docs:
     image: registry.avey.ai/api-docs:latest
@@ -17,12 +17,12 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      labels:
-        - "traefik.enable=true"
+      update_config:
+        order: start-first
       placement:
         constraints:
           - node.role == worker
       resources:
         limits:
-          cpus: '0.25'
+          cpus: "0.25"
           memory: 256M
