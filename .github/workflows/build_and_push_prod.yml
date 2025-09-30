@@ -48,10 +48,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Dokploy Deployment
-        uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
-        with:
-          auth_token: ${{ secrets.DOKPLOY_APIKEY }}
-          dokploy_url: ${{ secrets.DOKPLOY_URL }}
-          compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
+      # - name: Dokploy Deployment
+      #   uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
+      #   with:
+      #     auth_token: ${{ secrets.DOKPLOY_APIKEY }}
+      #     dokploy_url: ${{ secrets.DOKPLOY_URL }}
+      #     compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
 
