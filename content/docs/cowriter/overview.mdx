@@ -75,8 +75,8 @@ Connect to the SSE and receive findings.
 | Method | Path                      | Purpose |
 |--------|----------------------------|---------|
 | POST   | `/session`             | Create a new session. |
-| Transcribe   | `/session/{session_id}/transcribe`            | Transcribe audio. |
-| Events   | `/session/{session_id}/events`            | Receive events. |
+| WSS   | `/session/{session_id}/transcribe`            | Transcribe audio. |
+| SSE   | `/session/{session_id}/events`            | Receive events. |
 | GET   | `/session/{session_id}/findings`            | Get all findings. |
 
 For complete specifications and live testing, visit the 
