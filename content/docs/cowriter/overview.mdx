@@ -100,18 +100,18 @@ sequenceDiagram
     participant WS as WebSocket 
     participant SSE as SSE 
 
-    Client->>API: /cowriter
+    Client->>API: /cowriter/v1
     API-->>Client: session_id
 
     par websocket
-    Client->>WS: CONNECT cowriter/{session_id}/transcribe
+    Client->>WS: CONNECT /cowriter/v1/session/{session_id}/transcribe
     WS-->>Client: connected
     Client-->>WS: audio frames
     WS-->>Client: transcription results
 
 
     and SSE
-    Client->>SSE: /cowriter/{session_id}/events
+    Client->>SSE: /cowriter/v1/session/{session_id}/events
     SSE-->>Client: finding
     end
 `}
