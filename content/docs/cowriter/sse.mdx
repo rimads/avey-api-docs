@@ -83,18 +83,16 @@ event: new_findings
 data: {
   "findings": [
     {
-      "id": "123",
-      "name": "Hypertension", 
       "status": "present",
       "classification": "subjective",
-      "publisher": "Avey AI Model",
-      "time": "2025-09-10T13:00:00Z",
+      "publisher": "maven",
+      "time": "2025-09-30T18:56:07.131157918Z",
       "is_chief": true,
-      "parent_concept": {
-        "id": "hc123",
-        "name": "Cardiovascular Diseases"
-      },
-      "snomed_id": "38341003"
+      "concept": {
+          "id": "25064002",
+          "term": "Headache",
+          "coding": "snomed"
+      }
     }
   ]
 }
