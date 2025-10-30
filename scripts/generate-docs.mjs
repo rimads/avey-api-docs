@@ -20,6 +20,7 @@ if (!target || target === "all") {
       input: [path],
       output: `./content/docs/${key}`,
       includeDescription: true,
+      groupBy: "tag",
     });
     console.log(`Generated docs for ${key}`);
   }
@@ -37,6 +38,7 @@ await generateFiles({
   input: [inputs[target]],
   output: `./content/docs/${target}`,
   includeDescription: true,
+  groupBy: "tag",
 });
 
 console.log(`Generated docs for ${target}`);

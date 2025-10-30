@@ -1,0 +1,3 @@
+{
+  "pages": ["start_session", "answer_question", "diagnose_session"]
+}

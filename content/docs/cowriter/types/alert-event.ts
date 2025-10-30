@@ -12,3 +12,11 @@ export interface AlertEvent {
   }[];
   section: "procedure" | "medication" | "assessment";
 }
+
+const customToc = [
+  { id: "overview", title: "Overview", depth: 2 },
+  { id: "usage", title: "How to use the API", depth: 2 },
+  { id: "input", title: "Input Parameters", depth: 3 },
+  { id: "output", title: "Output", depth: 3 },
+  { id: "workflow", title: "How it works", depth: 2 },
+];
