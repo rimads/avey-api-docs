@@ -7,24 +7,24 @@
   },
   "servers": [
     {
-      "url": "https://api.avey.ai/ddx",
-      "description": "Production"
+      "url": "http://localhost:8081/ddx",
+      "description": "Development"
     }
   ],
   "paths": {
-    "/session": {
+    "/v1/session": {
       "post": {
         "tags": [
-          "Session management"
+          "Converational"
         ],
         "summary": "Create session",
-        "description": "Starts a new interactive diagnostic session. provide the patient's initial information\n    (age, sex, and the input text of the patient) to create a session and receive the first question.\n    A unique `session_id` is returned, which you must use for all subsequent calls.",
-        "operationId": "create_session",
+        "description": "Starts a new interactive diagnostic session. Provide the patient's initial information\n    (age, sex, and the input text of the patient) to create a session and receive the first question.\n    A unique `session_id` is returned, which you must use for all subsequent calls.",
+        "operationId": "start_session",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewSessionRequest"
+                "$ref": "#/components/schemas/StartSessionRequest"
               }
             }
           },
@@ -32,7 +32,7 @@
         },
         "responses": {
           "200": {
-            "description": "Session successfully created and first question returned.",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
@@ -41,43 +41,12 @@
               }
             }
           },
-          "401": {
-            "description": "Invalid or missing authentication token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Not authenticated"
-                }
-              }
-            }
-          },
           "422": {
-            "description": "Validation error.",
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "examples": {
-                  "missing_input": {
-                    "summary": "Missing input",
-                    "value": {
-                      "detail": "'input' must be provided."
-                    }
-                  },
-                  "extraction_failure": {
-                    "summary": "Extraction failure",
-                    "value": {
-                      "detail": "Could not extract any chief findings from the provided 'input'."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "An unexpected internal error occurred."
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -90,14 +59,14 @@
         ]
       }
     },
-    "/session/{session_id}": {
+    "/v1/session/{session_id}/next": {
       "post": {
         "tags": [
-          "Session management"
+          "Converational"
         ],
-        "summary": "Update session",
+        "summary": "Answer question",
         "description": "Submits an answer to the previous question and retrieves the next one.\n    When the model has enough information, or if the question limit set for the session is reached, the `question` field in the response will be `null`.",
-        "operationId": "update_session",
+        "operationId": "answer_question",
         "security": [
           {
             "HTTPBearer": []
@@ -124,14 +93,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateSessionRequest"
+                "$ref": "#/components/schemas/AnswerQuestionRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Answer processed successfully. Returns next question or null.",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
@@ -140,53 +109,12 @@
               }
             }
           },
-          "401": {
-            "description": "Invalid or missing authentication token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Not authenticated"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Session not found.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Session not found or has expired."
-                }
-              }
-            }
-          },
           "422": {
-            "description": "Validation error.",
+            "description": "Validation Error",
             "content": {
               "application/json": {
-                "examples": {
-                  "missing_input": {
-                    "summary": "Missing input",
-                    "value": {
-                      "detail": "'input' must be provided."
-                    }
-                  },
-                  "extraction_failure": {
-                    "summary": "Extraction failure",
-                    "value": {
-                      "detail": "Could not extract any findings from the provided 'input'."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "An unexpected internal error occurred."
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -194,14 +122,14 @@
         }
       }
     },
-    "/session/{session_id}/diagnose": {
+    "/v1/session/{session_id}/diagnose": {
       "get": {
         "tags": [
-          "Session management"
+          "Converational"
         ],
         "summary": "Get diagnosis",
-        "description": "Generates a clinical diagnosis and patient recommendations based on a patient's profile from an existing session.\n        Query parameters can be used to toggle:\n            * Differential Diagnosis\n            * Urgency (Triage)\n            * Specialist Recommendation\n            * Suggested Health Management Advice",
-        "operationId": "diagnose",
+        "description": "Generates a clinical diagnosis and patient recommendations based on a patient's profile from an existing session.\n    Provides a differential diagnosis, self management adivce, urgency evaluation, and specialist recommendation.",
+        "operationId": "diagnose_session",
         "security": [
           {
             "HTTPBearer": []
@@ -225,31 +153,11 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful clinical assessment.",
+            "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DiagnoseResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid or missing authentication token.",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Not authenticated"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Invalid session id",
-            "content": {
-              "application/json": {
-                "example": {
-                  "detail": "Session not found or has expired."
                 }
               }
             }
@@ -263,13 +171,85 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/v1/ask": {
+      "post": {
+        "tags": [
+          "Stateless"
+        ],
+        "summary": "Ask",
+        "operationId": "ask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatelessAskRequest"
+              }
+            }
           },
-          "500": {
-            "description": "Internal server error.",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
             "content": {
               "application/json": {
-                "example": {
-                  "detail": "An unexpected internal error occurred."
+                "schema": {
+                  "$ref": "#/components/schemas/StatelessAskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/diagnose": {
+      "post": {
+        "tags": [
+          "Stateless"
+        ],
+        "summary": "Diagnose",
+        "operationId": "diagnose",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatelessAskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatelessDiagnoseResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -280,6 +260,40 @@
   },
   "components": {
     "schemas": {
+      "AnswerQuestionRequest": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "title": "Question Id",
+            "description": "The ID of the question being answered.",
+            "examples": [
+              1
+            ]
+          },
+          "input": {
+            "type": "string",
+            "title": "Input",
+            "description": "Free-text input from the user.",
+            "examples": [
+              "No, but i find it difficult to sleep at night"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "question_id"
+        ],
+        "title": "AnswerQuestionRequest",
+        "description": "Payload to submit patient response and get the next question."
+      },
+      "CodingSystem": {
+        "type": "string",
+        "enum": [
+          "aut"
+        ],
+        "title": "CodingSystem",
+        "description": "Medical coding system enumeration.\n\nRepresents the standardized medical terminology/coding system\nused to identify medical concepts.\n\nSystems:\n    ICD_10_CM: International Classification of Diseases, 10th Revision, Clinical Modification\n    ICD_10_AM: International Classification of Diseases, 10th Revision, Australian Modification\n    SNOMED_CT: Systematized Nomenclature of Medicine - Clinical Terms\n    AUT: Avey Universal Terminology (custom system)"
+      },
       "Concept": {
         "properties": {
           "id": {
@@ -307,7 +321,7 @@
           "term"
         ],
         "title": "Concept",
-        "description": "Represents a general medical concept, like a symptom or condition."
+        "description": "Medical concept value object (symptom, sign, condition, or disease).\n\nImmutable value object defined by id and term attributes."
       },
       "DiagnoseResponse": {
         "properties": {
@@ -359,6 +373,9 @@
             "examples": [
               "General Practitioner"
             ]
+          },
+          "patient_info": {
+            "$ref": "#/components/schemas/PatientInfo"
           }
         },
         "type": "object",
@@ -366,7 +383,8 @@
           "differential_diagnosis",
           "self_management",
           "urgency",
-          "specialist"
+          "specialist",
+          "patient_info"
         ],
         "title": "DiagnoseResponse",
         "description": "Clinical diagnosis of a patient."
@@ -410,7 +428,7 @@
           "term"
         ],
         "title": "Disease",
-        "description": "Detailed information about a potential disease or condition in a differential diagnosis."
+        "description": "Disease entity for differential diagnosis lists.\n\nExtends Concept with optional clinical description."
       },
       "Finding": {
         "properties": {
@@ -449,7 +467,7 @@
           "status"
         ],
         "title": "Finding",
-        "description": "A medical concept with a reported status from the patient."
+        "description": "Medical finding value object (concept + status).\n\nImmutable value object representing a symptom/sign with presence status."
       },
       "FindingStatus": {
         "type": "string",
@@ -459,7 +477,7 @@
           "unsure"
         ],
         "title": "FindingStatus",
-        "description": "The patient's reported status for a given finding or symptom."
+        "description": "Finding status: present, absent, or unsure (three-valued logic)."
       },
       "HTTPValidationError": {
         "properties": {
@@ -473,46 +491,6 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
-      },
-      "NewSessionRequest": {
-        "properties": {
-          "max_questions": {
-            "type": "integer",
-            "title": "Max Questions",
-            "description": "Maximum number of questions per session. If left empty, the session averages 10-20 questions.",
-            "default": 99
-          },
-          "age": {
-            "type": "integer",
-            "maximum": 130,
-            "minimum": 0,
-            "title": "Age",
-            "description": "The age of the patient in years.",
-            "examples": [
-              34
-            ]
-          },
-          "sex": {
-            "$ref": "#/components/schemas/Sex",
-            "description": "The biological sex of the patient. Possible values are 'male', 'female'."
-          },
-          "input": {
-            "type": "string",
-            "title": "Input",
-            "description": "Free-text input describing the patient's symptoms.",
-            "examples": [
-              "My tummy hurts, and i feel like i don't want to eat anything"
-            ]
-          }
-        },
-        "type": "object",
-        "required": [
-          "age",
-          "sex",
-          "input"
-        ],
-        "title": "NewSessionRequest",
-        "description": "Payload to create a new diagnostic session."
       },
       "PatientInfo": {
         "properties": {
@@ -536,7 +514,7 @@
             },
             "type": "array",
             "title": "Chief Findings",
-            "description": "The primary symptoms or reasons for the consultation, all of which should have a present status",
+            "description": "The class Finding representation for chief_findings",
             "examples": [
               [
                 {
@@ -570,7 +548,7 @@
             },
             "type": "array",
             "title": "Findings",
-            "description": "All symptoms or findings collected during the session.",
+            "description": "The class Finding representation for findings",
             "examples": [
               [
                 {
@@ -605,7 +583,7 @@
           "findings"
         ],
         "title": "PatientInfo",
-        "description": "A complete snapshot of the patient's information at a point in time."
+        "description": "Final patient information for API responses.\n\nRepresents patient with demographics and findings as Finding objects for external consumption."
       },
       "Question": {
         "properties": {
@@ -617,26 +595,6 @@
               1,
               2,
               3
-            ]
-          },
-          "media_url": {
-            "title": "Media Url",
-            "description": "A unique, incrementally increasing ID for the question within the session.",
-            "examples": [
-              1,
-              2,
-              3
-            ],
-            "oneOf": [
-              {
-                "type": "string",
-                "maxLength": 2083,
-                "minLength": 1,
-                "format": "uri"
-              },
-              {
-                "type": "null"
-              }
             ]
           },
           "text": {
@@ -681,6 +639,19 @@
                 }
               ]
             ]
+          },
+          "other_context": {
+            "title": "Other Context",
+            "description": "Additional context to the question, e.g. media_url.",
+            "oneOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -690,10 +661,85 @@
           "target_concepts"
         ],
         "title": "Question",
-        "description": "A Question returned by the model."
+        "description": "Diagnostic question entity.\n\nClinical inquiry about specific medical concepts to gather patient information."
+      },
+      "QuestionWithoutId": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text",
+            "description": "The question to be displayed to the user.",
+            "examples": [
+              "Do you have a Lymphadenopathy?"
+            ]
+          },
+          "description": {
+            "title": "Description",
+            "description": "A statement that clarifies the question to an end user",
+            "examples": [
+              "Lymphadenopathy is enlargement or swelling in one of your lymph nodes"
+            ],
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_concepts": {
+            "items": {
+              "$ref": "#/components/schemas/Concept"
+            },
+            "type": "array",
+            "title": "Target Concepts",
+            "description": "The medical concept this question is about.",
+            "examples": [
+              [
+                {
+                  "id": "Headache (Occipital region)",
+                  "term": "Headache (Occipital region)"
+                },
+                {
+                  "id": "Headache (Occipital region)",
+                  "term": "Headache (Occipital region)"
+                }
+              ]
+            ]
+          },
+          "other_context": {
+            "title": "Other Context",
+            "description": "Additional context to the question, e.g. media_url.",
+            "oneOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "target_concepts"
+        ],
+        "title": "QuestionWithoutId",
+        "description": "Question variant with ID excluded from JSON schema (for stateless API responses)."
       },
       "SessionResponse": {
         "properties": {
+          "status": {
+            "$ref": "#/components/schemas/SessionStatus",
+            "description": "The current state of the session",
+            "examples": [
+              "in_progress",
+              "done"
+            ]
+          },
           "session_id": {
             "type": "string",
             "title": "Session Id",
@@ -703,6 +749,7 @@
             ]
           },
           "question": {
+            "description": "The question to be displayed to the user. Null if the session is done.",
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Question"
@@ -718,12 +765,22 @@
         },
         "type": "object",
         "required": [
+          "status",
           "session_id",
           "question",
           "patient_info"
         ],
         "title": "SessionResponse",
-        "description": "Response for creating a new session or updating one, containing the updated patient case and the next question for the patient.\nWhen 'question' is null, the session is over. the client should then copy the returned 'patient_info' and use it to make a final call to the defined diagnosis endpoint."
+        "description": "Response from session operations (start or update).\n\nContains session ID, status, current question, and patient information."
+      },
+      "SessionStatus": {
+        "type": "string",
+        "enum": [
+          "in_progress",
+          "done"
+        ],
+        "title": "SessionStatus",
+        "description": "Session progress status (in_progress or done)."
       },
       "Sex": {
         "type": "string",
@@ -732,33 +789,143 @@
           "female"
         ],
         "title": "Sex",
-        "description": "Biological sex of the patient."
+        "description": "Biological sex enumeration (male/female)."
       },
-      "UpdateSessionRequest": {
+      "StartSessionRequest": {
         "properties": {
-          "question_id": {
-            "type": "string",
-            "title": "Question Id",
-            "description": "The ID of the question being answered.",
+          "age": {
+            "type": "integer",
+            "maximum": 130,
+            "exclusiveMinimum": 0,
+            "title": "Age",
+            "description": "The age of the patient in years.",
             "examples": [
-              1
+              34
             ]
+          },
+          "sex": {
+            "$ref": "#/components/schemas/Sex",
+            "description": "The biological sex of the patient. Possible values are 'male', 'female'."
           },
           "input": {
             "type": "string",
             "title": "Input",
-            "description": "Free-text input from the user.",
+            "description": "Free-text input describing the patient's symptoms.",
             "examples": [
-              "No, but i find it difficult to sleep at night"
+              "My tummy hurts, and i feel like i don't want to eat anything"
+            ]
+          },
+          "max_questions": {
+            "type": "integer",
+            "title": "Max Questions",
+            "description": "Maximum number of questions per session.",
+            "default": 15
+          }
+        },
+        "type": "object",
+        "required": [
+          "age",
+          "sex",
+          "input"
+        ],
+        "title": "StartSessionRequest",
+        "description": "Request to start a new diagnostic session.\n\nIncludes patient demographics, symptom description, and session limits."
+      },
+      "StatelessAskRequest": {
+        "properties": {
+          "sex": {
+            "$ref": "#/components/schemas/Sex"
+          },
+          "age": {
+            "type": "integer",
+            "maximum": 130,
+            "exclusiveMinimum": 0,
+            "title": "Age"
+          },
+          "coding": {
+            "$ref": "#/components/schemas/CodingSystem",
+            "default": "aut"
+          },
+          "chief_findings": {
+            "items": {
+              "$ref": "#/components/schemas/Concept"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Chief Findings",
+            "description": "The main complaints of the patient which are found as present"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings",
+            "description": "The findings found in the patient case and their presence. Present (patient confirms the finding), Absent (patient does not have the finding) Unsure (patient is uncertain of having it)"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sex",
+          "age",
+          "chief_findings",
+          "findings"
+        ],
+        "title": "StatelessAskRequest",
+        "description": "Request for stateless question generation.\n\nProvides patient demographics and findings without session tracking."
+      },
+      "StatelessAskResponse": {
+        "properties": {
+          "question": {
+            "description": "The question to be displayed to the user in a non interactive session. Null if a question cannot be found.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/QuestionWithoutId"
+              },
+              {
+                "type": "null"
+              }
             ]
           }
         },
         "type": "object",
         "required": [
-          "question_id"
+          "question"
         ],
-        "title": "UpdateSessionRequest",
-        "description": "Payload to submit patient response and get the next question."
+        "title": "StatelessAskResponse",
+        "description": "Response from stateless question generation.\n\nContains generated question or None if unavailable."
+      },
+      "StatelessDiagnoseResponse": {
+        "properties": {
+          "ddx": {
+            "items": {
+              "$ref": "#/components/schemas/Disease"
+            },
+            "type": "array",
+            "title": "Differential Diagnosis",
+            "description": "A ranked list of possible conditions matching the patient's profile.",
+            "examples": [
+              [
+                {
+                  "description": "Commonly known as the common cold, this is a viral infection of your nose and throat.",
+                  "id": "123",
+                  "term": "Common Cold"
+                },
+                {
+                  "description": "Commonly known as the flu, this is a contagious respiratory illness caused by influenza viruses.",
+                  "id": "456",
+                  "term": "Influenza"
+                }
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "ddx"
+        ],
+        "title": "StatelessDiagnoseResponse",
+        "description": "Response from stateless differential diagnosis generation.\n\nContains ranked list of potential diseases."
       },
       "ValidationError": {
         "properties": {
