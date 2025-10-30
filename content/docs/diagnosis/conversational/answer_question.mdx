@@ -1,9 +1,9 @@
 ---
-title: Update session
+title: Answer question
 full: true
 _openapi:
   method: POST
-  route: /session/{session_id}
+  route: /v1/session/{session_id}/next
   toc: []
   structuredData:
     headings: []
@@ -18,4 +18,4 @@ _openapi:
 Submits an answer to the previous question and retrieves the next one.
     When the model has enough information, or if the question limit set for the session is reached, the `question` field in the response will be `null`.
 
-<APIPage document={"json/diagnosis.json"} operations={[{"path":"/session/{session_id}","method":"post"}]} webhooks={[]} hasHead={false} />
+<APIPage document={"json/diagnosis.json"} operations={[{"path":"/v1/session/{session_id}/next","method":"post"}]} webhooks={[]} hasHead={false} />

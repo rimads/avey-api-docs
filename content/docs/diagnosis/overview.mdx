@@ -2,6 +2,7 @@
 title: What is the Diagnosis API?
 sidebar_title: Overview
 ---
+
 The Diagnosis API is a backend service that powers intelligent medical question‑and‑answer and diagnostic workflows.
 It’s built around a clinical AI model that can conduct structured medical interviews through iterative questioning, adapt each next question based on previous answers, and build a detailed picture of the patient’s condition — ultimately providing a differential diagnosis along with related care recommendations.
 
@@ -25,27 +26,42 @@ It’s built around a clinical AI model that can conduct structured medical inte
   />
 </Cards>
 
-## Workflow
+## API Types
+
+<Cards>
+  <Card
+    title="Conversational API"
+    description="Interactive diagnostic sessions with iterative questioning to reach a diagnosis."
+
+  />
+  <Card
+    title="Stateless API"
+    description="Send all patient information in a single request and receive a question or a complete diagnosis."
+  />
+</Cards>
+## Conversational API
+Designed for interactive, real-time diagnostic sessions. It allows you to start a session with patient details, answer questions, and get diagnosis results.
+### Workflow
 Integrating the Diagnosis API is straightforward — just three API calls to go from patient input to complete diagnostic results.
 <div className="fd-steps">
   <div className="fd-step">
     <div className="fd-step-content">
-### Step 1 — Create a session
+#### Step 1 — Start a session
 Send patient details to start a session.  
 Receive a `session_id` and the first question.
     </div> 
   </div>
     <div className="fd-step">
     <div className="fd-step-content">
-### Step 2 — Update the session
-Send answers with the `session_id`.  
+#### Step 2 — Send answers 
+Send answers with the `session_id` and receive the next question.  
 Repeat until the API returns `null` for the question.
 
     </div> 
   </div>
     <div className="fd-step">
     <div className="fd-step-content">
-### Step 3 — Get diagnosis
+#### Step 3 — Get diagnosis
 Provide a session ID to retrieve diagnosis from existing patient data.
 
     </div> 
@@ -55,18 +71,19 @@ Provide a session ID to retrieve diagnosis from existing patient data.
 However, accuracy improves when the session is completed before diagnosis.</Callout>
 
 
-## Endpoints
+### Endpoints
 
 | Method | Path                      | Purpose |
 |--------|----------------------------|---------|
-| POST   | `/ddx/session`             | Create a session, initialize patient context, and receive the first question. |
-| POST   | `/ddx/session/{session_id}` | Update an existing session by submitting answers and receiving the next step in the patient's assessment. |
-| GET   | `/ddx/session/{session_id}/diagnose`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
+| POST   | `/ddx/v1/session`             | Create a session, initialize patient context, and receive the first question. |
+| POST   | `/ddx/v1/session/{session_id}/next` | Update an existing session by submitting answers and receiving the next step in the patient's assessment. |
+| GET   | `/ddx/v1/session/{session_id}/diagnose`            | Generate final outputs including differential diagnosis, triage, specialist, and self-management advice. |
 
 For complete specifications and live testing, visit the 
 <a href="#api-reference" 
 className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">API reference</a>.
-## Architecture
+
+### Architecture
 <Mermaid
 
   chart={`
@@ -89,25 +106,62 @@ sequenceDiagram
 />
 
 
+
+
+## Stateless API
+Designed for non-interactive use cases where you send all patient information in a single request and receive a question or a complete diagnosis without iterative questioning.
+
+
+### Ask Endpoint
+
+Send patient details and findings to receive a question based on the patient's information. This gives the API user the power to control the flow of the conversation.
+
+
+
+
+<Callout type="info">This endpoint is deterministic: the same patient details and findings will always return the same question. Similar sets of findings may return the same question.</Callout>
+
+### Diagnose Endpoint
+
+Send patient details and findings to receive a set of potential differential diagnoses.
+
+
+<Callout type="info">Providing additional patient details and findings will enhance the accuracy of the diagnosis.</Callout>
+
+
+
+
 ## Requirements
 - **Authentication**: The API uses a bearer token for 
 <a href="/authentication" className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">authentication</a>.
 
 
 ## API reference
+
+#### Conversational API
 <Cards className="grid grid-cols-3 ">
   <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/diagnosis/create_session" title="Create session"/>
+href="/diagnosis/conversational/start_session" title="Start session"/>
     <Card
 
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
 
-href="/diagnosis/update_session" title="Update session"/>
+href="/diagnosis/conversational/answer_question" title="Update session"/>
     <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/diagnosis/diagnose" title="Get diagnosis"
+href="/diagnosis/conversational/diagnose_session" title="Get diagnosis"
 />
+</Cards>
+
+#### Stateless API
+<Cards className="grid grid-cols-3 ">
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/diagnosis/stateless/ask" title="Ask"/>
+    <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+href="/diagnosis/stateless/diagnose" title="Diagnose"/>
 </Cards>
 
 
