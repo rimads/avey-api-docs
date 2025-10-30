@@ -1,4 +1,4 @@
 export interface CollaboratorQuestionEvent {
-  /** The recommended AI-generated question to ask the patient */
-  question: string;
+  /** The recommended AI-generated questions to ask the patient */
+  data: Array<{ question: string }>;
 }
