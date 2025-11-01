@@ -44,9 +44,6 @@ if (!target || target === "all") {
       output: outputDir,
       includeDescription: true,
       groupBy: "tag",
-      frontmatter: (title, description, operation) => ({
-        title,
-      }),
     });
     moveUntaggedToTopLevel(outputDir);
     console.log(`Generated docs for ${key}`);
@@ -67,9 +64,6 @@ await generateFiles({
   output: outputDir,
   includeDescription: true,
   groupBy: "tag",
-  frontmatter: (title, description, operation) => ({
-    title,
-  }),
 });
 moveUntaggedToTopLevel(outputDir);
 
