@@ -2,9 +2,10 @@
   "title": "C-SUITE APIs",
   "pages": [
     "overview",
+    "websocket",
+    "sse",
     "createSession",
     "getFindings",
-    "websocket",
-    "sse"
+    "getCollaboratorDiagnoses"
   ]
 }

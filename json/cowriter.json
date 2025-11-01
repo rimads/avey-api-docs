@@ -13,9 +13,6 @@
   "paths": {
     "/session": {
       "post": {
-        "tags": [
-          "session"
-        ],
         "summary": "Create Session",
         "operationId": "createSession",
         "requestBody": {
@@ -80,9 +77,6 @@
     },
     "/session/{session_id}/findings": {
       "get": {
-        "tags": [
-          "session"
-        ],
         "summary": "Get Findings",
         "operationId": "getFindings",
         "parameters": [
@@ -144,6 +138,70 @@
           }
         }
       }
+    },
+    "/session/{session_id}/collaborator/diagnoses": {
+      "get": {
+        "summary": "Get Collaborator Diagnoses",
+        "operationId": "getCollaboratorDiagnoses",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CollaboratorDiagnosis"
+                  },
+                  "title": "Response Getcollaboratordiagnoses"
+                }
+              }
+            }
+          },
+          "400": {
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[str]",
+            "type": "object",
+            "description": "Bad Request"
+          },
+          "422": {
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": [
+              "message"
+            ],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object",
+            "description": "Unprocessable Content"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -163,6 +221,29 @@
           "aut"
         ],
         "title": "CodingSystem"
+      },
+      "CollaboratorDiagnosis": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "CollaboratorDiagnosis"
       },
       "Concept": {
         "properties": {

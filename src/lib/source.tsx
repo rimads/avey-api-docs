@@ -26,7 +26,7 @@ export const source = loader({
       if (data.new) {
         const originalName = node.name;
         node.name = (
-          <span className="flex justify-between w-full items-center -pr-8">
+          <span key={file.path} className="flex justify-between w-full items-center -pr-8">
             {originalName}
             <span className="ml-1 text-white rounded-full bg-av-blue-900 px-2.5 py-0.5 text-xs font-medium text-right">
               NEW
