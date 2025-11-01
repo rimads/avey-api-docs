@@ -13,9 +13,6 @@
   "paths": {
     "/session": {
       "post": {
-        "tags": [
-          "session"
-        ],
         "summary": "Create Session",
         "operationId": "createSession",
         "requestBody": {
@@ -80,9 +77,6 @@
     },
     "/session/{session_id}/findings": {
       "get": {
-        "tags": [
-          "session"
-        ],
         "summary": "Get Findings",
         "operationId": "getFindings",
         "parameters": [
@@ -147,9 +141,6 @@
     },
     "/session/{session_id}/collaborator/diagnoses": {
       "get": {
-        "tags": [
-          "session"
-        ],
         "summary": "Get Collaborator Diagnoses",
         "operationId": "getCollaboratorDiagnoses",
         "parameters": [
