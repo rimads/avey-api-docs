@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:8081/ddx",
+      "url": "https://api.avey.ai/ddx",
       "description": "Development"
     }
   ],
