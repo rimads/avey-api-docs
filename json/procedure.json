@@ -1,350 +1,316 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-        "title": "Avey Procedure Adjudication API",
-        "version": "1.0.0"
-    },
-    "servers": [
-        {
-            "url": "https://api.avey.ai/procedures",
-            "description": "Avey Procedure Adjudication API"
-        }
-    ],
-    "paths": {
-        "/adjudicate": {
-            "post": {
-                "summary": "Adjudicate Claim",
-                "operationId": "adjudicate",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/AdjudicationRequest"
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "List of violations found (empty array if no violations)",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/Violation"
-                                    },
-                                    "type": "array",
-                                    "title": "Response 200 Adjudicate"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid request format",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError_str_"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation errors for request fields",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError_Dict_str__str__"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "API Key Auth": []
-                    }
-                ]
-            }
-        }
-    },
-    "components": {
-        "schemas": {
-            "AdjudicationRequest": {
-                "properties": {
-                    "procedures": {
-                        "items": {
-                            "$ref": "#/components/schemas/ProcedureBundle"
-                        },
-                        "type": "array",
-                        "minItems": 1,
-                        "title": "Procedures",
-                        "description": "procedure bundles to adjudicate in the claim."
-                    },
-                    "history": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "$ref": "#/components/schemas/ProcedureBundle"
-                                },
-                                "type": "array"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "History",
-                        "description": "procedure bundles collected from previous claims. (Required for MUE2 and PTP violations)"
-                    },
-                    "diagnoses": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "type": "string"
-                                },
-                                "type": "array"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Diagnoses",
-                        "description": "diagnoses to adjudicate the procedures against.",
-                        "examples": [
-                            [
-                                "E11.9"
-                            ]
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "procedures"
-                ],
-                "title": "AdjudicationRequest",
-                "description": "Represents a request to adjudicate medical procedures."
-            },
-            "CPTEntry": {
-                "properties": {
-                    "code": {
-                        "type": "string",
-                        "title": "Code",
-                        "description": "CPT code",
-                        "examples": [
-                            "99213"
-                        ]
-                    },
-                    "frequency": {
-                        "anyOf": [
-                            {
-                                "type": "integer",
-                                "minimum": 1.0
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Frequency",
-                        "description": "number of times the CPT code should be performed.",
-                        "default": 1,
-                        "examples": [
-                            1
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "code"
-                ],
-                "title": "CPTEntry"
-            },
-            "HTTPError_Dict_str__str__": {
-                "properties": {
-                    "message": {
-                        "additionalProperties": {
-                            "type": "string"
-                        },
-                        "type": "object",
-                        "title": "Message"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "message"
-                ],
-                "title": "HTTPError[Dict[str, str]]"
-            },
-            "HTTPError_str_": {
-                "properties": {
-                    "message": {
-                        "type": "string",
-                        "title": "Message"
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "message"
-                ],
-                "title": "HTTPError[str]"
-            },
-            "ProcedureBundle": {
-                "properties": {
-                    "ref_id": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ref Id",
-                        "description": "optional ID for tracking this procedure in violations",
-                        "examples": [
-                            "proc-1"
-                        ]
-                    },
-                    "cpt": {
-                        "$ref": "#/components/schemas/CPTEntry",
-                        "title": "CPT Entry",
-                        "description": "primary CPT code to adjudicate."
-                    },
-                    "quantity": {
-                        "anyOf": [
-                            {
-                                "type": "integer",
-                                "minimum": 1.0
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Quantity",
-                        "description": "number of times the entire procedure should be performed in the given date.",
-                        "default": 1,
-                        "examples": [
-                            1
-                        ]
-                    },
-                    "date": {
-                        "type": "string",
-                        "title": "Date",
-                        "description": "date of the procedure.",
-                        "examples": [
-                            "2025-11-01"
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "cpt",
-                    "date"
-                ],
-                "title": "ProcedureBundle",
-                "description": "Represents a bundled medical procedure with its primary CPT code only"
-            },
-            "Violation": {
-                "properties": {
-                    "ref_ids": {
-                        "anyOf": [
-                            {
-                                "items": {
-                                    "type": "string"
-                                },
-                                "type": "array"
-                            },
-                            {
-                                "type": "null"
-                            }
-                        ],
-                        "title": "Ref Ids",
-                        "description": "IDs of the procedure bundles involved in this violation."
-                    },
-                    "rule": {
-                        "$ref": "#/components/schemas/ViolationRule",
-                        "title": "Violation Rule",
-                        "examples": [
-                            "MUE1",
-                            "MUE2",
-                            "PTP0",
-                            "PTP1",
-                            "PLE"
-                        ]
-                    },
-                    "level": {
-                        "$ref": "#/components/schemas/ViolationLevel",
-                        "title": "Violation Level",
-                        "description": "severity level of the violation.",
-                        "examples": [
-                            "error",
-                            "warning"
-                        ]
-                    },
-                    "description": {
-                        "type": "string",
-                        "title": "Description",
-                        "description": "a human-readable description of the rule.",
-                        "examples": [
-                            "Procedures cannot be billed together (modifier not allowed)"
-                        ]
-                    },
-                    "cpts": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array",
-                        "title": "Cpts",
-                        "description": "CPT codes involved in this violation. Single code for MUE and PLE, two codes for PTP."
-                    },
-                    "detail": {
-                        "type": "string",
-                        "title": "Detail",
-                        "description": "detailed context about the violation.",
-                        "examples": [
-                            "Total quantity of 5 exceeds limit of 3"
-                        ]
-                    }
-                },
-                "type": "object",
-                "required": [
-                    "rule",
-                    "level",
-                    "description",
-                    "cpts",
-                    "detail"
-                ],
-                "title": "Violation",
-                "description": "Represents a detected rule violation."
-            },
-            "ViolationLevel": {
-                "type": "string",
-                "enum": [
-                    "error",
-                    "warning"
-                ],
-                "title": "ViolationLevel",
-                "description": "Represents the severity level of a violation."
-            },
-            "ViolationRule": {
-                "type": "string",
-                "enum": [
-                    "MUE1",
-                    "MUE2",
-                    "PTP0",
-                    "PTP1",
-                    "PLE"
-                ],
-                "title": "ViolationRule",
-                "description": "Represents the type of violation rule."
-            }
-        },
-        "securitySchemes": {
-            "API Key Auth": {
-                "type": "apiKey",
-                "in": "header",
-                "name": "X-API-Key"
-            }
-        }
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Avey Procedure Adjudication API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.avey.ai/procedures",
+      "description": "Avey Procedure Adjudication API"
     }
+  ],
+  "paths": {
+    "/adjudicate": {
+      "post": {
+        "summary": "Adjudicate Claim",
+        "operationId": "adjudicate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdjudicationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "List of violations found (empty array if no violations)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Violation"
+                  },
+                  "type": "array",
+                  "title": "Response 200 Adjudicate"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError_str_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation errors for request fields",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPError_Dict_str__str__"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "API Key Auth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdjudicationConfig": {
+        "properties": {
+          "level": {
+            "$ref": "#/components/schemas/ViolationLevel",
+            "title": "Violation Level",
+            "description": "Minimum severity level of the violations. Warning-level violations are usually intended for coders.",
+            "examples": ["critical", "warning", null]
+          }
+        },
+        "type": "object",
+        "title": "AdjudicationConfig",
+        "description": "Represents the configuration for adjudication."
+      },
+      "AdjudicationRequest": {
+        "properties": {
+          "procedures": {
+            "items": {
+              "$ref": "#/components/schemas/ProcedureBundle"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Procedures",
+            "description": "procedure bundles to adjudicate in the claim."
+          },
+          "history": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ProcedureBundle"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "History",
+            "description": "procedure bundles collected from previous claims. (Required for MUE2 and PTP violations)"
+          },
+          "diagnoses": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Diagnoses",
+            "description": "diagnoses to adjudicate the procedures against.",
+            "examples": [["E11.9"]]
+          },
+          "config": {
+            "$ref": "#/components/schemas/AdjudicationConfig",
+            "description": "adjudication configuration"
+          }
+        },
+        "type": "object",
+        "required": ["procedures", "config"],
+        "title": "AdjudicationRequest",
+        "description": "Represents a request to adjudicate medical procedures."
+      },
+      "CPTEntry": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "CPT code",
+            "examples": ["99213"]
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency",
+            "description": "number of times the CPT code should be performed.",
+            "default": 1,
+            "examples": [1]
+          }
+        },
+        "type": "object",
+        "required": ["code"],
+        "title": "CPTEntry"
+      },
+      "HTTPError_Dict_str__str__": {
+        "properties": {
+          "message": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "HTTPError[Dict[str, str]]"
+      },
+      "HTTPError_str_": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": ["message"],
+        "title": "HTTPError[str]"
+      },
+      "ProcedureBundle": {
+        "properties": {
+          "ref_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref Id",
+            "description": "optional ID for tracking this procedure in violations",
+            "examples": ["proc-1"]
+          },
+          "cpt": {
+            "$ref": "#/components/schemas/CPTEntry",
+            "title": "CPT Entry",
+            "description": "primary CPT code to adjudicate."
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity",
+            "description": "number of times the entire procedure should be performed in the given date.",
+            "default": 1,
+            "examples": [1]
+          },
+          "date": {
+            "type": "string",
+            "title": "Date",
+            "description": "date of the procedure.",
+            "examples": ["2025-11-01"]
+          }
+        },
+        "type": "object",
+        "required": ["cpt", "date"],
+        "title": "ProcedureBundle",
+        "description": "Represents a bundled medical procedure with its primary CPT code only"
+      },
+      "Violation": {
+        "properties": {
+          "ref_ids": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ref Ids",
+            "description": "IDs of the procedure bundles involved in this violation."
+          },
+          "rule": {
+            "$ref": "#/components/schemas/ViolationRule",
+            "title": "Violation Rule",
+            "examples": ["MUE1", "MUE2", "PTP0", "PTP1", "PLE"]
+          },
+          "level": {
+            "$ref": "#/components/schemas/ViolationLevel",
+            "title": "Violation Level",
+            "description": "severity level of the violation.",
+            "examples": ["critical", "warning"]
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "a human-readable description of the rule.",
+            "examples": [
+              "Procedures cannot be billed together (modifier not allowed)"
+            ]
+          },
+          "cpts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cpts",
+            "description": "CPT codes involved in this violation. Single code for MUE and PLE, two codes for PTP."
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "detailed context about the violation.",
+            "examples": ["Total quantity of 5 exceeds limit of 3"]
+          }
+        },
+        "type": "object",
+        "required": ["rule", "level", "description", "cpts", "detail"],
+        "title": "Violation",
+        "description": "Represents a detected rule violation."
+      },
+      "ViolationLevel": {
+        "type": "string",
+        "enum": ["critical", "warning"],
+        "title": "ViolationLevel",
+        "description": "Represents the severity level of a violation."
+      },
+      "ViolationRule": {
+        "type": "string",
+        "enum": ["MUE1", "MUE2", "PTP0", "PTP1", "PLE"],
+        "title": "ViolationRule",
+        "description": "Represents the type of violation rule."
+      }
+    },
+    "securitySchemes": {
+      "API Key Auth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  }
 }
