@@ -14,10 +14,10 @@ services:
       placement:
         constraints:
           - node.role == worker
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 256M
+      # resources:
+        # limits:
+        #   cpus: '0.25'
+        #   memory: 256M
       update_config:
         order: start-first
       rollback_config:
