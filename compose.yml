@@ -4,13 +4,13 @@ networks:
 
 services:
   docs:
-    image: registry.avey.ai/api-docs:latest
+    image: ecr.avey.ai/api-docs:latest
     networks:
       - dokploy-network
     environment:
-      - NEXT_PUBLIC_MODE=${NEXT_PUBLIC_MODE?}
-      - GITHUB_APP_ID=${GITHUB_APP_ID?}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY?}
+      - NEXT_PUBLIC_MODE=production
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
     deploy:
       labels:
         - "traefik.enable=true"
