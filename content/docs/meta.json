@@ -6,8 +6,8 @@
     "icd",
     "cpt",
     "procedure",
+    "drug",
     "cowriter",
-    "!drug",
     "..."
   ]
 }

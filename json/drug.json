@@ -1,0 +1,594 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Avey Drug API",
+        "description": "API for adjudicating drugs and their dosages in relation to diseases.",
+        "version": "0.1.0"
+    },
+    "servers": [
+        {
+            "url": "https://api.avey.ai/drugs",
+            "description": "Production"
+        }
+    ],
+    "paths": {
+        "/adjudicate": {
+            "post": {
+                "summary": "Adjudicate",
+                "description": "Endpoint for adjudicating drugs and their dosages in relation to diseases",
+                "operationId": "adjudicate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AdjudicateRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Violation"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Adjudicate"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ActiveIngredient": {
+                "properties": {
+                    "generic_name": {
+                        "type": "string",
+                        "title": "Generic Name",
+                        "description": "Generic name of the active ingredient",
+                        "examples": [
+                            "Amoxicillin and Clavulanic Acid"
+                        ]
+                    },
+                    "concentration": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "title": "Concentration",
+                        "description": "Concentration amount of the active ingredient",
+                        "examples": [
+                            0.25
+                        ]
+                    },
+                    "concentration_unit": {
+                        "type": "string",
+                        "title": "Concentration Unit",
+                        "description": "Unit of the concentration",
+                        "examples": [
+                            "mg/gram"
+                        ]
+                    },
+                    "package_size": {
+                        "type": "number",
+                        "minimum": 0.0,
+                        "title": "Package Size",
+                        "description": "Size of the package",
+                        "examples": [
+                            20.0
+                        ]
+                    },
+                    "package_size_unit": {
+                        "$ref": "#/components/schemas/PackageSizeUnit",
+                        "description": "Unit of the package size",
+                        "examples": [
+                            "gram"
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "generic_name",
+                    "concentration",
+                    "concentration_unit",
+                    "package_size",
+                    "package_size_unit"
+                ],
+                "title": "ActiveIngredient"
+            },
+            "AdjudicateRequest": {
+                "properties": {
+                    "sex": {
+                        "description": "Sex of the patient",
+                        "examples": [
+                            "male",
+                            "female"
+                        ],
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Sex"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "age": {
+                        "title": "Age",
+                        "description": "Age of the patient",
+                        "examples": [
+                            30
+                        ],
+                        "oneOf": [
+                            {
+                                "type": "integer",
+                                "maximum": 150.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "weight": {
+                        "title": "Weight",
+                        "description": "Weight of the patient",
+                        "examples": [
+                            70.0
+                        ],
+                        "oneOf": [
+                            {
+                                "type": "number",
+                                "maximum": 500.0,
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "diagnoses": {
+                        "items": {
+                            "$ref": "#/components/schemas/Diagnosis"
+                        },
+                        "type": "array",
+                        "title": "Diagnoses",
+                        "description": "List of diagnoses"
+                    },
+                    "medications": {
+                        "items": {
+                            "$ref": "#/components/schemas/CustomMedicationDTO"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Medications",
+                        "description": "List of medications",
+                        "examples": [
+                            [
+                                {
+                                    "form": "IM/Intraarticular/Percutaneous",
+                                    "generic_name": "Methylprednisolone",
+                                    "ingredients": [
+                                        {
+                                            "concentration": 40.0,
+                                            "concentration_unit": "mg/ml",
+                                            "generic_name": "Methylprednisolone",
+                                            "package_size": 1.0,
+                                            "package_size_unit": "ml"
+                                        }
+                                    ],
+                                    "perscription": {
+                                        "dosage": {
+                                            "duration": 1,
+                                            "duration_unit": "D",
+                                            "frequency": 1,
+                                            "frequency_unit": "D",
+                                            "quantity": 1
+                                        },
+                                        "quantity": 1
+                                    },
+                                    "size": 1,
+                                    "size_unit": "ml",
+                                    "trade_name": "DEPO - MEDROL",
+                                    "type": "custom"
+                                }
+                            ]
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "diagnoses",
+                    "medications"
+                ],
+                "title": "AdjudicateRequest"
+            },
+            "CustomMedicationDTO": {
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "const": "custom",
+                        "title": "Type",
+                        "default": "custom"
+                    },
+                    "ref_ids": {
+                        "title": "Ref Ids",
+                        "description": "optional ID for tracking this medication in the list of violations",
+                        "oneOf": [
+                            {
+                                "items": {
+                                    "type": "string"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "generic_name": {
+                        "type": "string",
+                        "title": "Generic Name",
+                        "description": "Generic name of the medication",
+                        "examples": [
+                            "Calcium dobesilate monohydrate 40mg/g Lidocaine HCl 20mg/g + dexamethasone 0.25mg/g"
+                        ]
+                    },
+                    "trade_name": {
+                        "type": "string",
+                        "title": "Trade Name",
+                        "description": "Brand or trade name",
+                        "examples": [
+                            "Doxiproct Plus"
+                        ]
+                    },
+                    "ingredients": {
+                        "items": {
+                            "$ref": "#/components/schemas/ActiveIngredient"
+                        },
+                        "type": "array",
+                        "minItems": 1,
+                        "title": "Ingredients",
+                        "description": "List of active ingredients"
+                    },
+                    "form": {
+                        "type": "string",
+                        "title": "Form",
+                        "description": "Form of medication",
+                        "examples": [
+                            "Rectal Ointment"
+                        ]
+                    },
+                    "size": {
+                        "title": "Size",
+                        "description": "Number of dosage units per pack or container",
+                        "examples": [
+                            20
+                        ],
+                        "oneOf": [
+                            {
+                                "type": "integer",
+                                "minimum": 0.0
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "size_unit": {
+                        "title": "Size Unit",
+                        "description": "Unit of the dosage size (e.g., 'tablet', 'capsule', 'mL')",
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    },
+                    "perscription": {
+                        "$ref": "#/components/schemas/MedicationPerscription",
+                        "description": "Perscription information"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "generic_name",
+                    "trade_name",
+                    "ingredients",
+                    "form",
+                    "size",
+                    "perscription"
+                ],
+                "title": "CustomMedicationDTO"
+            },
+            "DateTimeUnit": {
+                "type": "string",
+                "enum": [
+                    "D",
+                    "M",
+                    "W",
+                    "Y",
+                    "m",
+                    "h"
+                ],
+                "title": "DateTimeUnit"
+            },
+            "Diagnosis": {
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "title": "Code",
+                        "description": "Code for the diagnosis",
+                        "examples": [
+                            "M34"
+                        ]
+                    },
+                    "system": {
+                        "$ref": "#/components/schemas/DiagnosisCodingSystem",
+                        "description": "Coding system of the diagnosis",
+                        "examples": [
+                            "ICD10cm"
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "code",
+                    "system"
+                ],
+                "title": "Diagnosis"
+            },
+            "DiagnosisCodingSystem": {
+                "type": "string",
+                "enum": [
+                    "ICD10cm"
+                ],
+                "title": "DiagnosisCodingSystem"
+            },
+            "HTTPValidationError": {
+                "properties": {
+                    "detail": {
+                        "items": {
+                            "$ref": "#/components/schemas/ValidationError"
+                        },
+                        "type": "array",
+                        "title": "Detail"
+                    }
+                },
+                "type": "object",
+                "title": "HTTPValidationError"
+            },
+            "MedicationDosage": {
+                "properties": {
+                    "quantity": {
+                        "type": "integer",
+                        "minimum": 0.0,
+                        "title": "Quantity",
+                        "description": "Quantity per dose (e.g., 2 tablets)",
+                        "default": 0,
+                        "examples": [
+                            2
+                        ]
+                    },
+                    "frequency": {
+                        "type": "integer",
+                        "minimum": 0.0,
+                        "title": "Frequency",
+                        "description": "How many times the dose is taken within the frequency_unit",
+                        "default": 0,
+                        "examples": [
+                            3
+                        ]
+                    },
+                    "frequency_unit": {
+                        "$ref": "#/components/schemas/DateTimeUnit",
+                        "description": "Unit for frequency, e.g., 'D' for day, 'W' for week",
+                        "default": "D",
+                        "examples": [
+                            "D",
+                            "M",
+                            "W",
+                            "Y",
+                            "m",
+                            "h"
+                        ]
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "minimum": 0.0,
+                        "title": "Duration",
+                        "description": "Duration value for the treatment period",
+                        "default": 0,
+                        "examples": [
+                            10
+                        ]
+                    },
+                    "duration_unit": {
+                        "$ref": "#/components/schemas/DateTimeUnit",
+                        "description": "Unit for duration, e.g., 'D' for day, 'W' for week",
+                        "default": "D",
+                        "examples": [
+                            "D",
+                            "M",
+                            "W",
+                            "Y",
+                            "m",
+                            "h"
+                        ]
+                    }
+                },
+                "type": "object",
+                "title": "MedicationDosage"
+            },
+            "MedicationPerscription": {
+                "properties": {
+                    "quantity": {
+                        "type": "integer",
+                        "minimum": 0.0,
+                        "title": "Quantity",
+                        "description": "Quantity prescribed (number of packs or containers)",
+                        "examples": [
+                            1
+                        ]
+                    },
+                    "dosage": {
+                        "$ref": "#/components/schemas/MedicationDosage",
+                        "description": "Dosage information"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "quantity",
+                    "dosage"
+                ],
+                "title": "MedicationPerscription"
+            },
+            "PackageSizeUnit": {
+                "type": "string",
+                "enum": [
+                    "gram",
+                    "ml",
+                    "tablet"
+                ],
+                "title": "PackageSizeUnit"
+            },
+            "Sex": {
+                "type": "string",
+                "enum": [
+                    "male",
+                    "female"
+                ],
+                "title": "Sex"
+            },
+            "ValidationError": {
+                "properties": {
+                    "loc": {
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "integer"
+                                }
+                            ]
+                        },
+                        "type": "array",
+                        "title": "Location"
+                    },
+                    "msg": {
+                        "type": "string",
+                        "title": "Message"
+                    },
+                    "type": {
+                        "type": "string",
+                        "title": "Error Type"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "loc",
+                    "msg",
+                    "type"
+                ],
+                "title": "ValidationError"
+            },
+            "Violation": {
+                "properties": {
+                    "rule": {
+                        "$ref": "#/components/schemas/ViolationRule",
+                        "title": "Violation Rule",
+                        "examples": [
+                            "DLE1",
+                            "DLE2",
+                            "DCV1",
+                            "DDV1",
+                            "DOV1"
+                        ]
+                    },
+                    "level": {
+                        "$ref": "#/components/schemas/ViolationLevel",
+                        "title": "Violation Level",
+                        "description": "severity level of the violation.",
+                        "examples": [
+                            "critical",
+                            "warning"
+                        ]
+                    },
+                    "description": {
+                        "type": "string",
+                        "title": "Description",
+                        "description": "a human-readable description of the rule.",
+                        "examples": [
+                            "Medication is not justified by the diagnoses"
+                        ]
+                    },
+                    "medications": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Medications",
+                        "description": "medications involved in the violation. (IDs or generic names based on the request)",
+                        "examples": [
+                            [
+                                "43598-006-14"
+                            ],
+                            [
+                                "Amoxicillin and Clavulanic Acid"
+                            ]
+                        ]
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "rule",
+                    "level",
+                    "description",
+                    "medications"
+                ],
+                "title": "Violation",
+                "description": "Represents a detected rule violation."
+            },
+            "ViolationLevel": {
+                "type": "string",
+                "enum": [
+                    "critical",
+                    "warning"
+                ],
+                "title": "ViolationLevel",
+                "description": "Represents the severity level of a violation."
+            },
+            "ViolationRule": {
+                "type": "string",
+                "enum": [
+                    "DLE1",
+                    "DLE2",
+                    "DCV1",
+                    "DDV1",
+                    "DOV1"
+                ],
+                "title": "ViolationRule",
+                "description": "Represents the type of violation rule."
+            }
+        }
+    }
+}
