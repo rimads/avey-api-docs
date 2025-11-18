@@ -22,10 +22,10 @@ services:
         order: start-first
       rollback_config:
         parallelism: 1
-        delay: 5s
-        monitor: 5s
+        # delay: 5s
+        # monitor: 5s
       restart_policy:
         condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        # delay: 5s
+        # max_attempts: 3
+        # window: 120s
