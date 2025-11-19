@@ -61,6 +61,9 @@ export function SeverityGrid() {
               <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
                 Medical Directors
               </span>
+              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
+                Medical Coders
+              </span>
             </div>
           </div>
         </div>
