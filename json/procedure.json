@@ -71,6 +71,23 @@
     },
     "components": {
         "schemas": {
+            "AdjudicationConfig": {
+                "properties": {
+                    "level": {
+                        "$ref": "#/components/schemas/ViolationLevel",
+                        "title": "Violation Level",
+                        "description": "Minimum severity level of the violations. Warning-level violations are usually intended for coders.",
+                        "examples": [
+                            "critical",
+                            "warning",
+                            null
+                        ]
+                    }
+                },
+                "type": "object",
+                "title": "AdjudicationConfig",
+                "description": "Represents the configuration for adjudication."
+            },
             "AdjudicationRequest": {
                 "properties": {
                     "procedures": {
@@ -116,11 +133,16 @@
                                 "E11.9"
                             ]
                         ]
+                    },
+                    "config": {
+                        "$ref": "#/components/schemas/AdjudicationConfig",
+                        "description": "adjudication configuration"
                     }
                 },
                 "type": "object",
                 "required": [
-                    "procedures"
+                    "procedures",
+                    "config"
                 ],
                 "title": "AdjudicationRequest",
                 "description": "Represents a request to adjudicate medical procedures."
@@ -277,7 +299,7 @@
                         "title": "Violation Level",
                         "description": "severity level of the violation.",
                         "examples": [
-                            "error",
+                            "critical",
                             "warning"
                         ]
                     },
@@ -320,7 +342,7 @@
             "ViolationLevel": {
                 "type": "string",
                 "enum": [
-                    "error",
+                    "critical",
                     "warning"
                 ],
                 "title": "ViolationLevel",
