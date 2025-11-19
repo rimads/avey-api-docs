@@ -33,7 +33,7 @@ export function Violation({ code, title, level, children }: ViolationProps) {
   );
 }
 
-export function SeverityGrid() {
+export function SeverityGrid({ showAudience = true }: { showAudience?: boolean }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
       <div className="rounded-xl border bg-gradient-to-b from-red-50 to-white dark:from-red-950/20 dark:to-transparent border-red-100 dark:border-red-900/30 p-6 shadow-sm">
@@ -52,20 +52,22 @@ export function SeverityGrid() {
             Fundamental errors that will cause claim rejection. These require clinical review.
           </div>
           
-          <div className="bg-white dark:bg-neutral-900 rounded-lg border border-red-100 dark:border-red-900/30 p-3">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Target Audience</p>
-            <div className="flex gap-2 flex-wrap">
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
-                Physicians
-              </span>
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
-                Medical Directors
-              </span>
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
-                Medical Coders
-              </span>
+          {showAudience && (
+            <div className="bg-white dark:bg-neutral-900 rounded-lg border border-red-100 dark:border-red-900/30 p-3">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Target Audience</p>
+              <div className="flex gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
+                  Physicians
+                </span>
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
+                  Medical Directors
+                </span>
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-100 dark:border-red-900/30">
+                  Medical Coders
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 
@@ -85,17 +87,19 @@ export function SeverityGrid() {
             Potential issues that may be valid with proper documentation or modifiers.
           </div>
           
-          <div className="bg-white dark:bg-neutral-900 rounded-lg border border-amber-100 dark:border-amber-900/30 p-3">
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Target Audience</p>
-            <div className="flex gap-2 flex-wrap">
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30">
-                Medical Coders
-              </span>
-              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30">
-                Billers
-              </span>
+          {showAudience && (
+            <div className="bg-white dark:bg-neutral-900 rounded-lg border border-amber-100 dark:border-amber-900/30 p-3">
+              <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">Target Audience</p>
+              <div className="flex gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30">
+                  Medical Coders
+                </span>
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-900/30">
+                  Billers
+                </span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

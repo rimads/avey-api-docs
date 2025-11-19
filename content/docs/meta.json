@@ -3,11 +3,11 @@
   "pages": [
     "index",
     "diagnosis",
+    "cowriter",
+    "drug",
+    "procedure",
     "icd",
     "cpt",
-    "procedure",
-    "drug",
-    "cowriter",
     "..."
   ]
 }

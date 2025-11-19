@@ -167,30 +167,6 @@ To maximize adjudication accuracy, ensure your request includes:
 *   **Diagnoses:** The ICD-10 codes justifying the procedures.
 *   **History:** A list of past procedures. This is **critical** for MUE2 (lifetime) checks. Without history, the API cannot detect if a patient has previously received a non-repeatable service.
 
-<Mermaid
-  chart={`
-sequenceDiagram
-    participant Client
-    participant API as Adjudication API
-    participant Engine as Rule Engine
-    
-    Client->>API: POST /adjudicate
-    Note right of Client: Procedures + Diagnoses + History
-    
-    API->>Engine: Evaluate Context
-    
-    par Compliance Checks
-        Engine->>Engine: MUE (Daily & Lifetime Limits)
-        Engine->>Engine: PTP (Bundling Validation)
-    and Clinical Checks
-        Engine->>Engine: PLE (Diagnosis Justification)
-    end
-    
-    Engine-->>API: Violations
-    API-->>Client: JSON Response
-`}
-/>
-
 ## Configuration
 
 You can fine-tune the strictness of the API using the `config` object in your request.

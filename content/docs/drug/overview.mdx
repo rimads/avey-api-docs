@@ -1,76 +1,135 @@
 ---
-title: Drug API
-sidebar_title: Overview
-description: Validate medications for necessity, safety, and correct dosage based on diagnoses and patient context
+title: Overview
+description: Automated validation for drug prescriptions, dosage limits, and clinical interactions.
 ---
 
-## Use Drug API for
+<Callout type="warn" title="Experimental API">
+  The Drug Adjudication API is currently in **Beta**. Features and response schemas are subject to breaking changes and improvements.
+</Callout>
+
+The **Drug Adjudication API** acts as a sophisticated clinical safeguard for medication management. It evaluates prescribed drugs against patient demographics, diagnoses, and other medications to ensure safety, medical necessity, and adherence to dosage guidelines.
+
+By integrating this API, healthcare systems can prevent adverse drug events, ensure appropriate prescribing, and reduce pharmacy claim rejections.
+
+## Use Cases
 
 <Cards>
-  <Card
-    title="Medical justification"
-    description="Check if a medication is clinically appropriate for one or more conditions"
-  />
-  <Card
-    title="Contraindication detection"
-    description="Detect any safety concerns or risks due to drug-disease or drug-drug interactions"
-  />
-  <Card
-    title="Dosage validation"
-    description="Ensure that prescribed dosages are within acceptable clinical limits"
-  />
-    <Card
-    title="Dosage recommendation"
-    description="Receive recommended dosage ranges for medications that fall outside safe boundaries"
-  />
-
+  <Card title="Pre-Prescription Checks" href="#">
+    Validate prescriptions at the point of care to prevent errors before the patient leaves the clinic.
+  </Card>
+  <Card title="Pharmacy Claim Audits" href="#">
+    Automate the review of pharmacy claims for medical necessity and dosage compliance.
+  </Card>
+  <Card title="Clinical Decision Support" href="#">
+    Alert providers to potential drug-drug interactions or contraindications based on patient history.
+  </Card>
+  <Card title="Patient Safety Monitoring" href="#">
+    Screen medication lists for cumulative risks or age/weight-inappropriate dosages.
+  </Card>
 </Cards>
 
+## Violation Types
 
+We return specific violation codes to help you understand *why* a medication was flagged.
 
+### 1. Medical Necessity (DLE)
 
-## How to use the API
-This API accepts patient context (diagnoses and demographics) and one or more medications as input. It returns clinical validation results indicating whether the medications are necessary, safe, and appropriately dosed. You’ll typically call this API during the treatment recommendation stage, or when reviewing a medication list for contraindications or dosage concerns.
+<Violation code="DLE1" title="Diagnosis Mismatch" level="critical">
+Ensures the medication is clinically indicated for the patient's diagnosed conditions.
 
+*   **Description:** Diagnoses does not necessitate the use of the medication.
+*   **Example:** Prescribing **Metformin** (diabetes) for a patient with only **Hypertension** diagnoses.
 
-### Input Parameters
+```json
+{
+  "rule": "DLE1",
+  "level": "critical",
+  "description": "Diagnoses does not necessitate the use of the medication",
+  "medications": ["Metformin"]
+}
+```
+</Violation>
 
-| Field              | Type       | Description |
-|-------------------|------------|-------------|
-| `ndcs`<span style={{ color: "red" }}>*</span>            | `string[]` | One or more NDC codes representing medications. |
-| `primary_icd`<span style={{ color: "red" }}>*</span>     | `string`   | Primary diagnosis (ICD-10 code). |
-| `secondary_icds`  | `string[]` | Additional diagnoses (ICD-10 codes). |
-| `age`<span style={{ color: "red" }}>*</span>             | `number`   | Patient's age. |
-| `gender`           | `string`   | Patient's gender. |
-| `weight`           | `number`   | Patient's weight (in kg). |
+<Violation code="DLE2" title="Dosage Necessity" level="critical">
+Checks if the specific dosage prescribed is supported by the diagnosis.
 
+*   **Description:** Diagnoses does not necessitate the use of the medication in the prescribed dosage.
 
-### Output
+```json
+{
+  "rule": "DLE2",
+  "level": "critical",
+  "description": "Diagnoses does not necessitate the use of the medication in the perscribed dosage",
+  "medications": ["Ibuprofen"]
+}
+```
+</Violation>
 
-Returns an object that includes:
-  - Validation results for each medication:
-  - Medical necessity (`justified` or not)
-  - Any detected drug-drug or drug-disease interactions
-  - Dosage validation (valid/invalid)
-  - Recommended dosage if applicable
+### 2. Contraindications (DCV)
 
-## How it works
+<Violation code="DCV1" title="Comorbid Contraindication" level="critical">
+Identifies if a drug is dangerous given the patient's other medical conditions.
 
-The Drug API routes your input through Avey's clinical validation pipeline. It checks whether each medication is medically appropriate for the provided conditions, flags any safety risks, and returns dosage recommendations when needed — all handled by Avey’s internal Drug Engine.
+*   **Description:** Drug contraindicated with comorbid condition.
+*   **Example:** Prescribing **Beta-blockers** to a patient with **Asthma**.
 
-No need to manually check clinical guidelines — the Drug API ensures smarter medication validation in real time.
+```json
+{
+  "rule": "DCV1",
+  "level": "critical",
+  "description": "Drug contraindicated with comorbid condition",
+  "medications": ["Propranolol"]
+}
+```
+</Violation>
 
-<Mermaid chart={`
-sequenceDiagram
-    participant Developer
-    participant Avey Drug API
-    participant Avey Validator
-    participant Avey Drug Engine
+### 3. Drug Interactions (DDV)
 
-    Developer->>Avey Drug API: Send NDCs, ICDs, age, gender, weight
-    Avey Drug API->>Avey Drug Engine: Analyze medication + diagnosis context
-    Avey Drug Engine->>Avey Validator: Validate safety, necessity, dosage
-    Avey Validator-->>Avey Drug API: Return validation results
-    Avey Drug API-->>Developer: Final drug report with justifications and recommendations
-`}/>
+<Violation code="DDV1" title="Drug-Drug Interaction" level="critical">
+Detects harmful interactions between multiple prescribed medications.
 
+*   **Description:** Potential drug–drug interaction detected between prescribed medications.
+
+```json
+{
+  "rule": "DDV1",
+  "level": "critical",
+  "description": "Potential drug–drug interaction detected between prescribed medications.",
+  "medications": ["Warfarin", "Aspirin"]
+}
+```
+</Violation>
+
+### 4. Dosage Safety (DOV)
+
+<Violation code="DOV1" title="Dosage Limit Exceeded" level="warning">
+Flags dosages that exceed recommended maximums for safety, considering age and weight.
+
+*   **Description:** Prescribed dosage exceeds the recommended maximum limit.
+
+```json
+{
+  "rule": "DOV1",
+  "level": "warning",
+  "description": "Prescribed dosage exceeds the recommended maximum limit",
+  "medications": ["Acetaminophen"]
+}
+```
+</Violation>
+
+---
+
+## Criticality & Workflows
+
+<SeverityGrid showAudience={false} />
+
+### Endpoint
+`POST /adjudicate`
+
+### Data Requirements
+
+To ensure accurate adjudication, provide as much patient context as possible:
+
+*   **Age**, **Sex**, **Weight:** Crucial for calculating safe dosages.
+*   **Diagnoses:** Required to validate medical necessity (DLE rules).
+*   **Medications:** The list of drugs to evaluate, including detailed ingredients and dosage instructions.

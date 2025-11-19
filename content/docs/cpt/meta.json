@@ -1,5 +1,8 @@
 {
-  "title": "CPT coding API",
-  "pages": ["overview", "..."],
+  "title": "CPT API (Soon)",
+  "pages": [
+    "overview",
+    "..."
+  ],
   "defaultOpen": false
 }

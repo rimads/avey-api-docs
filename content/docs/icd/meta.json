@@ -1,5 +1,8 @@
 {
-  "title": "ICD coding API",
-  "pages": ["overview", "..."],
+  "title": "ICD API (Soon)",
+  "pages": [
+    "overview",
+    "..."
+  ],
   "defaultOpen": false
 }

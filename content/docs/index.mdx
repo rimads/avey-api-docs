@@ -12,9 +12,19 @@ Avey delivers AI-driven healthcare APIs that transform unstructured clinical dat
     description="Conversational AI for clinical data gathering and differential diagnosis generation"
   />
   <Card
-    title="CPT API (coming soon)"
-    href="/cpt/overview"
-    description="Automatic CPT code identification for medical procedures"
+    title="C-Suite API"
+    href="/cowriter/overview"
+    description="Avey's Cowriter, Coder, and Collaborator all seemlessly integrated into a single unified API suite"
+  />
+  <Card
+    title="Drug API"
+    href="/drug/overview"
+    description="Medication validation, interactions, and contraindications"
+  />
+  <Card
+    title="Procedure API"
+    href="/procedure/overview"
+    description="Procedure validation and medical necessity checking"
   />
   <Card
     title="ICD API (coming soon)"
@@ -22,17 +32,9 @@ Avey delivers AI-driven healthcare APIs that transform unstructured clinical dat
     description="ICD code extraction from symptom and diagnosis descriptions"
   />
   <Card
-    title="NDC API (coming soon)"
-    description="Medication name to NDC code conversion"
-  />
-  <Card
-    title="Drug API (coming soon)"
-    description="Medication validation, interactions, and contraindications"
-  />
-  <Card
-    title="Procedure API"
-    href="/procedure/overview"
-    description="Procedure validation and medical necessity checking"
+    title="CPT API (coming soon)"
+    href="/cpt/overview"
+    description="Automatic CPT code identification for medical procedures"
   />
 </Cards>
 
@@ -91,21 +93,21 @@ X-API-KEY: YOUR_API_KEY
 <Cards className="grid grid-cols-3 ">
   <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/diagnosis/overview" title="Diagnosis API overview"/>
-    <Card
+      href="/diagnosis/overview" title="Diagnosis API overview"/>
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+      href="/cowriter/overview" title="C-Suite API overview"/>
+  <Card
+      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
+      href="/drug/overview" title="Drug API overview"/>
+  <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
       href="/procedure/overview"
       title="Procedure API overview"/>
-    <Card
+  <Card
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
- title="Drug API overview"/>
-    <Card
+      href="/icd/overview" title="ICD API (Beta) overview"/>
+  <Card 
       className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/icd/overview" title="ICD API overview"/>
-    <Card 
-      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
-href="/cpt/overview" title="CPT API overview"/>
-    <Card
-      className="flex items-center gap-2 group transition-all duration-300 hover:[&>div]:bg-fd-info [&>div]:transition-all [&>div]:duration-300"
- title="NDC API overview"/>
+      href="/cpt/overview" title="CPT API (Beta) overview"/>
 </Cards>

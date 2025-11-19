@@ -1,5 +1,4 @@
 {
-  "title": "Drug API",
-  "pages": ["overview", "..."],
-  "defaultOpen": false
+  "title": "Drug Adjudication",
+  "pages": ["overview", "adjudicate"]
 }
