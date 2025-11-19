@@ -1,8 +1,6 @@
 {
   "title": "CPT API (Soon)",
-  "pages": [
-    "overview",
-    "..."
-  ],
+  "new": "BETA",
+  "pages": ["overview", "..."],
   "defaultOpen": false
 }
