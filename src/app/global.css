@@ -6,10 +6,8 @@
 @theme {
     /* Use Nunito loaded via next/font variable --nunito */
     --font-sans: var(--nunito), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    --color-av-blue-900: #004766;
     --color-av-gray-500:#949494;
     
-    /* Light Mode Colors (600 variants) */
     --color-blue-600: #44BEDF;
     --color-red-600: #D85E5F;
     --color-yellow-600: #F5C940;
@@ -18,7 +16,39 @@
     --color-blue-400: #77E0FF;
     --color-red-400: #ED7273;
     --color-yellow-400: #FFDE6F;
+    
+    --color-av-black: #171717;
+    --color-av-gray900: #333333;
+    --color-av-gray600: #666666;
+    --color-av-gray500: #949494;
+    --color-av-gray400: #CCCCCC;
+    --color-av-gray300: #E5E5E5;
+    --color-av-gray200: #F2F2F2;
+    --color-av-gray100: #F9F9F9;
+    --color-av-gray050: #FBFBFB;
+    --color-av-white: #FFFFFF;
+  
+    --color-av-blue900: #004766;
+    --color-av-blue800: #44BEDF;
+    --color-av-blue600: #5CCFF2;
+    --color-av-blue500: #77E0FF;
+    --color-av-blue100: #E6FBFF;  
+  
+    --color-av-red600: #D85E5F;
+    --color-av-red500: #ED7273; 
+    --color-av-red100: #FDF1F1;
+  
+    --color-av-yellow600: #F5C940;
+    --color-av-yellow500: #FFDE6F; 
+    --color-av-yellow100: #FFF8E2;
 
+
+    --color-av-orange600: #E68A00;
+    --color-av-orange500: #FF9900; 
+    --color-av-orange100: #FFF5E5;
+
+    --color-av-oncolor: #FFFFFF1E;     
+    --color-av-stroke-light: #0000000A;
   }
 
   @layer base {

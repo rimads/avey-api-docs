@@ -1,8 +1,6 @@
 {
-  "title": "ICD API (Soon)",
-  "pages": [
-    "overview",
-    "..."
-  ],
+  "title": "ICD API",
+  "new": "BETA",
+  "pages": ["overview", "..."],
   "defaultOpen": false
 }
