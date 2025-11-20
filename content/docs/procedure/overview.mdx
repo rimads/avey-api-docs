@@ -3,7 +3,7 @@ title: Overview
 description: Automated claim validation for medical necessity, billing compliance, and frequency limits.
 ---
 
-The **Procedure Adjudication API** serves as an intelligent, real-time gatekeeper for medical claims. It automatically evaluates procedure codes (CPT) against patient diagnoses (ICD-10) and historical data to ensure clinical accuracy and billing compliance.
+The **Procedure Adjudication API** serves as an intelligent, real-time gatekeeper for medical claims. It automatically evaluates procedure codes (CPT/CDT) against patient diagnoses (ICD-10) and historical data to ensure clinical accuracy and billing compliance.
 
 By integrating this API, organizations can prevent denials, ensure medical necessity, and adhere to strict coding standards before a claim ever reaches a payer.
 
@@ -163,8 +163,8 @@ We categorize every violation into a severity level. This allows you to filter n
 
 To maximize adjudication accuracy, ensure your request includes:
 
-*   **Procedures:** The CPT codes, dates, and units for the current claim.
-*   **Diagnoses:** The ICD-10 codes justifying the procedures.
+*   **Procedures:** The CPT / CDT codes, dates, and units for the current claim.
+*   **Diagnoses:** The ICD-10-CMcodes justifying the procedures.
 *   **History:** A list of past procedures. This is **critical** for MUE2 (cross-claim daily limit) checks. Without history, the API cannot detect if a patient has previously received procedures that would exceed daily limits when combined with the current claim.
 
 ## Configuration

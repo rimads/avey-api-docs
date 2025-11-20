@@ -180,7 +180,7 @@ export function DataSourceGrid() {
         </div>
         <div>
           <h4 className="font-semibold text-sm text-av-gray900 dark:text-av-gray100 m-0 mb-1">
-            ICD-10 & CPT
+            ICD-10-CM & CPT
           </h4>
           <p className="text-xs text-av-gray600 dark:text-av-gray400 m-0 leading-relaxed">
             Official coding manuals, guidelines, and relationship mappings.

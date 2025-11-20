@@ -13,7 +13,7 @@
     "paths": {
         "/adjudicate": {
             "post": {
-                "summary": "Adjudicate Claim",
+                "summary": "Adjudicate",
                 "operationId": "adjudicate",
                 "requestBody": {
                     "content": {
@@ -308,7 +308,7 @@
                         "title": "Description",
                         "description": "a human-readable description of the rule.",
                         "examples": [
-                            "Procedures cannot be billed together (modifier not allowed)"
+                            "Procedure quantity exceeds daily limit"
                         ]
                     },
                     "cpts": {
