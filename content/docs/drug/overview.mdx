@@ -50,7 +50,7 @@ Ensures the medication is clinically indicated for the patient's diagnosed condi
 ```
 </Violation>
 
-<Violation code="DLE2" title="Dosage Necessity" level="critical">
+<Violation code="DLE2" title="Dosage Necessity" level="warning">
 Checks if the specific dosage prescribed is supported by the diagnosis.
 
 *   **Description:** Diagnoses does not necessitate the use of the medication in the prescribed dosage.
@@ -58,7 +58,7 @@ Checks if the specific dosage prescribed is supported by the diagnosis.
 ```json
 {
   "rule": "DLE2",
-  "level": "critical",
+  "level": "warning",
   "description": "Diagnoses does not necessitate the use of the medication in the perscribed dosage",
   "medications": ["Ibuprofen"]
 }
