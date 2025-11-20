@@ -7,10 +7,10 @@ on:
 
 env:
   SERVICE_NAME: staging-api-docs
-  IMAGE_REGISTRY: registry.avey.ai
+  IMAGE_REGISTRY: ecr.avey.ai
   IMAGE_REGISTRY_USERNAME: avey
   IMAGE_REGISTRY_PASSWORD: ${{ secrets.AVEY_REGISTRY_PASSWORD }}
-  DOKPLOY_COMPOSE_ID: z4FaJRn1ceJQjU2_JbgOl
+  DOKPLOY_COMPOSE_ID: PfmifGdDYHHE37dw2ls-q
 
 jobs:
   build:
@@ -48,10 +48,9 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # - name: Dokploy Deployment
-      #   uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
-      #   with:
-      #     auth_token: ${{ secrets.DOKPLOY_APIKEY }}
-      #     dokploy_url: ${{ secrets.DOKPLOY_URL }}
-      #     compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}
-
+      - name: Dokploy Deployment
+        uses: ahmedabdou14/dokploy-deploy-gha@1.1.0
+        with:
+          auth_token: ${{ secrets.DOKPLOY_APIKEY }}
+          dokploy_url: ${{ secrets.DOKPLOY_URL }}
+          compose_id: ${{ env.DOKPLOY_COMPOSE_ID }}

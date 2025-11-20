@@ -1,4 +1,13 @@
 {
   "title": "Avey healthcare APIs",
-  "pages": ["index", "diagnosis", "icd", "cpt", "!drug", "..."]
+  "pages": [
+    "index",
+    "diagnosis",
+    "drug",
+    "procedure",
+    "cowriter",
+    "icd",
+    "cpt",
+    "..."
+  ]
 }

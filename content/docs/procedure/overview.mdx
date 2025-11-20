@@ -1,0 +1,193 @@
+---
+title: Overview
+description: Automated claim validation for medical necessity, billing compliance, and frequency limits.
+---
+
+The **Procedure Adjudication API** serves as an intelligent, real-time gatekeeper for medical claims. It automatically evaluates procedure codes (CPT/CDT) against patient diagnoses (ICD-10) and historical data to ensure clinical accuracy and billing compliance.
+
+By integrating this API, organizations can prevent denials, ensure medical necessity, and adhere to strict coding standards before a claim ever reaches a payer.
+
+## Use Cases
+
+<Cards>
+  <Card title="Pre-Claim Validation" href="#">
+    Automatically scrub claims for errors prior to submission, reducing claim denials.
+  </Card>
+  <Card title="Real-Time Coding Assistance" href="#">
+    Provide immediate feedback to medical coders, flagging conflicting codes or missing modifiers.
+  </Card>
+  <Card title="Clinical Decision Support" href="#">
+    Alert providers at the point of care if a scheduled procedure lacks supporting diagnosis.
+  </Card>
+  <Card title="Audit & Compliance" href="#">
+    Retrospectively analyze claims data to identify patterns of non-compliance.
+  </Card>
+</Cards>
+
+## Data Sources
+
+We ground our adjudication logic in industry-standard and authoritative sources:
+
+<DataSourceGrid />
+
+---
+
+## Violation Types
+
+We categorize claim issues into specific rule types. The API response returns these codes, allowing your system to route errors to the correct workflow.
+
+### 1. Medical Necessity (PLE)
+
+<Violation code="PLE" title="Medical Necessity" level="critical">
+This check validates the clinical relationship between the diagnosis and the procedure. It answers: *"Is this procedure medically justified by this condition?"*
+
+*   **Description:** Procedure not justified by diagnoses.
+*   **Example Scenario:** A provider bills for a **Chest X-Ray** but the only diagnosis on the claim is **Foot Pain**.
+
+```json
+{
+  "rule": "PLE",
+  "level": "critical",
+  "description": "Procedure not justified by diagnoses",
+  "cpts": ["71045"],
+  "detail": "Diagnosis 'M79.671' (Pain in right foot) does not support procedure '71045'",
+  "ref_ids": ["claim-line-1"]
+}
+```
+</Violation>
+
+### 2. Frequency Limits (MUE)
+
+Medically Unlikely Edits (MUE) prevent over-billing by enforcing quantity limits based on anatomical or policy maximums.
+
+#### Daily Limits (MUE1)
+
+<Violation code="MUE1" title="Daily Limits" level="critical">
+Flags claims where the units of service exceed what is allowed for a single date of service.
+
+*   **Description:** Procedure quantity exceeds daily limit.
+*   **Example Scenario:** Billing **3 units** of an Appendectomy (which can only happen once).
+
+```json
+{
+  "rule": "MUE1",
+  "level": "critical",
+  "description": "Procedure quantity exceeds daily limit",
+  "cpts": ["44950"],
+  "detail": "Total quantity of 3 exceeds limit of 1",
+  "ref_ids": ["claim-line-2"]
+}
+```
+</Violation>
+
+#### Cross-Claim Daily Limits (MUE2)
+
+<Violation code="MUE2" title="Cross-Claim Daily Limits" level="critical">
+Similar to MUE1, but also considers previous procedures from older claims in the patient's history.
+
+*   **Description:** Procedure quantity exceeds daily limit when considering current claim and historical claims.
+*   **Requirements:** You must provide the `history` array in the request for this check to function.
+
+```json
+{
+  "rule": "MUE2",
+  "level": "critical",
+  "description": "Procedure quantity exceeds daily limit when considering current claim and historical claims",
+  "cpts": ["44950"],
+  "detail": "History contains prior instance of '44950' on 2023-05-12"
+}
+```
+</Violation>
+
+### 3. Bundling Integrity (PTP)
+
+**Procedure-to-Procedure (PTP)** edits identify pairs of codes that should not be reported together. These rules, enforced by the National Correct Coding Initiative (NCCI), prevent improper payments by defining when a service is considered "integral" to or "mutually exclusive" with another more comprehensive service performed at the same site.
+
+<Callout title="Key Principles">
+*   **Mutually Exclusive:** Procedures that achieve the same result or are clinically impossible to perform together.
+*   **Integral Procedures:** A "separate procedure" or superficial service that is included in a more complex surgical procedure.
+*   **Comprehensive vs. Component:** Identifies when a specific service is deemed a component of a larger procedure. The component code is typically denied when billed alongside the comprehensive code.
+</Callout>
+
+#### Hard Stops (PTP0)
+
+<Violation code="PTP0" title="Hard Stops" level="critical">
+Codes that are mutually exclusive and can **never** be reported together on the same date of service.
+
+*   **Description:** Procedures cannot be billed together (modifier not allowed).
+*   **Action:** One of the codes must be removed.
+
+```json
+{
+  "rule": "PTP0",
+  "level": "critical",
+  "description": "Procedures cannot be billed together (modifier not allowed)",
+  "cpts": ["99215", "99205"],
+  "detail": "Code '99215' includes services described by '99205'",
+  "ref_ids": ["claim-line-3", "claim-line-4"]
+}
+```
+</Violation>
+
+#### Soft Stops (PTP1)
+
+<Violation code="PTP1" title="Soft Stops" level="warning">
+Codes that are typically bundled but **may** be allowed if performed on separate anatomical sites or distinct sessions, usually requiring a specific modifier (e.g., -59, -25).
+
+*   **Description:** Procedures cannot be billed together (modifier allowed with documentation).
+*   **Action:** Review documentation. If appropriate, apply a modifier to bypass the edit.
+
+```json
+{
+  "rule": "PTP1",
+  "level": "warning",
+  "description": "Procedures cannot be billed together (modifier allowed with documentation)",
+  "cpts": ["17000", "17003"],
+  "detail": "Modifier required to bypass bundling edit"
+}
+```
+</Violation>
+
+---
+
+## Criticality & Workflows
+
+We categorize every violation into a severity level. This allows you to filter noise and route issues to the right person.
+
+<SeverityGrid />
+
+### Endpoint
+`POST /adjudicate`
+
+### Data Requirements
+
+To maximize adjudication accuracy, ensure your request includes:
+
+*   **Procedures:** The CPT / CDT codes, dates, and units for the current claim.
+*   **Diagnoses:** The ICD-10-CM codes justifying the procedures.
+*   **History:** A list of past procedures. This is **critical** for MUE2 (cross-claim daily limit) checks. Without history, the API cannot detect if a patient has previously received procedures that would exceed daily limits when combined with the current claim.
+
+## Configuration
+
+You can fine-tune the strictness of the API using the `config` object in your request.
+
+### Filter by Level
+Control which violations are returned based on their severity. This is useful if you want to build different views for different users (e.g., showing only Critical errors to a physician).
+
+| Level | Effect |
+| :--- | :--- |
+| `warning` | **Default.** Returns ALL violations (Critical + Warning). |
+| `critical` | Returns ONLY Critical violations. Hides coder-level warnings (like PTP1). |
+
+**Request Example:**
+```json
+{
+  "procedures": [...],
+  "diagnoses": [...],
+  "config": {
+    "level": "critical"
+  }
+}
+```
+
+{/* <Roadmap /> */}

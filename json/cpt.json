@@ -5,6 +5,12 @@
     "description": "API for CPT code inference using LLM technology",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://api.avey.ai",
+      "description": "Production"
+    }
+  ],
   "paths": {
     "/cpt/code/": {
       "post": {

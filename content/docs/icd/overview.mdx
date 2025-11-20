@@ -3,21 +3,21 @@ title: What is the ICD API?
 sidebar_title: Overview
 ---
 
-The ICD API transforms unstructured clinical text into structured, standardized data by identifying medical conditions and assigning them corresponding ICD-10 codes.  
+The ICD API transforms unstructured clinical text into structured, standardized data by identifying medical concepts and assigning them corresponding ICD-10-CM codes.  
 It streamlines coding workflows, reduces manual effort, and ensures consistency across healthcare systems.
 ## Use cases
 <Cards>
   <Card
     title="Automated ICD coding"
-    description="Manual coding slows workflows. Instantly convert clinical text into ICD-10 codes with a single API call."
+    description="Manual coding slows workflows. Instantly convert clinical text into ICD-10-CM codes with a single API call."
   />
   <Card
     title="Billing and claims"
-    description="Claim rejections often stem from coding errors. Ensure accurate ICD coding for faster, cleaner reimbursement."
+    description="Claim denials often stem from coding errors. Ensure accurate ICD coding for faster, cleaner reimbursement."
   />
   <Card
     title="Data standardization"
-    description="Inconsistent diagnosis terms cause system mismatches. Standardize all records using ICD-10 codes."
+    description="Inconsistent diagnosis terms cause system mismatches. Standardize all records using ICD-10-CM codes."
   />
   <Card
     title="Decision support"
@@ -28,18 +28,18 @@ It streamlines coding workflows, reduces manual effort, and ensures consistency 
 
 
 ## How to use the API
-Call the ICD API to either extract conditions or return ICD-10 codes.
+Call the ICD API to either extract conditions or return ICD-10-CM codes.
 
 <Cards>
   <Card title="Extract">
     Send free text and receive a list of identified clinical conditions.
   </Card>
   <Card title="Classify">
-    Send free text and receive ICD-10 codes for the conditions in the text.
+    Send free text and receive ICD-10-CM codes for the conditions in the text.
   </Card>
 </Cards>
 
-<Callout type="info">Classification may include both generic and complete/specific ICD‑10 codes when available.</Callout>
+<Callout type="info">Classification may include both generic and complete/specific ICD‑10-CM codes when available.</Callout>
 
 For complete specifications and live testing, visit the 
 <a href="#api-reference" 
@@ -61,9 +61,9 @@ sequenceDiagram
   alt Extract conditions
     Client->>Extract: POST /icd/extract (clinical note text)
     Extract-->>Client: conditions[string] (list of extracted conditions)
-  else Classify to ICD-10
+  else Classify to ICD-10-CM
     Client->>Classify: POST /icd/classify (clinical note text)
-    Classify-->>Client: icd10[string] (list of ICD-10 codes)
+    Classify-->>Client: icd10cm[string] (list of ICD-10-CM codes)
   end
 `}
 />

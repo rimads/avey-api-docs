@@ -1,5 +1,6 @@
 {
-  "title": "ICD coding API",
+  "title": "ICD API",
+  "new": "BETA",
   "pages": ["overview", "..."],
   "defaultOpen": false
 }

@@ -4,13 +4,9 @@ networks:
     
 services:
   staging-docs:
-    image: registry.avey.ai/staging-api-docs:latest
+    image: ecr.avey.ai/staging-api-docs:latest
     networks:
       - dokploy-network
-    environment:
-      - NEXT_PUBLIC_MODE=${NEXT_PUBLIC_MODE?}
-      - GITHUB_APP_ID=${GITHUB_APP_ID?}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY?}
     deploy:
       labels:
         - "traefik.enable=true"
@@ -18,18 +14,18 @@ services:
       placement:
         constraints:
           - node.role == worker
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 256M
+      # resources:
+        # limits:
+        #   cpus: '0.25'
+        #   memory: 256M
       update_config:
         order: start-first
       rollback_config:
         parallelism: 1
-        delay: 5s
-        monitor: 5s
+        # delay: 5s
+        # monitor: 5s
       restart_policy:
         condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        # delay: 5s
+        # max_attempts: 3
+        # window: 120s

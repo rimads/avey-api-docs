@@ -2,70 +2,64 @@
 title: What is the CPT API?
 sidebar_title: Overview
 ---
+
 The CPT API transforms plain-language procedure descriptions into standardized CPT codes.
 It streamlines coding workflows, reduces manual effort, and ensures accuracy in billing and claims processing.
 
 ## Use cases
-<Cards className="grid grid-cols-3">
-  <Card title="Accurate coding">
-    Turn procedure descriptions into correct CPT codes to ensure compliance and reduce claim rejections.
-  </Card>
-  <Card title="Faster claims">
-    Speed up approvals with properly coded procedures to cut delays and rework.
-  </Card>
-  <Card title="Quick new procedure coding">
-    Code new or rare services instantly without manual research.
-  </Card>
+<Cards>
+  <Card
+    title="Automated CPT coding"
+    description="Manual coding slows workflows. Instantly convert procedure descriptions into CPT codes with a single API call."
+  />
+  <Card
+    title="Billing and claims"
+    description="Claim denials often stem from coding errors. Ensure accurate CPT coding for faster, cleaner reimbursement."
+  />
+  <Card
+    title="Data standardization"
+    description="Inconsistent procedure terms cause system mismatches. Standardize all records using CPT codes."
+  />
 </Cards>
 
 ## How to use the API
-The CPT API is designed for simplicity — only two steps are required.
-<div className="fd-steps">
-  <div className="fd-step">
-    <div className="fd-step-content">
-### Step 1 — Send procedure description 
-    Submit your description to the CPT API endpoint.
-    </div> 
-  </div>
-  <div className="fd-step">
-    <div className="fd-step-content">
-### Step 2 — Receive ranked CPT codes
-    Get a ranked list of relevant CPT codes.
-    </div> 
-  </div>
-</div>
+Call the CPT API to transform procedure descriptions into CPT codes.
+
+<Cards>
+  <Card title="Classify">
+    Send a procedure description and receive a ranked list of relevant CPT codes.
+  </Card>
+</Cards>
+
+<Callout type="info">The API returns a ranked list of CPT codes based on relevance to the input description.</Callout>
+
 For complete specifications and live testing, visit the 
 <a href="#api-reference" 
 className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">API reference</a>.
 
 ## Architecture
 
+The CPT API routes your procedure description through Avey’s coding pipeline. Avey parses the description, analyzes the medical context, and maps it to standardized CPT codes using Avey’s internal CPT Engine.
+
 <Mermaid
   chart={`
-sequenceDiagram
-    participant Client
-    participant Service as Avey CPT service
-    participant Validator as Avey validation & ranking
+  %%{init: { "sequence": { "actorMargin": 140, "messageMargin": 36, "diagramMarginY": 24, "noteMargin": 16, "boxMargin": 16}}}%%
 
-    Client->>Service: Submit procedure description + k
-    Service->>Validator: Analyze, match & rank codes
-    Validator-->>Service: Validated, prioritized list
-    Service-->>Client: Deliver top CPT codes
+sequenceDiagram
+  participant Client
+  participant Service as CPT API
+
+  Client->>Service: POST /cpt/code (procedure description)
+  Service-->>Client: cpt_codes[string] (ranked list of CPT codes)
 `}
 />
-<Callout>
-  **Note:** `k` specifies the maximum number of CPT codes to return. For example, if `k = 1`, the API will return only the top-ranked code.
-</Callout>
-
 
 ## Requirements
 - **Authentication**: The API uses a bearer token for 
 <a href="/authentication" className="underline decoration-current hover:text-av-gray-500 hover:decoration-av-gray-500 transition-colors duration-300">authentication</a>.
 
-
-
 ## API reference
 
 <Cards>
-  <Card title="Code" href="/cpt/prompt_llm_api_infer__post" /> 
+  <Card title="Classify" href="/cpt/prompt_llm_cpt_code__post" /> 
 </Cards>

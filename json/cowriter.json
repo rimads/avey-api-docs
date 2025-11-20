@@ -13,9 +13,6 @@
   "paths": {
     "/session": {
       "post": {
-        "tags": [
-          "session"
-        ],
         "summary": "Create Session",
         "operationId": "createSession",
         "requestBody": {
@@ -47,9 +44,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
             "title": "HTTPError[str]",
             "type": "object"
           },
@@ -64,9 +59,7 @@
                 "type": "object"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
             "title": "HTTPError[Dict[str, str]]",
             "type": "object"
           }
@@ -80,9 +73,6 @@
     },
     "/session/{session_id}/findings": {
       "get": {
-        "tags": [
-          "session"
-        ],
         "summary": "Get Findings",
         "operationId": "getFindings",
         "parameters": [
@@ -118,9 +108,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
             "title": "HTTPError[str]",
             "type": "object",
             "description": "Bad Request"
@@ -135,9 +123,7 @@
                 "type": "object"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
             "title": "HTTPError[Dict[str, str]]",
             "type": "object",
             "description": "Unprocessable Content"
@@ -147,9 +133,6 @@
     },
     "/session/{session_id}/collaborator/diagnoses": {
       "get": {
-        "tags": [
-          "session"
-        ],
         "summary": "Get Collaborator Diagnoses",
         "operationId": "getCollaboratorDiagnoses",
         "parameters": [
@@ -185,9 +168,7 @@
                 "type": "string"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
             "title": "HTTPError[str]",
             "type": "object",
             "description": "Bad Request"
@@ -202,9 +183,67 @@
                 "type": "object"
               }
             },
-            "required": [
-              "message"
-            ],
+            "required": ["message"],
+            "title": "HTTPError[Dict[str, str]]",
+            "type": "object",
+            "description": "Unprocessable Content"
+          }
+        }
+      }
+    },
+    "/session/{session_id}/collaborator/questions": {
+      "get": {
+        "summary": "Get Collaborator Questions",
+        "operationId": "getCollaboratorQuestions",
+        "parameters": [
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CollaboratorQuestion"
+                  },
+                  "title": "Response Getcollaboratorquestions"
+                }
+              }
+            }
+          },
+          "400": {
+            "properties": {
+              "message": {
+                "title": "Message",
+                "type": "string"
+              }
+            },
+            "required": ["message"],
+            "title": "HTTPError[str]",
+            "type": "object",
+            "description": "Bad Request"
+          },
+          "422": {
+            "properties": {
+              "message": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Message",
+                "type": "object"
+              }
+            },
+            "required": ["message"],
             "title": "HTTPError[Dict[str, str]]",
             "type": "object",
             "description": "Unprocessable Content"
@@ -217,18 +256,12 @@
     "schemas": {
       "Classification": {
         "type": "string",
-        "enum": [
-          "subjective",
-          "objective"
-        ],
+        "enum": ["subjective", "objective"],
         "title": "Classification"
       },
       "CodingSystem": {
         "type": "string",
-        "enum": [
-          "snomed",
-          "aut"
-        ],
+        "enum": ["snomed", "aut"],
         "title": "CodingSystem"
       },
       "CollaboratorDiagnosis": {
@@ -244,15 +277,32 @@
           "description": {
             "type": "string",
             "title": "Description"
+          },
+          "icd10cm_code": {
+            "type": "string",
+            "title": "Icd10Cm Code"
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "name",
-          "description"
-        ],
+        "required": ["id", "name", "description", "icd10cm_code"],
         "title": "CollaboratorDiagnosis"
+      },
+      "CollaboratorQuestion": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "title": "Question",
+            "description": "The collaborator question"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "description": "ISO 8601 timestamp when the question was asked"
+          }
+        },
+        "type": "object",
+        "required": ["question", "timestamp"],
+        "title": "CollaboratorQuestion"
       },
       "Concept": {
         "properties": {
@@ -269,11 +319,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "id",
-          "term",
-          "coding"
-        ],
+        "required": ["id", "term", "coding"],
         "title": "Concept"
       },
       "CreateSessionReq": {
@@ -286,9 +332,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "patient_data"
-        ],
+        "required": ["patient_data"],
         "title": "CreateSessionReq"
       },
       "CreateSessionRes": {
@@ -299,9 +343,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "session_id"
-        ],
+        "required": ["session_id"],
         "title": "CreateSessionRes"
       },
       "Finding": {
@@ -375,10 +417,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "age",
-          "sex"
-        ],
+        "required": ["age", "sex"],
         "title": "PatientData"
       },
       "PatientHistory": {
@@ -474,10 +513,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "name",
-          "cpt_code"
-        ],
+        "required": ["name", "cpt_code"],
         "title": "PatientMedication"
       },
       "PatientSymptom": {
@@ -503,18 +539,12 @@
           }
         },
         "type": "object",
-        "required": [
-          "title",
-          "snomed_code"
-        ],
+        "required": ["title", "snomed_code"],
         "title": "PatientSymptom"
       },
       "Publisher": {
         "type": "string",
-        "enum": [
-          "practitioner",
-          "maven"
-        ],
+        "enum": ["practitioner", "maven"],
         "title": "Publisher"
       },
       "SessionConfig": {
@@ -548,11 +578,7 @@
       },
       "Status": {
         "type": "string",
-        "enum": [
-          "present",
-          "absent",
-          "unsure"
-        ],
+        "enum": ["present", "absent", "unsure"],
         "title": "Status"
       },
       "SurgicalHistory": {
@@ -574,9 +600,7 @@
           }
         },
         "type": "object",
-        "required": [
-          "title"
-        ],
+        "required": ["title"],
         "title": "SurgicalHistory"
       }
     },
