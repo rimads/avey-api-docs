@@ -1,28 +1,29 @@
 ---
-title: What is the Diagnosis API?
+title: What is the Diagnostic Engine?
 sidebar_title: Overview
 ---
 
-The Diagnosis API is a backend service that powers intelligent medical question‑and‑answer and diagnostic workflows.
-It’s built around a clinical AI model that can conduct structured medical interviews through iterative questioning, adapt each next question based on previous answers, and build a detailed picture of the patient’s condition — ultimately providing a differential diagnosis along with related care recommendations.
+The **Diagnostic Engine** is an AI-powered service that replicates a doctor's clinical reasoning to conduct intelligent medical interviews. It dynamically generates follow-up questions based on patient responses, ensuring a thorough assessment of symptoms and risk factors.
+
+By building a detailed clinical context, the engine delivers a comprehensive output that includes differential diagnoses, triage advice, and specialist recommendations—enabling applications to provide personalized and accurate medical guidance.
 
 ## Use cases
 <Cards>
   <Card
-    title="Differential diagnosis"
-    description="Get a list of medical conditions the patient is suffering from"
+    title="Differential diagnoses"
+    description="Get a list of medical conditions the patient may have"
   />
   <Card
     title="Self-management advice"
-    description="Provides practical guidance to help individuals manage their symptoms safely at home"
+    description="Provides practical guidance to help patients manage their symptoms safely at home"
   />
   <Card
     title="Triage recommendation"
-    description="Suggests the appropriate level of care based on patient input."
+    description="Suggests the appropriate level of medical urgency based on the patient's symptoms"
   />
   <Card
     title="Specialist recommendation"
-    description="Recommends the appropriate medical specialty to visit based on patient input."
+    description="Recommends the appropriate medical specialty to consult with based on the patient's symptoms"
   />
 </Cards>
 
@@ -31,18 +32,18 @@ It’s built around a clinical AI model that can conduct structured medical inte
 <Cards>
   <Card
     title="Conversational API"
-    description="Interactive diagnostic sessions with iterative questioning to reach a diagnosis."
+    description="Interactive diagnostic sessions with iterative questioning to reach a differential diagnoses list"
 
   />
   <Card
     title="Stateless API"
-    description="Send all patient information in a single request and receive a question or a complete diagnosis."
+    description="Send all patient information in a single request and receive a question or a differential diagnoses list"
   />
 </Cards>
 ## Conversational API
-Designed for interactive, real-time diagnostic sessions. It allows you to start a session with patient details, answer questions, and get diagnosis results.
+Designed for interactive, real-time diagnostic sessions. It allows you to start a session with patient details, answer questions, and get diagnostic results.
 ### Workflow
-Integrating the Diagnosis API is straightforward — just three API calls to go from patient input to complete diagnostic results.
+Integrating the Diagnostic Engine is straightforward — just three API calls to go from patient input to complete diagnostic results.
 <div className="fd-steps">
   <div className="fd-step">
     <div className="fd-step-content">
@@ -62,13 +63,13 @@ Repeat until the API returns `null` for the question.
     <div className="fd-step">
     <div className="fd-step-content">
 #### Step 3 — Get diagnosis
-Provide a session ID to retrieve diagnosis from existing patient data.
+Provide a session ID to retrieve diagnostic results from existing patient data.
 
     </div> 
   </div>
 </div>
-<Callout type="info">You can call the Diagnose endpoint at any point during the session to receive results sooner.
-However, accuracy improves when the session is completed before diagnosis.</Callout>
+<Callout type="info">You can call the `Diagnose` or `Get DDX` endpoints at any time during the encounter to receive results sooner.
+However, accuracy improves when the encounter is fully completed.</Callout>
 
 
 ### Endpoints

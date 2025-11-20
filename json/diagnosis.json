@@ -119,7 +119,7 @@
     "/v1/session/{session_id}/diagnose": {
       "get": {
         "tags": ["Conversational"],
-        "summary": "Get diagnosis",
+        "summary": "Get DDX",
         "description": "Generates a clinical diagnosis and patient recommendations based on a patient's profile from an existing session.\n    Provides a differential diagnosis, self management adivce, urgency evaluation, and specialist recommendation.",
         "operationId": "diagnose_session",
         "security": [

@@ -11,7 +11,7 @@ By integrating this API, organizations can prevent denials, ensure medical neces
 
 <Cards>
   <Card title="Pre-Claim Validation" href="#">
-    Automatically scrub claims for errors prior to submission, reducing rejection rates.
+    Automatically scrub claims for errors prior to submission, reducing claim denials.
   </Card>
   <Card title="Real-Time Coding Assistance" href="#">
     Provide immediate feedback to medical coders, flagging conflicting codes or missing modifiers.
@@ -164,7 +164,7 @@ We categorize every violation into a severity level. This allows you to filter n
 To maximize adjudication accuracy, ensure your request includes:
 
 *   **Procedures:** The CPT / CDT codes, dates, and units for the current claim.
-*   **Diagnoses:** The ICD-10-CMcodes justifying the procedures.
+*   **Diagnoses:** The ICD-10-CM codes justifying the procedures.
 *   **History:** A list of past procedures. This is **critical** for MUE2 (cross-claim daily limit) checks. Without history, the API cannot detect if a patient has previously received procedures that would exceed daily limits when combined with the current claim.
 
 ## Configuration

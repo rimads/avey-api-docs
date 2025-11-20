@@ -79,7 +79,7 @@ export function SeverityGrid({
           </div>
           <div>
             <h3 className="font-semibold text-lg text-av-gray900 dark:text-av-gray100 mt-0 mb-0">
-              Critical
+            Critical
             </h3>
             <p className="text-xs text-av-red600 dark:text-av-red500 font-medium mt-0 mb-0">
               Denial Risk: High
@@ -199,6 +199,40 @@ export function DataSourceGrid() {
           <p className="text-xs text-av-gray600 dark:text-av-gray400 m-0 leading-relaxed">
             Rules derived from standard medical policies (LCD/NCD) and
             literature.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function DrugDataSourceGrid() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
+      <div className="rounded-lg border border-av-blue500/30 dark:border-av-blue900/30 bg-av-blue100/30 dark:bg-av-blue900/10 p-4 flex flex-col gap-3">
+        <div className="p-2 w-fit rounded-lg bg-av-blue500/80 dark:bg-av-blue900/40 text-av-blue100/90 dark:text-av-blue600">
+          <Database className="w-5 h-5" />
+        </div>
+        <div>
+          <h4 className="font-semibold text-sm text-av-gray900 dark:text-av-gray100 m-0 mb-1">
+            FDA Standards
+          </h4>
+          <p className="text-xs text-av-gray600 dark:text-av-gray400 m-0 leading-relaxed">
+            FDA-approved medical standards.
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-av-gray300 dark:border-av-gray600/30 bg-av-gray100/30 dark:bg-av-gray900/10 p-4 flex flex-col gap-3">
+        <div className="p-2 w-fit rounded-lg bg-av-gray300 dark:bg-av-gray600/40 text-av-gray900 dark:text-av-gray300">
+          <BookOpen className="w-5 h-5" />
+        </div>
+        <div>
+          <h4 className="font-semibold text-sm text-av-gray900 dark:text-av-gray100 m-0 mb-1">
+            Clinical Guidelines
+          </h4>
+          <p className="text-xs text-av-gray600 dark:text-av-gray400 m-0 leading-relaxed">
+             Clinical guidelines.
           </p>
         </div>
       </div>
