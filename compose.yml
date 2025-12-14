@@ -18,18 +18,18 @@ services:
       placement:
         constraints:
           - node.role == worker
-      resources:
-        limits:
-          cpus: "0.25"
-          memory: 256M
+      # resources:
+      #   limits:
+      #     cpus: "0.25"
+      #     memory: 256M
       update_config:
         order: start-first
       rollback_config:
         parallelism: 1
-        delay: 5s
-        monitor: 5s
+        # delay: 5s
+        # monitor: 5s
       restart_policy:
         condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        # delay: 5s
+        # max_attempts: 3
+        # window: 120s
