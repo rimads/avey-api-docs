@@ -5,31 +5,41 @@ import {
   Database,
   FileText,
   BookOpen,
+  Info,
 } from "lucide-react";
 
 interface ViolationProps {
   code: string;
   title: string;
-  level: "critical" | "warning";
+  level: "critical" | "warning" | "info";
   children: React.ReactNode;
 }
 
 export function Violation({ code, title, level, children }: ViolationProps) {
   const isCritical = level === "critical";
+  const isInfo = level === "info";
   const borderColor = isCritical
     ? "border-av-red500/10 dark:border-av-red600/10"
+    : isInfo
+    ? "border-av-blue500/10 dark:border-av-blue600/10"
     : "border-av-yellow500/10 dark:border-av-yellow600/10";
   const bgColor = isCritical
     ? "bg-av-red100/50 dark:bg-av-red600/5"
+    : isInfo
+    ? "bg-av-blue100/50 dark:bg-av-blue600/5"
     : "bg-av-yellow100/50 dark:bg-av-yellow600/3";
   const textColor = isCritical
     ? "text-av-gray900 dark:text-av-gray200"
     : "text-av-gray900 dark:text-av-gray200";
   const codeBg = isCritical
     ? "bg-av-red100 dark:bg-av-red600/30"
+    : isInfo
+    ? "bg-av-blue100 dark:bg-av-blue600/30"
     : "bg-av-yellow100 dark:bg-av-yellow600/30";
   const codeText = isCritical
     ? "text-av-red600 dark:text-av-red500"
+    : isInfo
+    ? "text-av-blue600 dark:text-av-blue500"
     : "text-av-yellow600 dark:text-av-yellow500";
 
   return (
@@ -71,7 +81,7 @@ export function SeverityGrid({
   showAudience?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8 ">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 ">
       <div className="rounded-xl border bg-gradient-to-b from-av-red100 to-av-white dark:from-av-red600/5 dark:to-av-red600/5 border-av-red500/10 dark:border-av-red600/10 p-6 shadow-sm ">
         <div className="flex items-center   gap-3 mb-4">
           <div className="p-2 rounded-full bg-av-red100 dark:bg-av-red600/50 text-av-red600 dark:text-av-red500">
@@ -146,6 +156,41 @@ export function SeverityGrid({
                 </span>
                 <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-av-yellow600/80 text-av-yellow100 dark:bg-av-yellow600/30 dark:text-av-yellow500 border border-none dark:border-av-yellow600/30">
                   Billers
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-xl border bg-gradient-to-b from-av-blue100 to-av-white dark:from-av-blue600/5 dark:to-av-blue600/5 border-av-blue500/10 dark:border-av-blue600/10 p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 rounded-full bg-av-blue100 dark:bg-av-blue600/50 text-av-blue600 dark:text-av-blue500">
+            <Info className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg text-av-gray900 dark:text-av-gray100 mt-0 mb-0">
+              Info
+            </h3>
+            <p className="text-xs text-av-blue600 dark:text-av-blue500 font-medium mt-0 mb-0">
+              Informational
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <div className="text-sm text-av-gray600 dark:text-av-gray300">
+            Suggestions and informational alerts that do not affect claim validity but may improve accuracy.
+          </div>
+
+          {showAudience && (
+            <div className="flex flex-col gap-1 pt-4">
+              <p className="text-sm font-semibold text-av-gray600 dark:text-av-gray400 mt-0">
+                Target audience:
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-av-blue600/80 text-av-blue100 dark:bg-av-blue600/30 dark:text-av-blue500 border border-none dark:border-av-blue600/30">
+                  All Users
                 </span>
               </div>
             </div>
