@@ -50,7 +50,7 @@ This check validates the clinical relationship between the diagnosis and the pro
   "level": "critical",
   "description": "Procedure not justified by diagnoses",
   "cpts": ["71045"],
-  "detail": "Diagnosis 'M79.671' (Pain in right foot) does not support procedure '71045'",
+  "detail": "Procedure 71045 is not justified by the provided diagnoses",
   "ref_ids": ["claim-line-1"]
 }
 ```
@@ -87,6 +87,7 @@ Similar to MUE1, but also considers previous procedures from older claims in the
 
 *   **Description:** Procedure quantity exceeds daily limit when considering current claim and historical claims.
 *   **Requirements:** You must provide the `history` array in the request for this check to function.
+*   **Note:** Procedures with no date provided will be skipped for this check.
 
 ```json
 {
@@ -94,7 +95,7 @@ Similar to MUE1, but also considers previous procedures from older claims in the
   "level": "critical",
   "description": "Procedure quantity exceeds daily limit when considering current claim and historical claims",
   "cpts": ["44950"],
-  "detail": "History contains prior instance of '44950' on 2023-05-12"
+  "detail": "Total quantity of 2 (claim: 1, history: 1) exceeds limit of 1"
 }
 ```
 </Violation>
@@ -123,7 +124,7 @@ Codes that are mutually exclusive and can **never** be reported together on the 
   "level": "critical",
   "description": "Procedures cannot be billed together (modifier not allowed)",
   "cpts": ["99215", "99205"],
-  "detail": "Code '99215' includes services described by '99205'",
+  "detail": "Procedures 99215 and 99205 can not be performed together on the same date of service",
   "ref_ids": ["claim-line-3", "claim-line-4"]
 }
 ```
@@ -143,7 +144,27 @@ Codes that are typically bundled but **may** be allowed if performed on separate
   "level": "warning",
   "description": "Procedures cannot be billed together (modifier allowed with documentation)",
   "cpts": ["17000", "17003"],
-  "detail": "Modifier required to bypass bundling edit"
+  "detail": "Procedures 17000 and 17003 can not be performed together on the same date of service, except with valid documentation"
+}
+```
+</Violation>
+
+#### Missing Dates (Info)
+
+<Violation code="PTP" title="Potential Conflicts" level="info">
+When procedure dates are missing, the API cannot definitively confirm a PTP violation. These potential conflicts are flagged as `info` alerts.
+
+*   **Reason:** One or more procedures in the pair lack a date of service.
+*   **Action:** Check dates to confirm if the services were performed on the same day.
+
+```json
+{
+  "rule": "PTP0",
+  "level": "info",
+  "description": "Procedures cannot be billed together (modifier not allowed)",
+  "cpts": ["99215", "99205"],
+  "detail": "Procedures 99215 and 99205 would not be accepted if performed on the same date",
+  "ref_ids": ["claim-line-3", "claim-line-4"]
 }
 ```
 </Violation>
@@ -176,8 +197,9 @@ Control which violations are returned based on their severity. This is useful if
 
 | Level | Effect |
 | :--- | :--- |
-| `warning` | **Default.** Returns ALL violations (Critical + Warning). |
-| `critical` | Returns ONLY Critical violations. Hides coder-level warnings (like PTP1). |
+| `info` | Returns ALL violations (Critical + Warning + Info). |
+| `warning` | **Default.** Returns Critical and Warning violations. |
+| `critical` | Returns ONLY Critical violations. Hides coder-level warnings (like PTP1) and info alerts. |
 
 **Request Example:**
 ```json

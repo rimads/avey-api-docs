@@ -80,6 +80,7 @@
                         "examples": [
                             "critical",
                             "warning",
+                            "info",
                             null
                         ]
                     }
@@ -250,7 +251,19 @@
                         ]
                     },
                     "date": {
-                        "type": "string",
+                        "anyOf": [
+                            {
+                                "type": "string",
+                                "format": "date"
+                            },
+                            {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
                         "title": "Date",
                         "description": "date of the procedure.",
                         "examples": [
@@ -300,7 +313,8 @@
                         "description": "severity level of the violation.",
                         "examples": [
                             "critical",
-                            "warning"
+                            "warning",
+                            "info"
                         ]
                     },
                     "description": {
@@ -343,7 +357,8 @@
                 "type": "string",
                 "enum": [
                     "critical",
-                    "warning"
+                    "warning",
+                    "info"
                 ],
                 "title": "ViolationLevel",
                 "description": "Represents the severity level of a violation."
