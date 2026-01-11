@@ -17,11 +17,11 @@ Stream audio from doctor-patient conversations to receive real-time transcriptio
 wss://api.avey.ai/cowriter/v1/session/{session_id}/transcribe
 ```
 
-#### Supported Audio Format
+#### Supported audio format
 ``` text
 pcm_f32le
 ```
-#### Path Parameters
+#### Path parameters
 <AutoTypeTable path="content/docs/cowriter/types/cowriter-websocket.ts" name="PathParamsTranscriptionRequest" />
 ---
 
@@ -308,7 +308,7 @@ export default useAudioProcessor;
 
 Here's how to use these components together:
 
-```ts title="Example Usage"
+```ts title="Example usage"
 import useAudioProcessor from './useAudioProcessor';
 
 function SpeechRecognition() {

@@ -49,6 +49,9 @@
 
     --color-av-oncolor: #FFFFFF1E;     
     --color-av-stroke-light: #0000000A;
+
+    --color-fd-background: var(--color-av-white);
+    --color-fd-card: var(--color-av-gray100);
   }
 
   @layer base {

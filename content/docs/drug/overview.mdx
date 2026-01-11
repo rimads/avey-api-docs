@@ -3,7 +3,7 @@ title: Overview
 description: Automated validation for drug prescriptions, dosage limits, and clinical interactions.
 ---
 
-<Callout type="warn" title="Beta Availability">
+<Callout type="warn" title="Beta availability">
   The Drug Adjudication API is currently in **Beta**. While functional, please anticipate limited medication coverage and potential breaking changes to the API specification.
   
   Currently, medications must be submitted as structured objects. We are working on adding support for standard identifiers like **NDC codes** in upcoming releases.
@@ -13,36 +13,36 @@ The Drug Adjudication API serves as a sophisticated clinical safeguard for medic
 
 This API is particularly valuable for pharmacy benefit management (PBM) systems, as it streamlines real-time drug evaluations, reduces claim denials, and ensures accurate, compliant prescribing. By integrating this API, healthcare and PBM platforms can help prevent adverse drug events, promote formulary adherence, and boost the overall efficiency of medication management.
 
-## Use Cases
+## Use cases
 
 <Cards>
-  <Card title="Pre-Prescription Checks" href="#">
+  <Card title="Pre-prescription checks" href="#">
     Validate prescriptions at the point of care to prevent errors before the patient leaves the clinic.
   </Card>
-  <Card title="Pharmacy Benefit Management (PBM)" href="#">
+  <Card title="Pharmacy benefit management (PBM)" href="#">
     Automate the review of pharmacy claims for medical necessity and dosage compliance.
   </Card>
-  <Card title="Clinical Decision Support" href="#">
+  <Card title="Clinical decision support" href="#">
     Alerts providers to potential dosage issues by evaluating the patient's individualized demographics and medical history.
   </Card>
-  <Card title="Patient Safety Monitoring" href="#">
+  <Card title="Patient safety monitoring" href="#">
     Identifies potential contraindications based on the patient’s comorbidities, history, and drug–drug interaction risks.
   </Card>
 </Cards>
 
-## Data Sources
+## Data sources
 
 We anchor our adjudication framework in FDA-approved medical standards and clinical guidelines.
 
 <DrugDataSourceGrid />
 
-## Violation Types
+## Violation types
 
 We return specific violation codes to help you understand *why* a medication was flagged.
 
-### 1. Medical Necessity (DLE)
+### 1. Medical necessity (DLE)
 
-<Violation code="DLE1" title="Diagnosis Mismatch" level="critical">
+<Violation code="DLE1" title="Diagnosis mismatch" level="critical">
 Ensures the medication is clinically indicated for the patient's diagnosed conditions.
 
 *   **Description:** Diagnoses do not necessitate the use of the medication.
@@ -58,7 +58,7 @@ Ensures the medication is clinically indicated for the patient's diagnosed condi
 ```
 </Violation>
 
-<Violation code="DLE2" title="Dosage Necessity" level="warning">
+<Violation code="DLE2" title="Dosage necessity" level="warning">
 Checks if the specific dosage prescribed/claimed is allowed given the diagnosis and the demographics
 
 *   **Description:** Diagnoses do not necessitate the use of the medication in the prescribed dosage.
@@ -75,7 +75,7 @@ Checks if the specific dosage prescribed/claimed is allowed given the diagnosis 
 
 ### 2. Contraindications (DCV)
 
-<Violation code="DCV1" title="Comorbidities Contraindication" level="critical">
+<Violation code="DCV1" title="Comorbidities contraindication" level="critical">
 Identifies if a drug is medically contraindicated to be given, considering the patient's other medical conditions.
 
 *   **Description:** Drug contraindicated with comorbid condition.
@@ -91,9 +91,9 @@ Identifies if a drug is medically contraindicated to be given, considering the p
 ```
 </Violation>
 
-### 3. Drug Interactions (DDV)
+### 3. Drug interactions (DDV)
 
-<Violation code="DDV1" title="Drug-Drug Interaction" level="critical">
+<Violation code="DDV1" title="Drug-drug interaction" level="critical">
 Detects possible deleterious drug–drug interactions arising from co-administration of multiple therapeutic agents.
 
 *   **Description:** Potential drug–drug interaction detected between prescribed medications.
@@ -108,9 +108,9 @@ Detects possible deleterious drug–drug interactions arising from co-administra
 ```
 </Violation>
 
-### 4. Dosage Safety (DOV)
+### 4. Dosage safety (DOV)
 
-<Violation code="DOV1" title="Dosage Limit Exceeded" level="warning">
+<Violation code="DOV1" title="Dosage limit exceeded" level="warning">
 Flags dosages that exceed recommended maximums for safety, considering age and weight.
 
 *   **Description:** Prescribed dosage exceeds the recommended maximum limit.
@@ -127,14 +127,14 @@ Flags dosages that exceed recommended maximums for safety, considering age and w
 
 ---
 
-## Criticality & Workflows
+## Criticality & workflows
 
 <SeverityGrid showAudience={false} />
 
 ### Endpoint
 `POST /adjudicate`
 
-### Data Requirements
+### Data requirements
 
 To ensure accurate adjudication, provide as much patient context as possible:
 
